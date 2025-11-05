@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.ProvinciaBean;
+import ar.edu.ubp.das.ristorino_backend.beans.RegistrarClickPromocionBody;
 import ar.edu.ubp.das.ristorino_backend.repositories.RistorinoRepository;
 
 @RestController
@@ -29,5 +32,11 @@ public class RistorinoResource {
   public ResponseEntity<List<PromocionContenidoBean>> obtenerPromociones() {
     List<PromocionContenidoBean> promociones = ristorinoRepository.getPromociones();
     return ResponseEntity.ok(promociones);
+  }
+
+  @PostMapping("/registrar-click-promocion")
+  public ResponseEntity<Integer> registrarClickContenido(@RequestBody RegistrarClickPromocionBody req) {
+    Integer idClick = ristorinoRepository.registrarClickContenido(req);
+    return ResponseEntity.ok(idClick);
   }
 }

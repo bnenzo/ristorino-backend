@@ -511,7 +511,7 @@ IF OBJECT_ID('dbo.sp_get_promociones_contenidos', 'P') IS NOT NULL
     DROP PROCEDURE dbo.sp_get_promociones_contenidos;
 GO
 
-CREATE PROCEDURE dbo.sp_get_promociones_contenidos
+CREATE OR ALTER PROCEDURE dbo.sp_get_promociones_contenidos
     @nro_restaurante INT = NULL,   -- filtro opcional
     @nro_sucursal    INT = NULL,   -- filtro opcional
     @solo_vigentes   BIT = 1,      -- 1 = solo vigentes
@@ -586,4 +586,108 @@ BEGIN
         cr.nro_contenido;
 END
 GO
+
+
+IF OBJECT_ID('dbo.sp_registrar_click_contenido', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_registrar_click_contenido;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_registrar_click_contenido
+    @nro_restaurante       INT,
+    @nro_idioma            INT,
+    @nro_contenido         INT,
+    @nro_cliente           INT = NULL,
+    @costo_click           DECIMAL(10,2) = NULL,   -- si NULL, toma el de contenidos_restaurantes
+    @fecha_hora_registro   DATETIME = NULL,        -- si NULL, GETDATE()
+    @validar_vigencia      BIT = 0,                -- 1 = exige que hoy esté en vigencia
+    @nro_click             INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRAN;
+
+        -- 1) Validaciones básicas
+        IF NOT EXISTS (
+            SELECT 1
+            FROM contenidos_restaurantes
+            WHERE nro_restaurante = @nro_restaurante
+              AND nro_idioma      = @nro_idioma
+              AND nro_contenido   = @nro_contenido
+        )
+            THROW 50000, 'Contenido inexistente para los parámetros enviados.', 1;
+
+        IF @validar_vigencia = 1
+        BEGIN
+            DECLARE @hoy DATE = CONVERT(date, ISNULL(@fecha_hora_registro, GETDATE()));
+            IF NOT EXISTS (
+                SELECT 1
+                FROM contenidos_restaurantes
+                WHERE nro_restaurante = @nro_restaurante
+                  AND nro_idioma      = @nro_idioma
+                  AND nro_contenido   = @nro_contenido
+                  AND @hoy BETWEEN fecha_ini_vigencia AND fecha_fin_vigencia
+            )
+                THROW 50001, 'El contenido no está vigente en la fecha indicada.', 1;
+        END
+
+        -- 2) Defaults
+        IF @costo_click IS NULL
+        BEGIN
+            SELECT @costo_click = cr.costo_click
+            FROM contenidos_restaurantes AS cr
+            WHERE cr.nro_restaurante = @nro_restaurante
+              AND cr.nro_idioma      = @nro_idioma
+              AND cr.nro_contenido   = @nro_contenido;
+        END
+
+        IF @fecha_hora_registro IS NULL
+            SET @fecha_hora_registro = GETDATE();
+
+        -- 3) Obtener nro_click siguiente con bloqueo para concurrencia
+        SELECT
+            @nro_click = ISNULL(MAX(ccr.nro_click), 0) + 1
+        FROM clicks_contenidos_restaurantes AS ccr WITH (UPDLOCK, HOLDLOCK)
+        WHERE ccr.nro_restaurante = @nro_restaurante
+          AND ccr.nro_idioma      = @nro_idioma
+          AND ccr.nro_contenido   = @nro_contenido;
+
+        -- 4) Insertar
+        INSERT INTO clicks_contenidos_restaurantes
+            (nro_restaurante, nro_idioma, nro_contenido, nro_click,
+             fecha_hora_registro, nro_cliente, costo_click, notificado)
+        VALUES
+            (@nro_restaurante, @nro_idioma, @nro_contenido, @nro_click,
+             @fecha_hora_registro, @nro_cliente, @costo_click, 0);
+
+        COMMIT;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK;
+        DECLARE @ErrMsg NVARCHAR(4000) = ERROR_MESSAGE(),
+                @ErrSev INT = ERROR_SEVERITY(),
+                @ErrSta INT = ERROR_STATE();
+        RAISERROR(@ErrMsg, @ErrSev, @ErrSta);
+    END CATCH
+END
+GO
+
+DECLARE @nro_click INT;
+
+-- Caso simple: usa costo del contenido y fecha actual, sin validar vigencia
+EXEC dbo.sp_registrar_click_contenido
+     @nro_restaurante = 1,
+     @nro_idioma      = 1,
+     @nro_contenido   = 2,
+     @nro_cliente     = 1,
+     @costo_click     = NULL,
+     @fecha_hora_registro = NULL,
+     @validar_vigencia = 0,
+     @nro_click = @nro_click OUTPUT;
+
+SELECT @nro_click AS nro_click_insertado;
+
+
+SELECT * from clicks_contenidos_restaurantes;
 

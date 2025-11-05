@@ -1,38 +1,40 @@
 USE ristorino;
 
 
-DROP TABLE IF EXISTS contenidos_restaurantes;
-DROP TABLE IF EXISTS preferencias_restaurantes;
-DROP TABLE IF EXISTS idiomas_zonas_suc_restaurantes;
+DROP TABLE IF EXISTS preferencias_reservas_restaurantes;
+DROP TABLE IF EXISTS clicks_contenidos_restaurantes;
+DROP TABLE IF EXISTS reservas_restaurantes;
+
 DROP TABLE IF EXISTS zonas_turnos_sucursales_restaurantes;
+DROP TABLE IF EXISTS idiomas_zonas_suc_restaurantes;
+
 DROP TABLE IF EXISTS turnos_sucursales_restaurantes;
 DROP TABLE IF EXISTS zonas_sucursales_restaurantes;
-DROP TABLE IF EXISTS sucursales_restaurantes;
 
-DROP TABLE IF EXISTS idiomas_categorias_preferencias;
-DROP TABLE IF EXISTS idiomas_dominio_cat_preferencias;
-DROP TABLE IF EXISTS idiomas_estados;
+DROP TABLE IF EXISTS contenidos_restaurantes;
+DROP TABLE IF EXISTS preferencias_restaurantes;
 
 DROP TABLE IF EXISTS preferencias_clientes;
-DROP TABLE IF EXISTS clientes;
 
-DROP TABLE IF EXISTS localidades;
-DROP TABLE IF EXISTS provincias;
+DROP TABLE IF EXISTS idiomas_dominio_cat_preferencias;
+DROP TABLE IF EXISTS idiomas_categorias_preferencias;
+DROP TABLE IF EXISTS idiomas_estados;
 
 DROP TABLE IF EXISTS configuracion_restaurantes;
-DROP TABLE IF EXISTS atributos;
+
+DROP TABLE IF EXISTS sucursales_restaurantes;
+
+DROP TABLE IF EXISTS clientes;
+DROP TABLE IF EXISTS localidades;
 
 DROP TABLE IF EXISTS dominio_categorias_preferencias;
 DROP TABLE IF EXISTS categorias_preferencias;
 
+DROP TABLE IF EXISTS atributos;
 DROP TABLE IF EXISTS estados_reservas;
 DROP TABLE IF EXISTS idiomas;
+DROP TABLE IF EXISTS provincias;
 DROP TABLE IF EXISTS restaurantes;
-
--- Tablas referenciadas por error en FKs (por si existen)
-DROP TABLE IF EXISTS categorias_precios;
-DROP TABLE IF EXISTS turnos_sucursales;
-DROP TABLE IF EXISTS zonas;
 
 
 ------------------------------------------------------------

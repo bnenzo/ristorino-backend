@@ -416,9 +416,9 @@ CREATE TABLE contenidos_restaurantes (
 );
 
 INSERT INTO contenidos_restaurantes VALUES
-(1,1,1,1,'Promo mediodía: menú parrilla + bebida','https://imgs.example.com/promo_mediodia.jpg','Promo mediodía: menú parrilla + bebida','2025-11-03','2026-02-10',15.00,'LBP-001-1'),
-(1,1,2,1,'Noche de pizzas a la piedra 2x1','https://imgs.example.com/pizzas_2x1.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-001-2'),
-(1,1,3,2,'Pastas caseras en sucursal Nueva Cba','https://imgs.example.com/pastas.jpg','Pastas caseras en sucursal Nueva Cba','2025-11-03','2026-02-10',10.00,'LBP-002-1');
+(1,1,1,1,'Promo mediodía: menú parrilla + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: menú parrilla + bebida','2025-11-03','2026-02-10',15.00,'LBP-001-1'),
+(1,1,2,1,'Noche de pizzas a la piedra 2x1','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-001-2'),
+(1,1,3,2,'Pastas caseras en sucursal Nueva Cba','https://vamosacomerrico.com/wp-content/uploads/2021/03/penne-pasta.jpg','Pastas caseras en sucursal Nueva Cba','2025-11-03','2026-02-10',10.00,'LBP-002-1');
 
 CREATE TABLE clicks_contenidos_restaurantes (
     nro_restaurante INT NOT NULL,

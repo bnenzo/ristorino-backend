@@ -673,21 +673,112 @@ BEGIN
 END
 GO
 
-DECLARE @nro_click INT;
+-- DECLARE @nro_click INT;
 
 -- Caso simple: usa costo del contenido y fecha actual, sin validar vigencia
-EXEC dbo.sp_registrar_click_contenido
-     @nro_restaurante = 1,
-     @nro_idioma      = 1,
-     @nro_contenido   = 2,
-     @nro_cliente     = 1,
-     @costo_click     = NULL,
-     @fecha_hora_registro = NULL,
-     @validar_vigencia = 0,
-     @nro_click = @nro_click OUTPUT;
+-- EXEC dbo.sp_registrar_click_contenido
+--      @nro_restaurante = 1,
+--      @nro_idioma      = 1,
+--      @nro_contenido   = 2,
+--      @nro_cliente     = 1,
+--      @costo_click     = NULL,
+--      @fecha_hora_registro = NULL,
+--      @validar_vigencia = 0,
+--      @nro_click = @nro_click OUTPUT;
 
-SELECT @nro_click AS nro_click_insertado;
+-- SELECT @nro_click AS nro_click_insertado;
 
 
-SELECT * from clicks_contenidos_restaurantes;
+-- SELECT * from clicks_contenidos_restaurantes;
 
+IF OBJECT_ID('dbo.sp_get_clicks_no_notificados', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_clicks_no_notificados;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_clicks_no_notificados
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        nro_restaurante,
+        nro_idioma,
+        nro_contenido,
+        nro_click,
+        fecha_hora_registro,
+        nro_cliente,
+        costo_click,
+        notificado
+    FROM dbo.clicks_contenidos_restaurantes
+    WHERE notificado = 0
+    ORDER BY fecha_hora_registro DESC;
+END
+GO
+-- EXEC dbo.sp_get_clicks_no_notificados;
+
+
+
+
+IF OBJECT_ID('dbo.sp_set_click_notificado', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_set_click_notificado;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_set_click_notificado
+    @nro_restaurante INT,
+    @nro_idioma      INT,
+    @nro_contenido   INT,
+    @nro_click       INT,
+    @notificado      BIT = 1          -- opcional: 1 por defecto
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        UPDATE ccr WITH (ROWLOCK)
+        SET notificado = @notificado
+        FROM dbo.clicks_contenidos_restaurantes AS ccr
+        WHERE ccr.nro_restaurante = @nro_restaurante
+          AND ccr.nro_idioma      = @nro_idioma
+          AND ccr.nro_contenido   = @nro_contenido
+          AND ccr.nro_click       = @nro_click;
+
+        IF @@ROWCOUNT = 0
+            THROW 50010, 'No existe el registro con las claves provistas.', 1;
+
+        SELECT  -- devuelve el estado final
+            nro_restaurante, nro_idioma, nro_contenido, nro_click,
+            fecha_hora_registro, nro_cliente, costo_click, notificado
+        FROM dbo.clicks_contenidos_restaurantes
+        WHERE nro_restaurante = @nro_restaurante
+          AND nro_idioma      = @nro_idioma
+          AND nro_contenido   = @nro_contenido
+          AND nro_click       = @nro_click;
+    END TRY
+    BEGIN CATCH
+        DECLARE @ErrMsg NVARCHAR(4000)=ERROR_MESSAGE(),
+                @ErrSev INT=ERROR_SEVERITY(),
+                @ErrSta INT=ERROR_STATE();
+        RAISERROR(@ErrMsg, @ErrSev, @ErrSta);
+    END CATCH
+END
+
+
+
+
+
+
+-- EXEC dbo.sp_set_click_notificado
+--     @nro_restaurante = 1,
+--     @nro_idioma      = 1,
+--     @nro_contenido   = 2,
+--     @nro_click       = 1,   -- clave
+--     @notificado      = 0;   -- opcional
+
+-- SELECT ROUTINE_CATALOG, ROUTINE_SCHEMA, ROUTINE_NAME
+-- FROM INFORMATION_SCHEMA.ROUTINES
+-- WHERE ROUTINE_TYPE='PROCEDURE'
+--   AND ROUTINE_CATALOG='ristorino'
+--   AND ROUTINE_SCHEMA='dbo'
+--   AND ROUTINE_NAME='sp_set_click_notificado';
+
+-- SELECT * from clicks_contenidos_restaurantes;

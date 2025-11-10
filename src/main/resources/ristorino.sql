@@ -504,7 +504,7 @@ BEGIN
     FROM provincias
     ORDER BY nom_provincia;
 END;
-
+GO
 
 
 IF OBJECT_ID('dbo.sp_get_promociones_contenidos', 'P') IS NOT NULL
@@ -805,6 +805,7 @@ BEGIN
     JOIN provincias p ON l.cod_provincia = p.cod_provincia
     WHERE sr.nro_restaurante = @nro_restaurante;
 END
+GO
 
 --preferencias restaurante
 IF OBJECT_ID('dbo.sp_get_preferencias_restaurante', 'P') IS NOT NULL

@@ -761,6 +761,7 @@ BEGIN
         RAISERROR(@ErrMsg, @ErrSev, @ErrSta);
     END CATCH
 END
+GO
 
 
 
@@ -782,3 +783,41 @@ END
 --   AND ROUTINE_NAME='sp_set_click_notificado';
 
 -- SELECT * from clicks_contenidos_restaurantes;
+
+
+
+IF OBJECT_ID('dbo.sp_get_preferencias_restaurante', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_preferencias_restaurante;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_preferencias_restaurante
+    @nro_restaurante INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        pr.nro_restaurante,
+        pr.cod_categoria,
+        cp.nom_categoria,
+        pr.nro_valor_dominio,
+        dcp.nom_valor_dominio,
+        pr.nro_preferencia,
+        pr.observaciones,
+        pr.nro_sucursal     -- puede venir NULL si aplica global
+    FROM dbo.preferencias_restaurantes AS pr
+    INNER JOIN dbo.dominio_categorias_preferencias AS dcp
+        ON dcp.cod_categoria      = pr.cod_categoria
+       AND dcp.nro_valor_dominio  = pr.nro_valor_dominio
+    INNER JOIN dbo.categorias_preferencias AS cp
+        ON cp.cod_categoria = pr.cod_categoria
+    WHERE pr.nro_restaurante = @nro_restaurante
+    ORDER BY
+        pr.cod_categoria,
+        pr.nro_preferencia,
+        pr.nro_valor_dominio;
+END
+GO
+
+-- Ejemplo de uso:
+-- EXEC dbo.sp_get_preferencias_restaurante @nro_restaurante = 1;

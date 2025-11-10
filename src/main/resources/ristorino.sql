@@ -763,29 +763,50 @@ BEGIN
 END
 GO
 
+--datos de restaurante
+IF OBJECT_ID('dbo.sp_get_datos_restaurante', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_datos_restaurante;
+GO
 
+CREATE PROCEDURE dbo.sp_get_datos_restaurante
+    @nro_restaurante INT
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    SELECT 
+        razon_social AS nombre_restaurante,
+        cuit
+    FROM restaurantes
+    WHERE nro_restaurante = @nro_restaurante;
+END;
+GO
 
+--sucursales de restaurante
+IF OBJECT_ID('dbo.sp_get_sucursales_restaurante', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_sucursales_restaurante;
+GO
 
+CREATE PROCEDURE sp_get_sucursales_restaurante
+    @nro_restaurante INT
+AS
+BEGIN
+    SELECT 
+        sr.nro_sucursal AS nroSucursal,
+        sr.nom_sucursal AS nombreSucursal,
+        (sr.calle + ' ' + COALESCE(CAST(sr.nro_calle AS VARCHAR), '') 
+         + ' ' + COALESCE(sr.barrio, '') 
+         + ' ' + COALESCE(sr.cod_postal, '')) AS direccionCompleta,
+        sr.telefonos,
+        l.nom_localidad AS localidad,
+        p.nom_provincia AS provincia
+    FROM sucursales_restaurantes sr
+    JOIN localidades l ON sr.nro_localidad = l.nro_localidad
+    JOIN provincias p ON l.cod_provincia = p.cod_provincia
+    WHERE sr.nro_restaurante = @nro_restaurante;
+END
 
--- EXEC dbo.sp_set_click_notificado
---     @nro_restaurante = 1,
---     @nro_idioma      = 1,
---     @nro_contenido   = 2,
---     @nro_click       = 1,   -- clave
---     @notificado      = 0;   -- opcional
-
--- SELECT ROUTINE_CATALOG, ROUTINE_SCHEMA, ROUTINE_NAME
--- FROM INFORMATION_SCHEMA.ROUTINES
--- WHERE ROUTINE_TYPE='PROCEDURE'
---   AND ROUTINE_CATALOG='ristorino'
---   AND ROUTINE_SCHEMA='dbo'
---   AND ROUTINE_NAME='sp_set_click_notificado';
-
--- SELECT * from clicks_contenidos_restaurantes;
-
-
-
+--preferencias restaurante
 IF OBJECT_ID('dbo.sp_get_preferencias_restaurante', 'P') IS NOT NULL
     DROP PROCEDURE dbo.sp_get_preferencias_restaurante;
 GO
@@ -821,3 +842,23 @@ GO
 
 -- Ejemplo de uso:
 -- EXEC dbo.sp_get_preferencias_restaurante @nro_restaurante = 1;
+
+
+
+-- EXEC dbo.sp_set_click_notificado
+--     @nro_restaurante = 1,
+--     @nro_idioma      = 1,
+--     @nro_contenido   = 2,
+--     @nro_click       = 1,   -- clave
+--     @notificado      = 0;   -- opcional
+
+-- SELECT ROUTINE_CATALOG, ROUTINE_SCHEMA, ROUTINE_NAME
+-- FROM INFORMATION_SCHEMA.ROUTINES
+-- WHERE ROUTINE_TYPE='PROCEDURE'
+--   AND ROUTINE_CATALOG='ristorino'
+--   AND ROUTINE_SCHEMA='dbo'
+--   AND ROUTINE_NAME='sp_set_click_notificado';
+
+-- SELECT * from clicks_contenidos_restaurantes;
+
+

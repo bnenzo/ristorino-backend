@@ -761,9 +761,87 @@ BEGIN
         RAISERROR(@ErrMsg, @ErrSev, @ErrSta);
     END CATCH
 END
+GO
 
+--datos de restaurante
+IF OBJECT_ID('dbo.sp_get_datos_restaurante', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_datos_restaurante;
+GO
 
+CREATE PROCEDURE dbo.sp_get_datos_restaurante
+    @nro_restaurante INT
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    SELECT 
+        razon_social AS nombre_restaurante,
+        cuit
+    FROM restaurantes
+    WHERE nro_restaurante = @nro_restaurante;
+END;
+GO
+
+--sucursales de restaurante
+IF OBJECT_ID('dbo.sp_get_sucursales_restaurante', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_sucursales_restaurante;
+GO
+
+CREATE PROCEDURE sp_get_sucursales_restaurante
+    @nro_restaurante INT
+AS
+BEGIN
+    SELECT 
+        sr.nro_sucursal AS nroSucursal,
+        sr.nom_sucursal AS nombreSucursal,
+        (sr.calle + ' ' + COALESCE(CAST(sr.nro_calle AS VARCHAR), '') 
+         + ' ' + COALESCE(sr.barrio, '') 
+         + ' ' + COALESCE(sr.cod_postal, '')) AS direccionCompleta,
+        sr.telefonos,
+        l.nom_localidad AS localidad,
+        p.nom_provincia AS provincia
+    FROM sucursales_restaurantes sr
+    JOIN localidades l ON sr.nro_localidad = l.nro_localidad
+    JOIN provincias p ON l.cod_provincia = p.cod_provincia
+    WHERE sr.nro_restaurante = @nro_restaurante;
+END
+
+--preferencias restaurante
+IF OBJECT_ID('dbo.sp_get_preferencias_restaurante', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_preferencias_restaurante;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_preferencias_restaurante
+    @nro_restaurante INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        pr.nro_restaurante,
+        pr.cod_categoria,
+        cp.nom_categoria,
+        pr.nro_valor_dominio,
+        dcp.nom_valor_dominio,
+        pr.nro_preferencia,
+        pr.observaciones,
+        pr.nro_sucursal     -- puede venir NULL si aplica global
+    FROM dbo.preferencias_restaurantes AS pr
+    INNER JOIN dbo.dominio_categorias_preferencias AS dcp
+        ON dcp.cod_categoria      = pr.cod_categoria
+       AND dcp.nro_valor_dominio  = pr.nro_valor_dominio
+    INNER JOIN dbo.categorias_preferencias AS cp
+        ON cp.cod_categoria = pr.cod_categoria
+    WHERE pr.nro_restaurante = @nro_restaurante
+    ORDER BY
+        pr.cod_categoria,
+        pr.nro_preferencia,
+        pr.nro_valor_dominio;
+END
+GO
+
+-- Ejemplo de uso:
+-- EXEC dbo.sp_get_preferencias_restaurante @nro_restaurante = 1;
 
 
 
@@ -782,3 +860,5 @@ END
 --   AND ROUTINE_NAME='sp_set_click_notificado';
 
 -- SELECT * from clicks_contenidos_restaurantes;
+
+

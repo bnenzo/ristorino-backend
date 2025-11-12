@@ -1,35 +1,26 @@
 USE ristorino;
 
+------------------------------------------------------------ DROPS ------------------------------------------------------------ 
 
 DROP TABLE IF EXISTS preferencias_reservas_restaurantes;
 DROP TABLE IF EXISTS clicks_contenidos_restaurantes;
 DROP TABLE IF EXISTS reservas_restaurantes;
-
 DROP TABLE IF EXISTS zonas_turnos_sucursales_restaurantes;
 DROP TABLE IF EXISTS idiomas_zonas_suc_restaurantes;
-
 DROP TABLE IF EXISTS turnos_sucursales_restaurantes;
 DROP TABLE IF EXISTS zonas_sucursales_restaurantes;
-
 DROP TABLE IF EXISTS contenidos_restaurantes;
 DROP TABLE IF EXISTS preferencias_restaurantes;
-
 DROP TABLE IF EXISTS preferencias_clientes;
-
 DROP TABLE IF EXISTS idiomas_dominio_cat_preferencias;
 DROP TABLE IF EXISTS idiomas_categorias_preferencias;
 DROP TABLE IF EXISTS idiomas_estados;
-
 DROP TABLE IF EXISTS configuracion_restaurantes;
-
 DROP TABLE IF EXISTS sucursales_restaurantes;
-
 DROP TABLE IF EXISTS clientes;
 DROP TABLE IF EXISTS localidades;
-
 DROP TABLE IF EXISTS dominio_categorias_preferencias;
 DROP TABLE IF EXISTS categorias_preferencias;
-
 DROP TABLE IF EXISTS atributos;
 DROP TABLE IF EXISTS estados_reservas;
 DROP TABLE IF EXISTS idiomas;
@@ -37,9 +28,8 @@ DROP TABLE IF EXISTS provincias;
 DROP TABLE IF EXISTS restaurantes;
 
 
-------------------------------------------------------------
--- CATALOGOS DE PREFERENCIAS
-------------------------------------------------------------
+------------------------------------------------------------ CATEGORIAS_PREFERENCIAS ------------------------------------------------------------ 
+
 CREATE TABLE categorias_preferencias (
     cod_categoria VARCHAR(30) PRIMARY KEY,
     nom_categoria VARCHAR(100) NOT NULL
@@ -47,6 +37,8 @@ CREATE TABLE categorias_preferencias (
 
 INSERT INTO categorias_preferencias (cod_categoria, nom_categoria) VALUES
 ('tc', 'Tipo de cocina');
+
+------------------------------------------------------------ DOMINIO_CATEGORIAS_PREFERENCIAS ------------------------------------------------------------ 
 
 CREATE TABLE dominio_categorias_preferencias (
     cod_categoria VARCHAR(30) NOT NULL,
@@ -57,21 +49,32 @@ CREATE TABLE dominio_categorias_preferencias (
 );
 
 INSERT INTO dominio_categorias_preferencias (cod_categoria, nro_valor_dominio, nom_valor_dominio) VALUES
-('tc', 1, 'Italiana tradicional'),
-('tc', 2, 'Fusión japonesa-peruana'),
-('tc', 3, 'Fast food gourmet'),
-('tc', 4, 'Regional del NOA');
+('tc', 1, 'Italiana'),
+('tc', 2, 'Mexicana'),
+('tc', 3, 'Española'),
+('tc', 4, 'Francesa'),
+('tc', 5, 'Japonesa'),
+('tc', 6, 'China'),
+('tc', 7, 'Tailandesa'),
+('tc', 8, 'India'),
+('tc', 9, 'Mediterránea'),
+('tc', 10, 'Argentina'),
+('tc', 11, 'Peruana'),
+('tc', 12, 'Árabe / Medio Oriente'),
+('tc', 13, 'Americana'),
+('tc', 14, 'Fusión'),
+('tc', 15, 'Internacional');
 
-------------------------------------------------------------
--- RESTAURANTES Y CONFIG
-------------------------------------------------------------
+------------------------------------------------------------ RESTAURANTES ------------------------------------------------------------ 
 CREATE TABLE restaurantes (
     nro_restaurante INT PRIMARY KEY,
     razon_social VARCHAR(150) NOT NULL,
     cuit CHAR(11) UNIQUE NOT NULL
 );
 
-INSERT INTO restaurantes VALUES (1, 'La Bella Pizza', '30714567891');
+INSERT INTO restaurantes VALUES (1, 'La Bella Pizza', '30717101975');
+
+------------------------------------------------------------ ATRIBUTOS ------------------------------------------------------------ 
 
 CREATE TABLE atributos (
     cod_atributo VARCHAR(30) PRIMARY KEY,
@@ -80,9 +83,9 @@ CREATE TABLE atributos (
 );
 
 INSERT INTO atributos (cod_atributo, nom_atributo, tipo_dato) VALUES
-('idioma_default','Idioma por defecto','string'),
-('timezone','Zona horaria','string'),
-('moneda','Moneda','string');
+('api_base','apiBase','string');
+
+------------------------------------------------------------ CONFIGURACION_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE configuracion_restaurantes (
     nro_restaurante INT NOT NULL,
@@ -94,13 +97,10 @@ CREATE TABLE configuracion_restaurantes (
 );
 
 INSERT INTO configuracion_restaurantes (nro_restaurante, cod_atributo, valor) VALUES
-(1, 'idioma_default', 'es'),
-(1, 'timezone', 'America/Argentina/Cordoba'),
-(1, 'moneda', 'ARS');
+(1, 'api_base', 'http://localhost:8086/api/v1/la-bella-pizza');
 
-------------------------------------------------------------
--- GEOGRAFIA
-------------------------------------------------------------
+
+------------------------------------------------------------ PROVINCIAS ------------------------------------------------------------ 
 CREATE TABLE provincias (
     cod_provincia CHAR(5) PRIMARY KEY,
     nom_provincia VARCHAR(100) NOT NULL
@@ -132,6 +132,7 @@ INSERT INTO provincias (cod_provincia, nom_provincia) VALUES
 ('TUC','Tucumán'),
 ('CABA','Ciudad Autónoma de Buenos Aires');
 
+------------------------------------------------------------ LOCALIDADES ------------------------------------------------------------ 
 CREATE TABLE localidades (
     nro_localidad INT PRIMARY KEY,
     nom_localidad VARCHAR(100) NOT NULL,
@@ -144,9 +145,8 @@ INSERT INTO localidades (nro_localidad, nom_localidad, cod_provincia) VALUES
 (4,'Villa María','CBA'),(5,'Alta Gracia','CBA'),(6,'Jesús María','CBA'),
 (7,'La Falda','CBA'),(8,'Cosquín','CBA'),(9,'Río Tercero','CBA'),(10,'San Francisco','CBA');
 
-------------------------------------------------------------
--- CLIENTES Y PREFERENCIAS
-------------------------------------------------------------
+------------------------------------------------------------ CLIENTES ------------------------------------------------------------ 
+
 CREATE TABLE clientes (
     nro_cliente INT PRIMARY KEY,
     apellido VARCHAR(100) NOT NULL,
@@ -160,11 +160,13 @@ CREATE TABLE clientes (
 );
 
 INSERT INTO clientes (nro_cliente, apellido, nombre, clave, correo, telefonos, nro_localidad, habilitado) VALUES
-(1,'Pérez','Juan','1234','juan.perez@example.com','351-1234567',1,1),
+(1,'Letona','Renzo','letonaRenzo','renzo.letona@example.com','351-1112233',1,1),
 (2,'Gómez','María','abcd','maria.gomez@example.com','351-2345678',2,1),
 (3,'Rodríguez','Lucas','pass','lucas.rodriguez@example.com','351-3456789',3,1),
 (4,'Fernández','Ana','clave','ana.fernandez@example.com','351-4567890',4,1),
 (5,'Díaz','Carla','qwerty','carla.diaz@example.com','351-5678901',5,1);
+
+------------------------------------------------------------ PREFERENCIAS_CLIENTES ------------------------------------------------------------ 
 
 CREATE TABLE preferencias_clientes (
     nro_cliente INT NOT NULL,
@@ -185,9 +187,8 @@ INSERT INTO preferencias_clientes
 (4,'tc',1,''),
 (5,'tc',3,'Elige menús degustación');
 
-------------------------------------------------------------
--- ESTADOS E IDIOMAS
-------------------------------------------------------------
+------------------------------------------------------------ ESTADOS_RESERVAS ------------------------------------------------------------ 
+
 CREATE TABLE estados_reservas (
     cod_estado VARCHAR(30) PRIMARY KEY,
     nom_estado VARCHAR(100) NOT NULL
@@ -195,6 +196,8 @@ CREATE TABLE estados_reservas (
 
 INSERT INTO estados_reservas (cod_estado, nom_estado) VALUES
 ('PEN','Pendiente'),('CONF','Confirmada'),('CAN','Cancelada'),('COMP','Completada');
+
+------------------------------------------------------------ IDIOMAS ------------------------------------------------------------ 
 
 CREATE TABLE idiomas (
     nro_idioma INT PRIMARY KEY,
@@ -204,6 +207,8 @@ CREATE TABLE idiomas (
 
 INSERT INTO idiomas (nro_idioma, nom_idioma, cod_idioma) VALUES
 (1,'Español','es'),(2,'Inglés','en'),(3,'Portugués','pt');
+
+------------------------------------------------------------ IDIOMAS_ESTADOS ------------------------------------------------------------ 
 
 CREATE TABLE idiomas_estados (
     cod_estado VARCHAR(30) NOT NULL,
@@ -220,6 +225,8 @@ INSERT INTO idiomas_estados (cod_estado, nro_idioma, estado) VALUES
 ('CAN',1,'Cancelada'),('CAN',2,'Cancelled'),('CAN',3,'Cancelada'),
 ('COMP',1,'Completada'),('COMP',2,'Completed'),('COMP',3,'Concluída');
 
+------------------------------------------------------------ IDIOMAS_DOMINIO_CAT_PREFERENCIAS ------------------------------------------------------------ 
+
 CREATE TABLE idiomas_dominio_cat_preferencias (
     cod_categoria VARCHAR(30) NOT NULL,
     nro_valor_dominio INT NOT NULL,
@@ -234,21 +241,11 @@ CREATE TABLE idiomas_dominio_cat_preferencias (
 
 INSERT INTO idiomas_dominio_cat_preferencias
 (cod_categoria, nro_valor_dominio, nro_idioma, valor_dominio, desc_valor_dominio) VALUES
-('tc',1,1,'Italiana tradicional',NULL),
-('tc',1,2,'Traditional Italian',NULL),
-('tc',1,3,'Italiana tradicional',NULL),
+('tc',1,1,'Italiana',NULL),
+('tc',1,2,'Italian',NULL),
+('tc',1,3,'Italiana',NULL);
 
-('tc',2,1,'Fusión japonesa-peruana',NULL),
-('tc',2,2,'Japanese-Peruvian fusion',NULL),
-('tc',2,3,'Fusão japonesa-peruana',NULL),
-
-('tc',3,1,'Fast food gourmet',NULL),
-('tc',3,2,'Gourmet fast food',NULL),
-('tc',3,3,'Fast food gourmet',NULL),
-
-('tc',4,1,'Regional del NOA',NULL),
-('tc',4,2,'Northwest Argentina regional',NULL),
-('tc',4,3,'Regional do NOA',NULL);
+------------------------------------------------------------ IDIOMAS_CATEGORIAS_PREFERENCIAS ------------------------------------------------------------ 
 
 CREATE TABLE idiomas_categorias_preferencias (
     cod_categoria VARCHAR(30) NOT NULL,
@@ -266,9 +263,9 @@ INSERT INTO idiomas_categorias_preferencias
 ('tc',2,'Type of cuisine','Classifies the type of cuisine of the restaurant.'),
 ('tc',3,'Tipo de cozinha','Classifica o tipo de cozinha do restaurante.');
 
-------------------------------------------------------------
--- SUCURSALES Y ZONAS
-------------------------------------------------------------
+
+------------------------------------------------------------ SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
+
 CREATE TABLE sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
@@ -288,8 +285,10 @@ CREATE TABLE sucursales_restaurantes (
 );
 
 INSERT INTO sucursales_restaurantes VALUES
-(1,1,'Sucursal Alta Córdoba','Av. Colón',850,'Alta Córdoba',1,'5000','351-4567890',120,10,'LBP-001'),
-(1,2,'Sucursal General Paz','Av. Hipólito Yrigoyen',350,'General Paz',1,'5000','351-4781234',80,15,'LBP-002');
+(1,1,'La Bella Pizza Alta Córdoba','Juan Antonio Lavalleja',2344,'Alta Córdoba',1,'5001','03512317731',50,15,'LBP-001'),
+(1,2,'La Bella Pizza General Paz','Jacinto Ríos',170,'General Paz',1,'5004','03515388931',30,12,'LBP-002');
+
+------------------------------------------------------------ ZONAS_SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE zonas_sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
@@ -308,9 +307,9 @@ INSERT INTO zonas_sucursales_restaurantes VALUES
 (1,1,'ACBA','Se encuentra en alta cordoba',20,1,1),
 (1,2,'GPZ','Se encuentra en general paz',20,1,1);
 
-------------------------------------------------------------
--- TURNOS Y ZONAS POR TURNO
-------------------------------------------------------------
+
+------------------------------------------------------------ TURNOS_SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
+
 CREATE TABLE turnos_sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
@@ -324,8 +323,16 @@ CREATE TABLE turnos_sucursales_restaurantes (
 
 INSERT INTO turnos_sucursales_restaurantes
 (nro_restaurante, nro_sucursal, hora_desde, hora_hasta, habilitado) VALUES
-(1,1,'12:00','15:30',1),(1,1,'20:00','23:30',1),
-(1,2,'12:00','15:00',1),(1,2,'20:00','23:00',0);
+(1,1,'12:00','13:30',1),(1,1,'20:00','21:30',1),
+(1,1,'13:30','14:30',1),(1,1,'21:30','22:30',1),
+(1,1,'14:30','15:30',1),(1,1,'22:30','23:30',1),
+(1,2,'12:00','13:15',1),(1,2,'20:00','21:00',0);
+
+
+
+
+
+------------------------------------------------------------ ZONAS_TURNOS_SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE zonas_turnos_sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
@@ -344,9 +351,9 @@ INSERT INTO zonas_turnos_sucursales_restaurantes VALUES
 (1,1,'ACBA','12:00',1),(1,1,'ACBA','20:00',0),
 (1,2,'GPZ','12:00',1),(1,2,'GPZ','20:00',1);
 
-------------------------------------------------------------
--- IDIOMAS ZONAS POR SUCURSAL
-------------------------------------------------------------
+
+------------------------------------------------------------ IDIOMAS_ZONAS_SUC_RESTAURANTES ------------------------------------------------------------ 
+
 CREATE TABLE idiomas_zonas_suc_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
@@ -369,9 +376,9 @@ INSERT INTO idiomas_zonas_suc_restaurantes
 (1,2,'GPZ',2,'General Paz','Located in General Paz'),
 (1,2,'GPZ',3,'General Paz','Localiza-se em General Paz');
 
-------------------------------------------------------------
--- PREFERENCIAS DEL RESTAURANTE
-------------------------------------------------------------
+
+------------------------------------------------------------ PREFERENCIAS_RESTAURANTES ------------------------------------------------------------ 
+
 CREATE TABLE preferencias_restaurantes (
     nro_restaurante INT NOT NULL,
     cod_categoria VARCHAR(30) NOT NULL,
@@ -389,12 +396,12 @@ CREATE TABLE preferencias_restaurantes (
 
 INSERT INTO preferencias_restaurantes
 (nro_restaurante, cod_categoria, nro_valor_dominio, nro_preferencia, observaciones, nro_sucursal) VALUES
-(1,'tc',1,1,'Fuerte foco en pastas y pizzas',1),
-(1,'tc',1,2,'Fuerte foco en pastas y pizzas',2);
+(1,'tc',1,1,'Especializada en pizzas',1),
+(1,'tc',1,2,'Especializada en pizzas',2);
 
-------------------------------------------------------------
--- CONTENIDOS DEL RESTAURANTE
-------------------------------------------------------------
+
+------------------------------------------------------------ CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
+
 CREATE TABLE contenidos_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_idioma INT NOT NULL,
@@ -416,9 +423,11 @@ CREATE TABLE contenidos_restaurantes (
 );
 
 INSERT INTO contenidos_restaurantes VALUES
-(1,1,1,1,'Promo mediodía: menú parrilla + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: menú parrilla + bebida','2025-11-03','2026-02-10',15.00,'LBP-001-1'),
+(1,1,1,1,'Promo mediodía: Pizza a la piedra + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-001-1'),
 (1,1,2,1,'Noche de pizzas a la piedra 2x1','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-001-2'),
-(1,1,3,2,'Pastas caseras en sucursal Nueva Cba','https://vamosacomerrico.com/wp-content/uploads/2021/03/penne-pasta.jpg','Pastas caseras en sucursal Nueva Cba','2025-11-03','2026-02-10',10.00,'LBP-002-1');
+(1,1,3,2,'Degustacion de pizzas en sucursal Alta Cba','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-002-1');
+
+------------------------------------------------------------ CLICKS_CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE clicks_contenidos_restaurantes (
     nro_restaurante INT NOT NULL,
@@ -436,6 +445,7 @@ CREATE TABLE clicks_contenidos_restaurantes (
         REFERENCES clientes(nro_cliente)
 );
 
+------------------------------------------------------------ RESERVAS_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE reservas_restaurantes (
     nro_cliente INT NOT NULL,
@@ -464,6 +474,7 @@ INSERT INTO reservas_restaurantes VALUES
 (1,1,'2025-11-02 18:30:00','2025-11-05',1,1, 'ACBA', '12:00',2,0, 'CONF', NULL, 12000.00, 'LBP-001-R001'),
 (2,2,'2025-11-02 18:45:00','2025-11-05',1,1, 'ACBA', '20:00',4,2, 'CONF', NULL, 18000.00, 'LBP-001-R002');
 
+------------------------------------------------------------ PREFERENCIAS_RESERVAS_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE preferencias_reservas_restaurantes (
     nro_cliente INT NOT NULL,

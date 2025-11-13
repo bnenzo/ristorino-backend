@@ -1,11 +1,14 @@
 package ar.edu.ubp.das.ristorino_backend.beans;
 
+import java.math.BigDecimal;
+
 public class RegistrarClickPromocionBody {
 
   private Integer nroRestaurante;
   private Integer nroIdioma;
   private Integer nroContenido;
   private Integer nroCliente;
+  private BigDecimal costoClick;
 
   public RegistrarClickPromocionBody() {
   }
@@ -41,4 +44,13 @@ public class RegistrarClickPromocionBody {
   public void setNroCliente(Integer nroCliente) {
     this.nroCliente = nroCliente;
   }
+
+  public BigDecimal getCostoClick() {
+    return costoClick;
+  }
+
+  public void setCostoClick(BigDecimal costoClick) {
+    this.costoClick = costoClick;
+  }
+
 }

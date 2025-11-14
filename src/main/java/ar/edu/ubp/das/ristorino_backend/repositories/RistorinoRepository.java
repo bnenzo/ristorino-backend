@@ -2,6 +2,7 @@ package ar.edu.ubp.das.ristorino_backend.repositories;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
 import ar.edu.ubp.das.ristorino_backend.beans.DatosRestauranteBean;
+import ar.edu.ubp.das.ristorino_backend.beans.GetApiBaseUrlBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PreferenciaRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.RegistrarClickPromocionBody;
@@ -56,7 +57,23 @@ public class RistorinoRepository {
 
 		// Se recorren los clicks para enviar 1 a 1 al backend del restaurante
 		for (ClicksContenidosRestaurantesBean clickSinNotificar : clicksSinNotificar) {
-			String base = "http://localhost:8086/api/v1";
+
+			// Se obtiene la api base para cada uno de esos restaurantes
+			SqlParameterSource getApiBaseUrlParams = new MapSqlParameterSource()
+					.addValue("nro_restaurante", clickSinNotificar.getNroRestaurante());
+
+			List<GetApiBaseUrlBean> apiBaseUrl = jdbcCallFactory.executeQuery(
+					"sp_get_apibase_by_restaurant_id",
+					"dbo",
+					getApiBaseUrlParams,
+					"configuracion_restaurantes",
+					GetApiBaseUrlBean.class);
+
+			if (apiBaseUrl.size() != 1) {
+				throw new Error("No se encontro la apibase para el restaurante");
+			}
+
+			String base = apiBaseUrl.get(0).getValor();
 
 			JsonObject body = new JsonObject();
 			body.addProperty("nroRestaurante", clickSinNotificar.getNroRestaurante());
@@ -67,7 +84,7 @@ public class RistorinoRepository {
 			body.addProperty("costoClick", clickSinNotificar.getCostoClick());
 
 			Httpful http = new Httpful(base)
-					.path("/la-bella-pizza/registrar_click_contenido")
+					.path("/registrar_click_contenido")
 					.post(body);
 
 			http.execute(String.class);

@@ -842,6 +842,20 @@ GO
 --   AND ROUTINE_SCHEMA='dbo'
 --   AND ROUTINE_NAME='sp_set_click_notificado';
 
+CREATE OR ALTER PROCEDURE sp_get_apibase_by_restaurant_id
+    @nro_restaurante INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT valor
+    FROM configuracion_restaurantes
+    WHERE nro_restaurante = @nro_restaurante
+      AND cod_atributo = 'api_base';
+END
+
+
+
 -- SELECT * from clicks_contenidos_restaurantes;
 
 

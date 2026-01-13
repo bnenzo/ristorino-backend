@@ -2,7 +2,6 @@ package ar.edu.ubp.das.ristorino_backend.resources.clicks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +22,4 @@ public class ClicksResource {
     return ResponseEntity.ok("Se registro el click correctamente");
   }
 
-  @GetMapping("/notificar-clicks-promocion-manual")
-  public ResponseEntity<String> notificarClicksPromocionManual() {
-    clicksRepository.notificarClicksPromocionManual();
-    return ResponseEntity.ok("Proceso de notificacion de click finalizado correctamente");
-  }
 }

@@ -9,6 +9,7 @@ public class RegistrarClickPromocionBody {
   private Integer nroContenido;
   private Integer nroCliente;
   private BigDecimal costoClick;
+  private String codContenidoRestaurante;
 
   public RegistrarClickPromocionBody() {
   }
@@ -51,6 +52,14 @@ public class RegistrarClickPromocionBody {
 
   public void setCostoClick(BigDecimal costoClick) {
     this.costoClick = costoClick;
+  }
+
+  public String getCodContenidoRestaurante() {
+    return codContenidoRestaurante;
+  }
+
+  public void setCodContenidoRestaurante(String codContenidoRestaurante) {
+    this.codContenidoRestaurante = codContenidoRestaurante;
   }
 
 }

@@ -1,0 +1,92 @@
+package ar.edu.ubp.das.ristorino_backend.beans;
+
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "Cliente")
+public class ClienteBean {
+
+  private Integer nroCliente;
+  private String apellido;
+  private String nombre;
+  private String clave;
+  private String correo;
+  private String telefonos;
+  private Integer nroLocalidad;
+  private Boolean habilitado;
+
+  public Integer getNroCliente() {
+    return nroCliente;
+  }
+
+  public void setNroCliente(Integer nroCliente) {
+    this.nroCliente = nroCliente;
+  }
+
+  public String getApellido() {
+    return apellido;
+  }
+
+  public void setApellido(String apellido) {
+    this.apellido = apellido;
+  }
+
+  public String getNombre() {
+    return nombre;
+  }
+
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
+
+  public String getClave() {
+    return clave;
+  }
+
+  public void setClave(String clave) {
+    this.clave = clave;
+  }
+
+  public String getCorreo() {
+    return correo;
+  }
+
+  public void setCorreo(String correo) {
+    this.correo = correo;
+  }
+
+  public String getTelefonos() {
+    return telefonos;
+  }
+
+  public void setTelefonos(String telefonos) {
+    this.telefonos = telefonos;
+  }
+
+  public Integer getNroLocalidad() {
+    return nroLocalidad;
+  }
+
+  public void setNroLocalidad(Integer nroLocalidad) {
+    this.nroLocalidad = nroLocalidad;
+  }
+
+  public Boolean getHabilitado() {
+    return habilitado;
+  }
+
+  public void setHabilitado(Boolean habilitado) {
+    this.habilitado = habilitado;
+  }
+
+  @Override
+  public String toString() {
+    return "ClienteBean{" +
+        "nroCliente=" + nroCliente +
+        ", apellido='" + apellido + '\'' +
+        ", nombre='" + nombre + '\'' +
+        ", correo='" + correo + '\'' +
+        ", nroLocalidad=" + nroLocalidad +
+        ", habilitado=" + habilitado +
+        '}';
+  }
+}

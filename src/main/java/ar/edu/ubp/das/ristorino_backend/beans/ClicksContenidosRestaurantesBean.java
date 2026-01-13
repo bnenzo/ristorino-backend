@@ -15,6 +15,21 @@ public class ClicksContenidosRestaurantesBean {
   private Integer nroCliente;
   private BigDecimal costoClick;
   private int notificado;
+  private String codContenidoRestaurante;
+
+  public ClicksContenidosRestaurantesBean() {
+  }
+
+  public ClicksContenidosRestaurantesBean(ClicksContenidosRestaurantesBean other) {
+    this.nroRestaurante = other.nroRestaurante;
+    this.nroCliente = other.nroCliente;
+    this.nroContenido = other.nroContenido;
+    this.nroIdioma = other.nroIdioma;
+    this.nroClick = other.nroClick;
+    this.costoClick = other.costoClick;
+    this.fechaHoraRegistro = other.fechaHoraRegistro;
+    this.codContenidoRestaurante = other.codContenidoRestaurante;
+  }
 
   public int getNroRestaurante() {
     return nroRestaurante;
@@ -78,6 +93,14 @@ public class ClicksContenidosRestaurantesBean {
 
   public void setNotificado(int notificado) {
     this.notificado = notificado;
+  }
+
+  public String getCodContenidoRestaurante() {
+    return codContenidoRestaurante;
+  }
+
+  public void setCodContenidoRestaurante(String codContenidoRestaurante) {
+    this.codContenidoRestaurante = codContenidoRestaurante;
   }
 
   @Override

@@ -5,12 +5,13 @@ import com.google.gson.JsonObject;
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
 import ar.edu.ubp.das.ristorino_backend.components.Httpful;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
+import ar.edu.ubp.das.ristorino_backend.services.clicks.utils.ClicksUtils;
 
 public class ClicksRestClient {
   public void registrarClickContenido(ConfigBean config, ClicksContenidosRestaurantesBean click) {
 
     JsonObject body = new JsonObject();
-    body.addProperty("nroRestaurante", click.getNroRestaurante());
+    body.addProperty("nroRestaurante", ClicksUtils.obtenerNroRestaurante(click.getCodContenidoRestaurante()));
     body.addProperty("nroContenido", click.getNroContenido());
     body.addProperty("nroClick", click.getNroClick());
     body.addProperty("fechaHoraRegistro", click.getFechaHoraRegistro());

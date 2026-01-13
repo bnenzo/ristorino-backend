@@ -489,17 +489,17 @@ CREATE TABLE contenidos_restaurantes (
 );
 
 INSERT INTO contenidos_restaurantes VALUES
-(1,1,1,1,'Promo mediodía: Pizza a la piedra + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-001-1'),
-(1,1,2,1,'Noche de pizzas a la piedra 2x1','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-001-2'),
-(1,1,3,2,'Degustacion de pizzas en sucursal Alta Cba','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-002-1'),
+(1,1,1,1,'Promo mediodía: Pizza a la piedra + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-1-1'),
+(1,1,2,1,'Noche de pizzas a la piedra 2x1','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-1-1'),
+(1,1,3,2,'Degustacion de pizzas en sucursal Alta Cba','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-1-2'),
 
-(2,1,1,1,'Promo 50% off Ceviche','https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2026-02-10',15.00,'PK-001-1'),
-(2,1,2,1,'Noche de Mar al 2x1','https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2026-02-10',15.00,'PK-001-2'),
-(2,1,3,1,'Promo ceviche 3x2 + bebida gratis','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2026-02-10',15.00,'PK-001-3'),
+(2,1,1,1,'Promo 50% off Ceviche','https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,2,1,'Noche de Mar al 2x1','https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,3,1,'Promo ceviche 3x2 + bebida gratis','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2026-02-10',15.00,'PK-1-1'),
 
-(3,1,1,1,'Promo 5 hamburguesas clasicas','https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2026-02-10',15.00,'LFB-001-1'),
-(3,1,2,1,'Quintuple monster','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2026-02-10',15.00,'LFB-001-2'),
-(3,1,3,1,'Promo Burger + papa y gaseosa','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2026-02-10',15.00,'LFB-001-3');
+(3,1,1,1,'Promo 5 hamburguesas clasicas','https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
+(3,1,2,1,'Quintuple monster','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
+(3,1,3,1,'Promo Burger + papa y gaseosa','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2026-02-10',15.00,'LFB-1-1');
 
 ------------------------------------------------------------ CLICKS_CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -512,6 +512,7 @@ CREATE TABLE clicks_contenidos_restaurantes (
     nro_cliente INT,
     costo_click DECIMAL(10,2) NOT NULL,
     notificado BIT DEFAULT 0,
+    cod_contenido_restaurante VARCHAR(255),
     PRIMARY KEY (nro_restaurante, nro_idioma, nro_contenido, nro_click),
     FOREIGN KEY (nro_restaurante, nro_contenido, nro_idioma)
     REFERENCES contenidos_restaurantes(nro_restaurante, nro_contenido, nro_idioma),
@@ -682,7 +683,8 @@ CREATE OR ALTER PROCEDURE dbo.sp_registrar_click_contenido
     @nro_idioma            INT,
     @nro_contenido         INT,
     @nro_cliente           INT = NULL,
-    @costo_click           DECIMAL(10,2)   
+    @costo_click           DECIMAL(10,2),
+    @cod_contenido_restaurante VARCHAR(255)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -712,11 +714,10 @@ BEGIN
         -- 3) Insertar
         INSERT INTO clicks_contenidos_restaurantes
             (nro_restaurante, nro_idioma, nro_contenido, nro_click,
-             fecha_hora_registro, nro_cliente, costo_click, notificado)
+             fecha_hora_registro, nro_cliente, costo_click, notificado, cod_contenido_restaurante)
         VALUES
             (@nro_restaurante, @nro_idioma, @nro_contenido, @nro_click,
-             DEFAULT, @nro_cliente, @costo_click, 0);
-
+             DEFAULT, @nro_cliente, @costo_click, 0, @cod_contenido_restaurante);
         COMMIT;
     END TRY
     BEGIN CATCH
@@ -764,7 +765,8 @@ BEGIN
         fecha_hora_registro,
         nro_cliente,
         costo_click,
-        notificado
+        notificado,
+        cod_contenido_restaurante
     FROM dbo.clicks_contenidos_restaurantes
     WHERE notificado = 0
     ORDER BY fecha_hora_registro DESC;
@@ -980,3 +982,6 @@ BEGIN
     WHERE nro_restaurante = @nro_restaurante;
 END;
 GO
+
+
+-- SELECT * from clicks_contenidos_restaurantes;

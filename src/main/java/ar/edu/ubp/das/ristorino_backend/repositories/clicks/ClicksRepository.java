@@ -24,7 +24,8 @@ public class ClicksRepository {
         .addValue("nro_idioma", registrarClickPromocionBody.getNroIdioma())
         .addValue("nro_contenido", registrarClickPromocionBody.getNroContenido())
         .addValue("nro_cliente", 1, Types.INTEGER)
-        .addValue("costo_click", registrarClickPromocionBody.getCostoClick(), Types.DECIMAL);
+        .addValue("costo_click", registrarClickPromocionBody.getCostoClick(), Types.DECIMAL)
+        .addValue("cod_contenido_restaurante", registrarClickPromocionBody.getCodContenidoRestaurante());
 
     jdbcCallFactory.executeWithOutputs(
         "sp_registrar_click_contenido", "dbo", params);

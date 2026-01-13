@@ -9,10 +9,10 @@ DROP TABLE IF EXISTS zonas_turnos_sucursales_restaurantes;
 DROP TABLE IF EXISTS idiomas_zonas_suc_restaurantes;
 DROP TABLE IF EXISTS turnos_sucursales_restaurantes;
 DROP TABLE IF EXISTS zonas_sucursales_restaurantes;
-DROP TABLE IF EXISTS contenidos_restaurantes;
+DROP TABLE IF EXISTS contenidos_restaurantes; 
 DROP TABLE IF EXISTS preferencias_restaurantes;
 DROP TABLE IF EXISTS preferencias_clientes;
-DROP TABLE IF EXISTS idiomas_dominio_cat_preferencias;
+DROP TABLE IF EXISTS idiomas_dominio_cat_preferencias; 
 DROP TABLE IF EXISTS idiomas_categorias_preferencias;
 DROP TABLE IF EXISTS idiomas_estados;
 DROP TABLE IF EXISTS configuracion_restaurantes;
@@ -73,6 +73,10 @@ CREATE TABLE restaurantes (
 );
 
 INSERT INTO restaurantes VALUES (1, 'La Bella Pizza', '30717101975');
+INSERT INTO restaurantes VALUES (2, 'Perukai', '20999999222');
+INSERT INTO restaurantes VALUES (3, 'La Fabrica Burger', '30999999333');
+INSERT INTO restaurantes VALUES (4, 'Sabores del Norte', '40999999444');
+
 
 ------------------------------------------------------------ ATRIBUTOS ------------------------------------------------------------ 
 
@@ -83,7 +87,11 @@ CREATE TABLE atributos (
 );
 
 INSERT INTO atributos (cod_atributo, nom_atributo, tipo_dato) VALUES
-('api_base','apiBase','string');
+('api_base','apiBase','string'),
+('service_name','serviceName','string'),
+('port_name','portName','string'),
+('namespace','namespace','string'),
+('backend_type', 'backendType', 'string');
 
 ------------------------------------------------------------ CONFIGURACION_RESTAURANTES ------------------------------------------------------------ 
 
@@ -97,7 +105,13 @@ CREATE TABLE configuracion_restaurantes (
 );
 
 INSERT INTO configuracion_restaurantes (nro_restaurante, cod_atributo, valor) VALUES
-(1, 'api_base', 'http://localhost:8086/api/v1/la-bella-pizza');
+(1, 'api_base', 'http://localhost:8086/api/v1/la-bella-pizza'),
+(1, 'backend_type', 'REST'),
+(2, 'api_base', 'http://localhost:8087/services/perukai.wsdl'),
+(2, 'service_name', 'PerukaiWSPortService'),
+(2, 'port_name', 'PerukaiWSPortSoap11'),
+(2, 'namespace', 'http://services.perukai.das.ubp.edu.ar/'),
+(2, 'backend_type', 'SOAP');
 
 
 ------------------------------------------------------------ PROVINCIAS ------------------------------------------------------------ 
@@ -286,7 +300,14 @@ CREATE TABLE sucursales_restaurantes (
 
 INSERT INTO sucursales_restaurantes VALUES
 (1,1,'La Bella Pizza Alta Córdoba','Juan Antonio Lavalleja',2344,'Alta Córdoba',1,'5001','03512317731',50,15,'LBP-001'),
-(1,2,'La Bella Pizza General Paz','Jacinto Ríos',170,'General Paz',1,'5004','03515388931',30,12,'LBP-002');
+(1,2,'La Bella Pizza General Paz','Jacinto Ríos',170,'General Paz',1,'5004','03515388931',30,12,'LBP-002'),
+
+(2,1,'Perukai Nueva Córdoba','Hipólito Yrigoyen',500,'Nueva Córdoba',1,'5000','0351-4000001',50,10,'PK-001'),
+(2,2,'Perukai Güemes','Belgrano',700,'Güemes',1,'5000','0351-4000002',45,10,'PK-002'),
+
+(3,1,'La Fabrica Burger Cerro','Rafael Nuñez',4000,'Cerro de las Rosas',1,'5004','03515377931',60,10,'LFB-001');
+
+
 
 ------------------------------------------------------------ ZONAS_SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
 
@@ -305,7 +326,12 @@ CREATE TABLE zonas_sucursales_restaurantes (
 
 INSERT INTO zonas_sucursales_restaurantes VALUES
 (1,1,'ACBA','Se encuentra en alta cordoba',20,1,1),
-(1,2,'GPZ','Se encuentra en general paz',20,1,1);
+(1,2,'GPZ','Se encuentra en general paz',20,1,1),
+
+(2,1,'NCBA','Se encuentra en nueva cordoba',50,1,1),
+(2,2,'CTR','Se encuentra en guemes',45,1,1),
+
+(3,1,'CDLR','Se encuentra en el cerro de las rosas',60,1,1);
 
 
 ------------------------------------------------------------ TURNOS_SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
@@ -326,8 +352,24 @@ INSERT INTO turnos_sucursales_restaurantes
 (1,1,'12:00','13:30',1),(1,1,'20:00','21:30',1),
 (1,1,'13:30','14:30',1),(1,1,'21:30','22:30',1),
 (1,1,'14:30','15:30',1),(1,1,'22:30','23:30',1),
-(1,2,'12:00','13:15',1),(1,2,'20:00','21:00',0);
+(1,2,'12:00','13:15',1),(1,2,'20:00','21:00',0),
 
+(2,1,'12:00','13:30',1),
+(2,1,'13:30','14:30',1),
+(2,1,'14:30','15:30',1),
+(2,1,'20:00','21:30',1),
+(2,1,'21:30','22:30',1),
+(2,1,'22:30','23:30',1),
+(2,2,'12:00','13:15',1),
+(2,2,'13:15','14:15',1),
+(2,2,'14:15','15:15',1),
+(2,2,'20:00','21:00',0),
+(2,2,'21:00','22:00',0),
+
+(3,1,'12:00','13:30',1),
+(3,1,'13:30','14:30',1),
+(3,1,'20:00','21:30',1),
+(3,1,'21:30','22:30',1);
 
 
 
@@ -349,7 +391,15 @@ CREATE TABLE zonas_turnos_sucursales_restaurantes (
 
 INSERT INTO zonas_turnos_sucursales_restaurantes VALUES
 (1,1,'ACBA','12:00',1),(1,1,'ACBA','20:00',0),
-(1,2,'GPZ','12:00',1),(1,2,'GPZ','20:00',1);
+(1,2,'GPZ','12:00',1),(1,2,'GPZ','20:00',1),
+
+(2,1,'NCBA','12:00',1),
+(2,1,'NCBA','20:00',1),
+(2,2,'CTR','12:00',1),
+(2,2,'CTR','20:00',1),
+
+(3,1,'CDLR','12:00',1),
+(3,1,'CDLR','20:00',1);
 
 
 ------------------------------------------------------------ IDIOMAS_ZONAS_SUC_RESTAURANTES ------------------------------------------------------------ 
@@ -374,7 +424,18 @@ INSERT INTO idiomas_zonas_suc_restaurantes
 (1,1,'ACBA',3,'Alta Córdoba','Localiza-se em Alta Córdoba'),
 (1,2,'GPZ',1,'General Paz','Se encuentra en General Paz'),
 (1,2,'GPZ',2,'General Paz','Located in General Paz'),
-(1,2,'GPZ',3,'General Paz','Localiza-se em General Paz');
+(1,2,'GPZ',3,'General Paz','Localiza-se em General Paz'),
+
+(2,1,'NCBA',1,'Nueva Córdoba','Se encuentra en Nueva Córdoba'),
+(2,1,'NCBA',2,'Nueva Córdoba','Located in Nueva Córdoba'),
+(2,1,'NCBA',3,'Nueva Córdoba','Localiza-se em Nueva Córdoba'),
+(2,2,'CTR',1,'Centro','Se encuentra en Centro'),
+(2,2,'CTR',2,'Centro','Located in Centro'),
+(2,2,'CTR',3,'Centro','Localiza-se em Centro'),
+
+(3,1,'CDLR',1,'Cerro de las Rosas','Se encuentra en Cerro de las Rosas'),
+(3,1,'CDLR',2,'Cerro de las Rosas','Located in Cerro de las Rosas'),
+(3,1,'CDLR',3,'Cerro de las Rosas','Localiza-se em Cerro de las Rosas');
 
 
 ------------------------------------------------------------ PREFERENCIAS_RESTAURANTES ------------------------------------------------------------ 
@@ -397,7 +458,12 @@ CREATE TABLE preferencias_restaurantes (
 INSERT INTO preferencias_restaurantes
 (nro_restaurante, cod_categoria, nro_valor_dominio, nro_preferencia, observaciones, nro_sucursal) VALUES
 (1,'tc',1,1,'Especializada en pizzas',1),
-(1,'tc',1,2,'Especializada en pizzas',2);
+(1,'tc',1,2,'Especializada en pizzas',2),
+
+(2,'tc',11,1,'Especializada en ceviche',1),
+(2,'tc',11,2,'Especializada en ceviche',2),
+
+(3,'tc',13,1,'Especializada en hamburguesas',1);
 
 
 ------------------------------------------------------------ CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
@@ -423,9 +489,17 @@ CREATE TABLE contenidos_restaurantes (
 );
 
 INSERT INTO contenidos_restaurantes VALUES
-(1,1,1,1,'Promo mediodía: Pizza a la piedra + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-001-1'),
-(1,1,2,1,'Noche de pizzas a la piedra 2x1','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-001-2'),
-(1,1,3,2,'Degustacion de pizzas en sucursal Alta Cba','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-002-1');
+(1,1,1,1,'Promo mediodía: Pizza a la piedra + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-1-1'),
+(1,1,2,1,'Noche de pizzas a la piedra 2x1','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-1-1'),
+(1,1,3,2,'Degustacion de pizzas en sucursal Alta Cba','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-1-2'),
+
+(2,1,1,1,'Promo 50% off Ceviche','https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,2,1,'Noche de Mar al 2x1','https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,3,1,'Promo ceviche 3x2 + bebida gratis','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+
+(3,1,1,1,'Promo 5 hamburguesas clasicas','https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
+(3,1,2,1,'Quintuple monster','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
+(3,1,3,1,'Promo Burger + papa y gaseosa','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2026-02-10',15.00,'LFB-1-1');
 
 ------------------------------------------------------------ CLICKS_CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -438,6 +512,7 @@ CREATE TABLE clicks_contenidos_restaurantes (
     nro_cliente INT,
     costo_click DECIMAL(10,2) NOT NULL,
     notificado BIT DEFAULT 0,
+    cod_contenido_restaurante VARCHAR(255),
     PRIMARY KEY (nro_restaurante, nro_idioma, nro_contenido, nro_click),
     FOREIGN KEY (nro_restaurante, nro_contenido, nro_idioma)
     REFERENCES contenidos_restaurantes(nro_restaurante, nro_contenido, nro_idioma),
@@ -608,7 +683,8 @@ CREATE OR ALTER PROCEDURE dbo.sp_registrar_click_contenido
     @nro_idioma            INT,
     @nro_contenido         INT,
     @nro_cliente           INT = NULL,
-    @costo_click           DECIMAL(10,2)   
+    @costo_click           DECIMAL(10,2),
+    @cod_contenido_restaurante VARCHAR(255)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -638,11 +714,10 @@ BEGIN
         -- 3) Insertar
         INSERT INTO clicks_contenidos_restaurantes
             (nro_restaurante, nro_idioma, nro_contenido, nro_click,
-             fecha_hora_registro, nro_cliente, costo_click, notificado)
+             fecha_hora_registro, nro_cliente, costo_click, notificado, cod_contenido_restaurante)
         VALUES
             (@nro_restaurante, @nro_idioma, @nro_contenido, @nro_click,
-             DEFAULT, @nro_cliente, @costo_click, 0);
-
+             DEFAULT, @nro_cliente, @costo_click, 0, @cod_contenido_restaurante);
         COMMIT;
     END TRY
     BEGIN CATCH
@@ -690,7 +765,8 @@ BEGIN
         fecha_hora_registro,
         nro_cliente,
         costo_click,
-        notificado
+        notificado,
+        cod_contenido_restaurante
     FROM dbo.clicks_contenidos_restaurantes
     WHERE notificado = 0
     ORDER BY fecha_hora_registro DESC;
@@ -842,20 +918,70 @@ GO
 --   AND ROUTINE_SCHEMA='dbo'
 --   AND ROUTINE_NAME='sp_set_click_notificado';
 
-CREATE OR ALTER PROCEDURE sp_get_apibase_by_restaurant_id
-    @nro_restaurante INT
+-- PROCEDIMIENTO PARA INSERTAR UN NUEVO CLIENTE
+IF OBJECT_ID('dbo.sp_insert_cliente', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_insert_cliente;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_insert_cliente
+    @nro_cliente    INT,
+    @apellido       VARCHAR(100),
+    @nombre         VARCHAR(100),
+    @clave          VARCHAR(100),
+    @correo         VARCHAR(150),
+    @telefonos      VARCHAR(50),
+    @nro_localidad  INT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT valor
-    FROM configuracion_restaurantes
-    WHERE nro_restaurante = @nro_restaurante
-      AND cod_atributo = 'api_base';
-END
+    BEGIN TRY
+        BEGIN TRAN;
 
+        IF EXISTS (SELECT 1 FROM dbo.clientes WHERE correo = @correo)
+            THROW 50001, 'El correo ya está registrado', 1;
+
+        INSERT INTO dbo.clientes (
+            nro_cliente,
+            apellido,
+            nombre,
+            clave,
+            correo,
+            telefonos,
+            nro_localidad,
+            habilitado
+        )
+        VALUES (
+            @nro_cliente,
+            @apellido,
+            @nombre,
+            @clave,
+            @correo,
+            @telefonos,
+            @nro_localidad,
+            1
+        );
+
+        COMMIT TRAN;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRAN;
+        THROW;
+    END CATCH
+END;
+GO
+
+
+CREATE OR ALTER PROCEDURE sp_get_configuration_by_restaurant_id
+    @nro_restaurante INT
+AS
+BEGIN
+
+    SELECT *
+    FROM configuracion_restaurantes
+    WHERE nro_restaurante = @nro_restaurante;
+END;
+GO
 
 
 -- SELECT * from clicks_contenidos_restaurantes;
-
-

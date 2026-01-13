@@ -5,19 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
 import ar.edu.ubp.das.ristorino_backend.beans.soap.ProvinciaBean;
-import ar.edu.ubp.das.ristorino_backend.infrastructure.clicks.ClicksGateway;
-import ar.edu.ubp.das.ristorino_backend.infrastructure.enums.BackendType;
+import ar.edu.ubp.das.ristorino_backend.services.clicks.ClicksService;
 import ar.edu.ubp.das.ristorino_backend.utils.SOAPClient;
 
 @RestController
 @RequestMapping("/ristorino")
 public class TestResource {
+  @Autowired
+  private ClicksService clicksService;
+
   @GetMapping("/testSoap")
   public List<ProvinciaBean> testSoap() {
 
@@ -81,10 +84,19 @@ public class TestResource {
     return "ok";
   }
 
-  @GetMapping("/testSoap3")
-  public String testSoap3() {
-    ClicksGateway clicksGateway = new ClicksGateway();
-    clicksGateway.registrarClickContenido(BackendType.SOAP);
+  @GetMapping("/testSoap4")
+  public String testSoap4() {
+
+    ClicksContenidosRestaurantesBean clickContenidoRestaurante = new ClicksContenidosRestaurantesBean();
+    clickContenidoRestaurante.setCostoClick(BigDecimal.valueOf(1));
+    clickContenidoRestaurante.setFechaHoraRegistro("2026-01-07T10:30:00");
+    clickContenidoRestaurante.setNroClick(1);
+    clickContenidoRestaurante.setNroCliente(1);
+    clickContenidoRestaurante.setNroContenido(1);
+    clickContenidoRestaurante.setNroIdioma(1);
+    clickContenidoRestaurante.setNroRestaurante(1);
+
+    clicksService.registrarClickContenido(clickContenidoRestaurante);
     return "ok";
   }
 }

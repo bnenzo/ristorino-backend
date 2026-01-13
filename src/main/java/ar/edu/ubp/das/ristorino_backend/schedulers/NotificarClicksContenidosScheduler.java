@@ -13,7 +13,7 @@ public class NotificarClicksContenidosScheduler {
   private ClicksService clicksService;
 
   // Ejecuta cada 5 minutos (300000 ms)
-  // 300000 -> 5min
+  // 300000 -> 5minn
   // 10000 -> 10seg
   @Scheduled(fixedRate = 15000)
   public void ejecutarNotificacionClicks() {

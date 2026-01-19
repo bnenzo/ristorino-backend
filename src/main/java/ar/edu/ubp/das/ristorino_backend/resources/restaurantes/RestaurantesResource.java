@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ar.edu.ubp.das.ristorino_backend.beans.DatosRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PreferenciaRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.beans.SucursalRestauranteBean;
-import ar.edu.ubp.das.ristorino_backend.repositories.RistorinoRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.restaurantes.RestaurantesRepository;
 
 @RestController

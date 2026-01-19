@@ -113,6 +113,7 @@ INSERT INTO configuracion_restaurantes (nro_restaurante, cod_atributo, valor) VA
 (2, 'namespace', 'http://services.perukai.das.ubp.edu.ar/'),
 (2, 'backend_type', 'SOAP');
 
+select * from configuracion_restaurantes
 
 ------------------------------------------------------------ PROVINCIAS ------------------------------------------------------------ 
 CREATE TABLE provincias (
@@ -220,7 +221,7 @@ CREATE TABLE idiomas (
 );
 
 INSERT INTO idiomas (nro_idioma, nom_idioma, cod_idioma) VALUES
-(1,'Español','es'),(2,'Inglés','en'),(3,'Portugués','pt');
+(1,'Español','es'),(2,'Inglés','en');
 
 ------------------------------------------------------------ IDIOMAS_ESTADOS ------------------------------------------------------------ 
 
@@ -234,10 +235,10 @@ CREATE TABLE idiomas_estados (
 );
 
 INSERT INTO idiomas_estados (cod_estado, nro_idioma, estado) VALUES
-('PEN',1,'Pendiente'),('PEN',2,'Pending'),('PEN',3,'Pendente'),
-('CONF',1,'Confirmada'),('CONF',2,'Confirmed'),('CONF',3,'Confirmada'),
-('CAN',1,'Cancelada'),('CAN',2,'Cancelled'),('CAN',3,'Cancelada'),
-('COMP',1,'Completada'),('COMP',2,'Completed'),('COMP',3,'Concluída');
+('PEN',1,'Pendiente'),('PEN',2,'Pending'),
+('CONF',1,'Confirmada'),('CONF',2,'Confirmed'),
+('CAN',1,'Cancelada'),('CAN',2,'Cancelled'),
+('COMP',1,'Completada'),('COMP',2,'Completed');
 
 ------------------------------------------------------------ IDIOMAS_DOMINIO_CAT_PREFERENCIAS ------------------------------------------------------------ 
 
@@ -256,8 +257,7 @@ CREATE TABLE idiomas_dominio_cat_preferencias (
 INSERT INTO idiomas_dominio_cat_preferencias
 (cod_categoria, nro_valor_dominio, nro_idioma, valor_dominio, desc_valor_dominio) VALUES
 ('tc',1,1,'Italiana',NULL),
-('tc',1,2,'Italian',NULL),
-('tc',1,3,'Italiana',NULL);
+('tc',1,2,'Italian',NULL);
 
 ------------------------------------------------------------ IDIOMAS_CATEGORIAS_PREFERENCIAS ------------------------------------------------------------ 
 
@@ -274,8 +274,7 @@ CREATE TABLE idiomas_categorias_preferencias (
 INSERT INTO idiomas_categorias_preferencias
 (cod_categoria, nro_idioma, categoria, desc_categoria) VALUES
 ('tc',1,'Tipo de cocina','Clasifica el tipo de cocina del restaurante'),
-('tc',2,'Type of cuisine','Classifies the type of cuisine of the restaurant.'),
-('tc',3,'Tipo de cozinha','Classifica o tipo de cozinha do restaurante.');
+('tc',2,'Type of cuisine','Classifies the type of cuisine of the restaurant.');
 
 
 ------------------------------------------------------------ SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
@@ -421,22 +420,16 @@ INSERT INTO idiomas_zonas_suc_restaurantes
 (nro_restaurante, nro_sucursal, cod_zona, nro_idioma, zona, desc_zona) VALUES
 (1,1,'ACBA',1,'Alta Córdoba','Se encuentra en Alta Córdoba'),
 (1,1,'ACBA',2,'Alta Córdoba','Located in Alta Córdoba'),
-(1,1,'ACBA',3,'Alta Córdoba','Localiza-se em Alta Córdoba'),
 (1,2,'GPZ',1,'General Paz','Se encuentra en General Paz'),
 (1,2,'GPZ',2,'General Paz','Located in General Paz'),
-(1,2,'GPZ',3,'General Paz','Localiza-se em General Paz'),
 
 (2,1,'NCBA',1,'Nueva Córdoba','Se encuentra en Nueva Córdoba'),
 (2,1,'NCBA',2,'Nueva Córdoba','Located in Nueva Córdoba'),
-(2,1,'NCBA',3,'Nueva Córdoba','Localiza-se em Nueva Córdoba'),
 (2,2,'CTR',1,'Centro','Se encuentra en Centro'),
 (2,2,'CTR',2,'Centro','Located in Centro'),
-(2,2,'CTR',3,'Centro','Localiza-se em Centro'),
 
 (3,1,'CDLR',1,'Cerro de las Rosas','Se encuentra en Cerro de las Rosas'),
-(3,1,'CDLR',2,'Cerro de las Rosas','Located in Cerro de las Rosas'),
-(3,1,'CDLR',3,'Cerro de las Rosas','Localiza-se em Cerro de las Rosas');
-
+(3,1,'CDLR',2,'Cerro de las Rosas','Located in Cerro de las Rosas');
 
 ------------------------------------------------------------ PREFERENCIAS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -489,17 +482,17 @@ CREATE TABLE contenidos_restaurantes (
 );
 
 INSERT INTO contenidos_restaurantes VALUES
-(1,1,1,1,'Promo mediodía: Pizza a la piedra + bebida','https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-1-1'),
-(1,1,2,1,'Noche de pizzas a la piedra 2x1','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-1-1'),
-(1,1,3,2,'Degustacion de pizzas en sucursal Alta Cba','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-1-2'),
+(1,1,1,1, null, 'https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-1-1'),
+(1,1,2,1, 'nn','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-1-1'),
+(1,1,3,2, 'nn','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-1-2'),
 
-(2,1,1,1,'Promo 50% off Ceviche','https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2026-02-10',15.00,'PK-1-1'),
-(2,1,2,1,'Noche de Mar al 2x1','https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2026-02-10',15.00,'PK-1-1'),
-(2,1,3,1,'Promo ceviche 3x2 + bebida gratis','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,1,1, null,'https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,2,1, null,'https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,3,1, 'nn','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2026-02-10',15.00,'PK-1-1'),
 
-(3,1,1,1,'Promo 5 hamburguesas clasicas','https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
-(3,1,2,1,'Quintuple monster','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
-(3,1,3,1,'Promo Burger + papa y gaseosa','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2026-02-10',15.00,'LFB-1-1');
+(3,1,1,1, null,'https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
+(3,1,2,1, 'nn','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
+(3,1,3,1, 'nn','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2026-02-10',15.00,'LFB-1-1');
 
 ------------------------------------------------------------ CLICKS_CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -1045,4 +1038,92 @@ GO
 
 
 DELETE FROM contenidos_restaurantes;
+
+IF OBJECT_ID('dbo.sp_get_contenidos_sin_contenido_IA', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_contenidos_sin_contenido_IA;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_contenidos_sin_contenido_IA
+AS
+BEGIN
 SELECT * FROM contenidos_restaurantes;
+    SELECT *
+    FROM dbo.contenidos_restaurantes AS cr
+    WHERE cr.contenido_promocional IS NULL
+END
+GO
+
+IF OBJECT_ID('dbo.sp_get_idiomas', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_idiomas;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_idiomas
+AS
+BEGIN
+    SELECT * FROM dbo.idiomas;
+END
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.sp_insertar_o_actualizar_contenido_generado_con_ia
+(
+    @nro_restaurante INT,
+    @nro_idioma INT,
+    @nro_contenido INT,
+    @nro_sucursal INT = NULL,
+    @contenido_promocional VARCHAR(255) = NULL,
+    @imagen_promocional VARCHAR(255) = NULL,
+    @contenido_a_publicar NVARCHAR(MAX),
+    @fecha_ini_vigencia DATE,
+    @fecha_fin_vigencia DATE,
+    @costo_click DECIMAL(10,2) = 0,
+    @cod_contenido_restaurante VARCHAR(255) = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRAN;
+
+        UPDATE dbo.contenidos_restaurantes
+        SET
+            nro_sucursal              = @nro_sucursal,
+            contenido_promocional     = @contenido_promocional,
+            imagen_promocional        = @imagen_promocional,
+            contenido_a_publicar      = @contenido_a_publicar,
+            fecha_ini_vigencia        = @fecha_ini_vigencia,
+            fecha_fin_vigencia        = @fecha_fin_vigencia,
+            costo_click               = @costo_click,
+            cod_contenido_restaurante = @cod_contenido_restaurante
+        WHERE
+            nro_restaurante = @nro_restaurante
+            AND nro_contenido = @nro_contenido
+            AND nro_idioma = @nro_idioma;
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            INSERT INTO dbo.contenidos_restaurantes
+            (
+                nro_restaurante, nro_idioma, nro_contenido, nro_sucursal,
+                contenido_promocional, imagen_promocional, contenido_a_publicar,
+                fecha_ini_vigencia, fecha_fin_vigencia, costo_click,
+                cod_contenido_restaurante
+            )
+            VALUES
+            (
+                @nro_restaurante, @nro_idioma, @nro_contenido, @nro_sucursal,
+                @contenido_promocional, @imagen_promocional, @contenido_a_publicar,
+                @fecha_ini_vigencia, @fecha_fin_vigencia, @costo_click,
+                @cod_contenido_restaurante
+            );
+        END
+
+        COMMIT TRAN;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRAN;
+        THROW;
+    END CATCH
+END;
+GO

@@ -1127,3 +1127,30 @@ BEGIN
     END CATCH
 END;
 GO
+
+-- GET TODOS LOS RESTAURANTES
+IF OBJECT_ID('dbo.sp_obtener_restaurantes', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_obtener_restaurantes;
+GO
+CREATE OR ALTER PROCEDURE dbo.sp_obtener_restaurantes
+AS
+BEGIN
+    SELECT * FROM dbo.restaurantes;
+END
+GO
+
+-- GET SUCURSALES DE UN RESTAURANTE (POR NRO_RESTAURANTE)
+IF OBJECT_ID('dbo.sp_obtener_sucursales_por_nro_restaurante', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_obtener_sucursales_por_nro_restaurante;
+GO
+CREATE OR ALTER PROCEDURE dbo.sp_obtener_sucursales_por_nro_restaurante
+(
+    @nro_restaurante INT
+)
+AS
+BEGIN
+    SELECT * 
+    FROM dbo.sucursales_restaurantes as sr 
+    WHERE sr.nro_restaurante = @nro_restaurante;
+END
+GO

@@ -13,6 +13,7 @@ import ar.edu.ubp.das.ristorino_backend.beans.DatosRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PreferenciaRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.beans.SucursalRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.restaurantes.RestaurantesRepository;
+import ar.edu.ubp.das.ristorino_backend.repositories.restaurantes.beans.RestaurantesBean;
 
 @RestController
 @RequestMapping("/ristorino")
@@ -54,4 +55,11 @@ public class RestaurantesResource {
 
     return ResponseEntity.ok(preferencias);
   }
+
+  // GET TODOS LOS RESTAURANTES
+  @GetMapping("/restaurantes")
+  public ResponseEntity<List<RestaurantesBean>> obtenerRestaurantes() {
+    return ResponseEntity.ok(restaurantesRepository.obtenerRestaurantes());
+  }
+
 }

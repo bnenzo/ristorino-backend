@@ -11,6 +11,7 @@ import ar.edu.ubp.das.ristorino_backend.beans.DatosRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PreferenciaRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.beans.SucursalRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
+import ar.edu.ubp.das.ristorino_backend.repositories.restaurantes.beans.RestaurantesBean;
 
 @Repository
 public class RestaurantesRepository {
@@ -56,5 +57,11 @@ public class RestaurantesRepository {
         params,
         "preferencias_restaurantes",
         PreferenciaRestauranteBean.class);
+  }
+
+  // GET TODOS LOS RESTAURANTES
+  public List<RestaurantesBean> obtenerRestaurantes() {
+    return jdbcCallFactory.executeQuery("sp_obtener_restaurantes", "dbo", "idiomas",
+        RestaurantesBean.class);
   }
 }

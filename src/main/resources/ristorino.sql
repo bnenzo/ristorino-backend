@@ -985,3 +985,64 @@ GO
 
 
 -- SELECT * from clicks_contenidos_restaurantes;
+
+CREATE OR ALTER PROCEDURE sp_get_restaurantes_id
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT nro_restaurante
+    FROM restaurantes
+    WHERE nro_restaurante IN (1, 2);
+END
+GO
+
+--INSERTAR CONTENIDOS NO PUBLICADOS OBTENIDOS DE LOS RESTAURANTES
+CREATE OR ALTER PROCEDURE sp_insert_contenido_restaurante
+(
+  @nro_restaurante INT,
+  @nro_idioma INT,
+  @nro_contenido INT,
+  @nro_sucursal INT = NULL,
+  @contenido_promocional VARCHAR(255),
+  @imagen_promocional VARCHAR(255),
+  @contenido_a_publicar NVARCHAR(MAX),
+  @fecha_ini_vigencia DATE,
+  @fecha_fin_vigencia DATE,
+  @costo_click DECIMAL(10,2),
+  @cod_contenido_restaurante VARCHAR(255)
+)
+AS
+BEGIN
+  INSERT INTO contenidos_restaurantes (
+    nro_restaurante,
+    nro_idioma,
+    nro_contenido,
+    nro_sucursal,
+    contenido_promocional,
+    imagen_promocional,
+    contenido_a_publicar,
+    fecha_ini_vigencia,
+    fecha_fin_vigencia,
+    costo_click,
+    cod_contenido_restaurante
+  )
+  VALUES (
+    @nro_restaurante,
+    @nro_idioma,
+    @nro_contenido,
+    @nro_sucursal,
+    @contenido_promocional,
+    @imagen_promocional,
+    @contenido_a_publicar,
+    @fecha_ini_vigencia,
+    @fecha_fin_vigencia,
+    @costo_click,
+    @cod_contenido_restaurante
+  );
+END
+GO
+
+
+DELETE FROM contenidos_restaurantes;
+SELECT * FROM contenidos_restaurantes;

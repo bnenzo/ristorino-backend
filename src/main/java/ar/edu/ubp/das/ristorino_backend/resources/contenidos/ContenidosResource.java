@@ -7,9 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +22,7 @@ import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.GenAI;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.SystemPrompts;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.ContenidosRepository;
+import ar.edu.ubp.das.ristorino_backend.services.contenidos.ContenidosService;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.beans.ObtenerContenidosSinContenidosIABean;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.IdiomasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
@@ -29,6 +32,8 @@ import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
 public class ContenidosResource {
   @Autowired
   private ContenidosRepository contenidosRepository;
+  @Autowired
+  private ContenidosService contenidosService;
 
   @Autowired
   private IdiomasRepository idiomasRepository;
@@ -40,6 +45,41 @@ public class ContenidosResource {
   public ResponseEntity<List<PromocionContenidoBean>> obtenerPromociones() {
     List<PromocionContenidoBean> promociones = contenidosRepository.getPromociones();
     return ResponseEntity.ok(promociones);
+  }
+
+  @GetMapping("/restaurantes/ids")
+  public ResponseEntity<List<Integer>> obtenerIdsRestaurantes() {
+
+    List<Integer> ids = contenidosRepository
+        .getRestaurantesId()
+        .stream()
+        .map(r -> r.getNro_restaurante())
+        .toList();
+
+    return ResponseEntity.ok(ids);
+  }
+
+  // @GetMapping("/test/rest")
+  // public ResponseEntity<String> testRest() {
+  // contenidosService.testRestClient();
+  // return ResponseEntity.ok("ok");
+  // }
+
+  // Endpoint de prueba nomas . . . borrar luego
+  @GetMapping("/contenidos/no-publicados")
+  public ResponseEntity<List<ContenidoNoPublicadoBean>> obtenerContenidosNoPublicados() {
+
+    List<ContenidoNoPublicadoBean> contenidos = contenidosService.obtenerTodosLosContenidosNoPublicados();
+
+    return ResponseEntity.ok(contenidos);
+  }
+
+  @PostMapping("/contenidos/sincronizar")
+  public ResponseEntity<String> sincronizarContenidos() {
+
+    contenidosService.sincronizarContenidosNoPublicados();
+
+    return ResponseEntity.ok("contenidos sincronizados correctamente");
   }
 
   @GetMapping("/test-promociones")

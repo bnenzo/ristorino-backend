@@ -1154,3 +1154,62 @@ BEGIN
     WHERE sr.nro_restaurante = @nro_restaurante;
 END
 GO
+
+
+-- GET DISPONIBILIDAD DE TURNOS (POR NRO_RESTAURANTE, SUCURSAL Y FECHA)
+IF OBJECT_ID('dbo.sp_obtener_disponibilidad_de_turnos', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_obtener_disponibilidad_de_turnos;
+GO
+CREATE OR ALTER PROCEDURE dbo.sp_obtener_disponibilidad_de_turnos
+(
+    @nro_restaurante INT,
+    @nro_sucursal INT,
+    @fecha_a_reservar DATE
+)
+AS
+BEGIN
+SELECT
+        tsr.nro_restaurante,
+        tsr.nro_sucursal,
+        @fecha_a_reservar AS fecha_reserva,
+        tsr.hora_desde AS hora_reserva,
+        tsr.hora_hasta,
+        COALESCE(SUM(rr.cant_adultos + rr.cant_menores), 0) AS cantidad_reservada,
+        (sr.total_comensales - COALESCE(SUM(rr.cant_adultos + rr.cant_menores), 0)) AS cupo_disponible,
+        sr.total_comensales,
+        tsr.habilitado AS turno_habilitado,
+        CASE
+            WHEN tsr.habilitado = 1
+             AND COALESCE(SUM(rr.cant_adultos + rr.cant_menores), 0) >= sr.total_comensales
+                THEN 1
+            ELSE 0
+        END AS turno_cerrado
+    FROM turnos_sucursales_restaurantes tsr
+    JOIN sucursales_restaurantes sr
+      ON sr.nro_restaurante = tsr.nro_restaurante
+     AND sr.nro_sucursal    = tsr.nro_sucursal
+    LEFT JOIN reservas_restaurantes rr
+      ON rr.nro_restaurante = tsr.nro_restaurante
+     AND rr.nro_sucursal    = tsr.nro_sucursal
+     AND rr.fecha_reserva   = @fecha_a_reservar
+     AND rr.hora_reserva    = tsr.hora_desde
+     AND rr.cod_estado IN ('PEN', 'CONF') 
+    WHERE tsr.nro_restaurante = @nro_restaurante
+      AND tsr.nro_sucursal    = @nro_sucursal
+    GROUP BY
+        tsr.nro_restaurante,
+        tsr.nro_sucursal,
+        tsr.hora_desde,
+        tsr.hora_hasta,
+        sr.total_comensales,
+        tsr.habilitado
+    ORDER BY tsr.hora_desde;
+END
+GO
+
+
+
+
+
+
+    

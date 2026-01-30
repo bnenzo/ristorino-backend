@@ -1,15 +1,15 @@
 package ar.edu.ubp.das.ristorino_backend.repositories.restaurantes.beans;
 
 public class RestaurantesBean {
-  private String nroRestaurante;
+  private Integer nroRestaurante;
   private String razonSocial;
   private String cuit;
 
-  public String getNroRestaurante() {
+  public Integer getNroRestaurante() {
     return nroRestaurante;
   }
 
-  public void setNroRestaurante(String nroRestaurante) {
+  public void setNroRestaurante(Integer nroRestaurante) {
     this.nroRestaurante = nroRestaurante;
   }
 

@@ -4,13 +4,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
+import ar.edu.ubp.das.ristorino_backend.services.reservas.ReservasService;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -20,6 +25,8 @@ public class ReservasResource {
 
   @Autowired
   private ReservasRepository reservasRepository;
+  @Autowired
+  private ReservasService reservasService;
 
   // GET DISPONIBILIDAD DE TURNOS (POR NRO_RESTAURANTE, SUCURSAL Y FECHA)
   @GetMapping("/reservas/disponibilidad")
@@ -33,7 +40,14 @@ public class ReservasResource {
     System.out.println(fechaAReservar);
 
     return reservasRepository.obtenerDisponibilidadDeTurnos(nroRestaurante, nroSucursal, fechaAReservar);
+  }
 
+  // POST TURNO EN UNA SUCURSAL DE UN RESTAURANTE
+  @PostMapping("/reservas")
+  public ResponseEntity<Void> crearReserva(
+      @RequestBody CrearReservaRequestBean request) {
+    reservasService.crearReserva(request);
+    return ResponseEntity.ok().build();
   }
 
 }

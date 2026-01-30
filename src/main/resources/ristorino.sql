@@ -1037,7 +1037,6 @@ END
 GO
 
 
-DELETE FROM contenidos_restaurantes;
 
 IF OBJECT_ID('dbo.sp_get_contenidos_sin_contenido_IA', 'P') IS NOT NULL
     DROP PROCEDURE dbo.sp_get_contenidos_sin_contenido_IA;
@@ -1208,8 +1207,38 @@ END
 GO
 
 
+--INSERT DE UN TURNO PEDIDO POR EL USUARIO, PARA UNA SUCURSAL DE UN RESTAURANTE
+CREATE PROCEDURE dbo.sp_insertar_turno_sucursal
+  @nro_restaurante INT,
+  @nro_sucursal INT,
+  @hora_desde TIME,
+  @hora_hasta TIME
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  INSERT INTO turnos_sucursales_restaurantes (
+    nro_restaurante,
+    nro_sucursal,
+    hora_desde,
+    hora_hasta,
+    habilitado
+  )
+  VALUES (
+    @nro_restaurante,
+    @nro_sucursal,
+    @hora_desde,
+    @hora_hasta,
+    1
+  );
+END;
+GO
+
+
+SELECT *
+FROM turnos_sucursales_restaurantes
+ORDER BY nro_restaurante, nro_sucursal, hora_desde;
 
 
 
 
-    

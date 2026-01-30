@@ -1,6 +1,7 @@
 package ar.edu.ubp.das.ristorino_backend.repositories.reservas;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,24 @@ public class ReservasRepository {
     return jdbcCallFactory.executeQuery("sp_obtener_disponibilidad_de_turnos", "dbo", params,
         "turnos_sucursales_restaurantes",
         ObtenerDisponibilidadTurnosBean.class);
+  }
+
+  // INSERT TURNO RESERVADO
+  public void insertarTurnoSucursal(
+      Integer nroRestaurante,
+      Integer nroSucursal,
+      LocalTime horaDesde,
+      LocalTime horaHasta) {
+
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_restaurante", nroRestaurante)
+        .addValue("nro_sucursal", nroSucursal)
+        .addValue("hora_desde", horaDesde)
+        .addValue("hora_hasta", horaHasta);
+
+    jdbcCallFactory.execute(
+        "sp_insertar_turno_sucursal",
+        "dbo",
+        params);
   }
 }

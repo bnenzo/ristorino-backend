@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerEstadosIdiomaBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerReservasClienteBean;
 
 @Repository
 public class ReservasRepository {
@@ -47,5 +49,35 @@ public class ReservasRepository {
         "sp_insertar_turno_sucursal",
         "dbo",
         params);
+  }
+
+  // GET LAS RESERVAS DE UN CLIENTE
+  public List<ObtenerReservasClienteBean> obtenerReservasCliente(Integer nroCliente, Integer nroIdioma,
+      LocalDate fecha, List<String> estados) {
+
+    String estadosCsv = (estados == null || estados.isEmpty())
+        ? null
+        : String.join(",", estados);
+
+    System.out.println(estadosCsv);
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_cliente", nroCliente)
+        .addValue("nro_idioma", nroIdioma)
+        .addValue("estados_csv", estadosCsv)
+        .addValue("fecha_reserva", fecha);
+
+    return jdbcCallFactory.executeQuery("sp_get_reservas_por_cliente", "dbo", params,
+        "turnos_sucursales_restaurantes",
+        ObtenerReservasClienteBean.class);
+  }
+
+  // OBTENER LOS ESTADOS POSIBLES DE UNA RESERVA EN UN IDIOMA EN PARTICULAR
+  public List<ObtenerEstadosIdiomaBean> obtenerEstadosDeReservaPorIdioma(Integer nroIdioma) {
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_idioma", nroIdioma);
+
+    return jdbcCallFactory.executeQuery("sp_get_estados_reserva_por_idioma", "dbo", params,
+        "turnos_sucursales_restaurantes",
+        ObtenerEstadosIdiomaBean.class);
   }
 }

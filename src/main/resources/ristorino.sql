@@ -540,6 +540,7 @@ CREATE TABLE reservas_restaurantes (
 
 INSERT INTO reservas_restaurantes VALUES
 (1,1,'2025-11-02 18:30:00','2025-11-05',1,1, 'ACBA', '12:00',2,0, 'CONF', NULL, 12000.00, 'LBP-001-R001'),
+(1,2,'2025-11-03 18:30:00','2025-11-06',1,1, 'ACBA', '12:00',3,0, 'PEN', NULL, 13000.00, 'LBP-001-R003'),
 (2,2,'2025-11-02 18:45:00','2025-11-05',1,1, 'ACBA', '20:00',4,2, 'CONF', NULL, 18000.00, 'LBP-001-R002');
 
 ------------------------------------------------------------ PREFERENCIAS_RESERVAS_RESTAURANTES ------------------------------------------------------------ 
@@ -1206,6 +1207,95 @@ SELECT
 END
 GO
 
+IF OBJECT_ID('dbo.sp_get_reservas_por_cliente', 'P') IS NOT NULL
+DROP PROCEDURE dbo.sp_get_reservas_por_cliente;
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_reservas_por_cliente
+(
+@nro_cliente INT,
+@nro_idioma INT,
+@fecha_reserva DATE = NULL,
+@estados_csv NVARCHAR(200) = NULL
+)
+AS
+BEGIN
+SET NOCOUNT ON;
+
+
+/* Validaciones básicas */
+IF NOT EXISTS (SELECT 1 FROM dbo.clientes WHERE nro_cliente = @nro_cliente)
+THROW 50020, 'El cliente no existe.', 1;
+
+
+IF NOT EXISTS (SELECT 1 FROM dbo.idiomas WHERE nro_idioma = @nro_idioma)
+THROW 50021, 'El idioma no existe.', 1;
+
+
+SELECT
+rr.nro_cliente,
+rr.nro_reserva,
+rr.fecha_reserva,
+rr.nro_restaurante,
+r.razon_social,
+rr.nro_sucursal,
+sr.nom_sucursal,
+sr.calle,
+sr.nro_calle,
+sr.barrio,
+sr.cod_postal,
+sr.telefonos AS telefonos_sucursal,
+rr.cod_zona,
+rr.hora_reserva,
+rr.cant_adultos,
+rr.cant_menores,
+rr.cod_estado,
+ie.estado AS estado, -- traducido según @nro_idioma
+rr.fecha_cancelacion,
+rr.costo_reserva,
+rr.cod_reserva_sucursal
+FROM dbo.reservas_restaurantes AS rr
+INNER JOIN dbo.restaurantes AS r
+ON r.nro_restaurante = rr.nro_restaurante
+INNER JOIN dbo.sucursales_restaurantes AS sr
+ON sr.nro_restaurante = rr.nro_restaurante
+AND sr.nro_sucursal = rr.nro_sucursal
+INNER JOIN dbo.idiomas_estados AS ie
+ON ie.cod_estado = rr.cod_estado
+AND ie.nro_idioma = @nro_idioma
+WHERE rr.nro_cliente = @nro_cliente
+AND (@fecha_reserva IS NULL OR rr.fecha_reserva = @fecha_reserva)
+AND (
+@estados_csv IS NULL OR LTRIM(RTRIM(@estados_csv)) = ''
+OR rr.cod_estado IN (
+SELECT LTRIM(RTRIM(value))
+FROM STRING_SPLIT(@estados_csv, ',')
+WHERE LTRIM(RTRIM(value)) <> ''
+)
+)
+ORDER BY
+rr.fecha_reserva DESC,
+rr.hora_reserva DESC,
+rr.nro_reserva DESC;
+END
+GO
+
+
+
+IF OBJECT_ID('dbo.sp_get_estados_reserva_por_idioma', 'P') IS NOT NULL
+DROP PROCEDURE dbo.sp_get_estados_reserva_por_idioma;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_estados_reserva_por_idioma 
+(
+@nro_idioma INT
+)
+AS
+BEGIN   
+    SELECT ie.cod_estado, ie.estado FROM idiomas_estados ie WHERE @nro_idioma = ie.nro_idioma
+END
+GO
 
 --INSERT DE UN TURNO PEDIDO POR EL USUARIO, PARA UNA SUCURSAL DE UN RESTAURANTE
 CREATE PROCEDURE dbo.sp_insertar_turno_sucursal

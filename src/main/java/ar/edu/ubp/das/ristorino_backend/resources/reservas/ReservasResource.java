@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,12 @@ import ar.edu.ubp.das.ristorino_backend.services.reservas.ReservasService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerEstadosIdiomaBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerReservasClienteBean;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -48,6 +55,23 @@ public class ReservasResource {
       @RequestBody CrearReservaRequestBean request) {
     reservasService.crearReserva(request);
     return ResponseEntity.ok().build();
+  }
+
+  // GET LAS RESERVAS DE UN CLIENTE
+  @GetMapping("/reservas/cliente")
+  public List<ObtenerReservasClienteBean> obtenerReservasCliente(
+      @RequestHeader(value = "nroCliente") Integer nroCliente,
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma,
+      @RequestParam(value = "fecha", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+      @RequestParam(value = "estados", required = false) List<String> estados) {
+    return reservasRepository.obtenerReservasCliente(nroCliente, nroIdioma, fecha, estados);
+  }
+
+  // OBTENER LOS ESTADOS POSIBLES DE UNA RESERVA EN UN IDIOMA EN PARTICULAR
+  @GetMapping("/reservas/estados")
+  public List<ObtenerEstadosIdiomaBean> obtenerEstadosDeReservaPorIdioma(
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma) {
+    return reservasRepository.obtenerEstadosDeReservaPorIdioma(nroIdioma);
   }
 
 }

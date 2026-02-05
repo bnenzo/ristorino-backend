@@ -353,17 +353,11 @@ INSERT INTO turnos_sucursales_restaurantes
 (1,1,'14:30','15:30',1),(1,1,'22:30','23:30',1),
 (1,2,'12:00','13:15',1),(1,2,'20:00','21:00',0),
 
-(2,1,'12:00','13:30',1),
-(2,1,'13:30','14:30',1),
-(2,1,'14:30','15:30',1),
-(2,1,'20:00','21:30',1),
-(2,1,'21:30','22:30',1),
-(2,1,'22:30','23:30',1),
-(2,2,'12:00','13:15',1),
-(2,2,'13:15','14:15',1),
-(2,2,'14:15','15:15',1),
-(2,2,'20:00','21:00',0),
-(2,2,'21:00','22:00',0),
+(2,1,'12:00','14:00',1),
+(2,1,'20:00','22:30',1),
+(2,2,'12:00','14:00',1),
+(2,2,'20:00','22:30',1),
+(2,2,'23:00','23:30',0),
 
 (3,1,'12:00','13:30',1),
 (3,1,'13:30','14:30',1),
@@ -539,7 +533,9 @@ CREATE TABLE reservas_restaurantes (
 );
 
 INSERT INTO reservas_restaurantes VALUES
-(1,1,'2025-11-02 18:30:00','2025-11-05',1,1, 'ACBA', '12:00',2,0, 'CONF', NULL, 12000.00, 'LBP-001-R001'),
+(1,1,'2025-11-02 18:30:00','2026-05-02',1,1, 'ACBA', '12:00',2,0, 'CONF', NULL, 12000.00, 'LBP-001-R001'),
+(1,2,'2025-11-03 18:30:00','2025-11-06',1,1, 'ACBA', '12:00',3,0, 'PEN', NULL, 13000.00, 'LBP-001-R003'),
+(1,3,'2025-11-02 18:30:00','2025-11-05',2,1, 'NCBA', '12:00',2,0, 'CONF', NULL, 12000.00, 'PERUKAI-001-R001'),
 (2,2,'2025-11-02 18:45:00','2025-11-05',1,1, 'ACBA', '20:00',4,2, 'CONF', NULL, 18000.00, 'LBP-001-R002');
 
 ------------------------------------------------------------ PREFERENCIAS_RESERVAS_RESTAURANTES ------------------------------------------------------------ 
@@ -1206,9 +1202,98 @@ SELECT
 END
 GO
 
+IF OBJECT_ID('dbo.sp_get_reservas_por_cliente', 'P') IS NOT NULL
+DROP PROCEDURE dbo.sp_get_reservas_por_cliente;
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_reservas_por_cliente
+(
+@nro_cliente INT,
+@nro_idioma INT,
+@fecha_reserva DATE = NULL,
+@estados_csv NVARCHAR(200) = NULL
+)
+AS
+BEGIN
+SET NOCOUNT ON;
+
+
+/* Validaciones básicas */
+IF NOT EXISTS (SELECT 1 FROM dbo.clientes WHERE nro_cliente = @nro_cliente)
+THROW 50020, 'El cliente no existe.', 1;
+
+
+IF NOT EXISTS (SELECT 1 FROM dbo.idiomas WHERE nro_idioma = @nro_idioma)
+THROW 50021, 'El idioma no existe.', 1;
+
+
+SELECT
+rr.nro_cliente,
+rr.nro_reserva,
+rr.fecha_reserva,
+rr.nro_restaurante,
+r.razon_social,
+rr.nro_sucursal,
+sr.nom_sucursal,
+sr.calle,
+sr.nro_calle,
+sr.barrio,
+sr.cod_postal,
+sr.telefonos AS telefonos_sucursal,
+rr.cod_zona,
+rr.hora_reserva,
+rr.cant_adultos,
+rr.cant_menores,
+rr.cod_estado,
+ie.estado AS estado, -- traducido según @nro_idioma
+rr.fecha_cancelacion,
+rr.costo_reserva,
+rr.cod_reserva_sucursal
+FROM dbo.reservas_restaurantes AS rr
+INNER JOIN dbo.restaurantes AS r
+ON r.nro_restaurante = rr.nro_restaurante
+INNER JOIN dbo.sucursales_restaurantes AS sr
+ON sr.nro_restaurante = rr.nro_restaurante
+AND sr.nro_sucursal = rr.nro_sucursal
+INNER JOIN dbo.idiomas_estados AS ie
+ON ie.cod_estado = rr.cod_estado
+AND ie.nro_idioma = @nro_idioma
+WHERE rr.nro_cliente = @nro_cliente
+AND (@fecha_reserva IS NULL OR rr.fecha_reserva = @fecha_reserva)
+AND (
+@estados_csv IS NULL OR LTRIM(RTRIM(@estados_csv)) = ''
+OR rr.cod_estado IN (
+SELECT LTRIM(RTRIM(value))
+FROM STRING_SPLIT(@estados_csv, ',')
+WHERE LTRIM(RTRIM(value)) <> ''
+)
+)
+ORDER BY
+rr.fecha_reserva DESC,
+rr.hora_reserva DESC,
+rr.nro_reserva DESC;
+END
+GO
+
+
+
+IF OBJECT_ID('dbo.sp_get_estados_reserva_por_idioma', 'P') IS NOT NULL
+DROP PROCEDURE dbo.sp_get_estados_reserva_por_idioma;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_estados_reserva_por_idioma 
+(
+@nro_idioma INT
+)
+AS
+BEGIN   
+    SELECT ie.cod_estado, ie.estado FROM idiomas_estados ie WHERE @nro_idioma = ie.nro_idioma
+END
+GO
 
 --INSERT DE UN TURNO PEDIDO POR EL USUARIO, PARA UNA SUCURSAL DE UN RESTAURANTE
-CREATE PROCEDURE dbo.sp_insertar_turno_sucursal
+CREATE OR ALTER PROCEDURE dbo.sp_insertar_turno_sucursal
   @nro_restaurante INT,
   @nro_sucursal INT,
   @hora_desde TIME,
@@ -1234,11 +1319,70 @@ BEGIN
 END;
 GO
 
+-- OBTENER LA RESERVA DE UN CLIENTE
+CREATE OR ALTER PROCEDURE dbo.sp_get_reserva_cliente
+  @nro_reserva INT,
+  @nro_cliente INT
+AS
+BEGIN
+  SET NOCOUNT ON;
 
-SELECT *
-FROM turnos_sucursales_restaurantes
-ORDER BY nro_restaurante, nro_sucursal, hora_desde;
+  SELECT
+      rr.nro_reserva,
+      rr.nro_restaurante,
+      r.razon_social,
+      rr.nro_sucursal,
+      sr.nom_sucursal,
+      rr.hora_reserva,
+      rr.cod_estado,
+      rr.fecha_reserva,
+      rr.cant_adultos,
+      rr.cod_reserva_sucursal
+  FROM dbo.reservas_restaurantes AS rr
+  INNER JOIN dbo.restaurantes AS r
+      ON r.nro_restaurante = rr.nro_restaurante
+  INNER JOIN dbo.sucursales_restaurantes AS sr
+      ON sr.nro_restaurante = rr.nro_restaurante
+     AND sr.nro_sucursal    = rr.nro_sucursal
+  WHERE rr.nro_reserva = @nro_reserva
+    AND rr.nro_cliente = @nro_cliente;
+END;
+GO
 
+-- ACTUALIZAR LA RESERVA DE UN CLIENTE
+CREATE OR ALTER PROCEDURE dbo.sp_actualizar_reserva_cliente
+  @nro_reserva   INT,
+  @nro_cliente   INT,
+  @cant_adultos  INT,
+  @fecha_reserva DATE,
+  @fecha_cancelacion DATE,
+  @hora_reserva  TIME,
+  @cod_estado VARCHAR(30) = NULL
+AS
+BEGIN
+  SET NOCOUNT ON;
 
+  BEGIN TRY
+    BEGIN TRAN;
+    -- Update
+    UPDATE rr
+      SET   rr.cant_adultos  = COALESCE(@cant_adultos,  rr.cant_adultos),
+        rr.fecha_reserva = COALESCE(@fecha_reserva, rr.fecha_reserva),
+        rr.hora_reserva  = COALESCE(@hora_reserva,  rr.hora_reserva),
+        rr.fecha_cancelacion = COALESCE(@fecha_cancelacion,  rr.fecha_cancelacion),
+        rr.cod_estado = COALESCE(@cod_estado,  rr.cod_estado)
+    FROM dbo.reservas_restaurantes AS rr
+    WHERE rr.nro_cliente = @nro_cliente
+      AND rr.nro_reserva = @nro_reserva;
 
+    IF @@ROWCOUNT = 0
+      THROW 50033, 'No existe la reserva para ese cliente/nro_reserva.', 1;
 
+    COMMIT TRAN;
+  END TRY
+  BEGIN CATCH
+    IF XACT_STATE() <> 0 ROLLBACK TRAN;
+    THROW;
+  END CATCH
+END;
+GO

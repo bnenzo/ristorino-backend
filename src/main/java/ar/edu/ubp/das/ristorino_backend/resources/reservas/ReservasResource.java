@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerReservaClienteBean;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.ReservasService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerEstadosIdiomaBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerReservasClienteBean;
@@ -72,6 +75,24 @@ public class ReservasResource {
   public List<ObtenerEstadosIdiomaBean> obtenerEstadosDeReservaPorIdioma(
       @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma) {
     return reservasRepository.obtenerEstadosDeReservaPorIdioma(nroIdioma);
+  }
+
+  // OBTENER LA RESERVA DE UN CLIENTE
+  @GetMapping("/reservas/cliente/{nro_reserva}")
+  public ObtenerReservaClienteBean obtenerReservaCliente(
+      @PathVariable("nro_reserva") Integer nroReserva,
+      @RequestHeader(value = "nroCliente") Integer nroCliente) {
+    return reservasRepository.obtenerReservaCliente(nroCliente, nroReserva);
+  }
+
+  // ACTUALIZAR LA RESERVA DE UN CLIENTE
+  @PutMapping("/reservas/cliente/{nro_reserva}")
+  public ResponseEntity<Void> actualizarReservaCliente(
+      @PathVariable("nro_reserva") Integer nroReserva,
+      @RequestBody ActualizarReservaClienteRequestBean body,
+      @RequestHeader(value = "nroCliente") Integer nroCliente) {
+    reservasService.actualizarReservaCliente(nroCliente, nroReserva, body);
+    return ResponseEntity.ok().build();
   }
 
 }

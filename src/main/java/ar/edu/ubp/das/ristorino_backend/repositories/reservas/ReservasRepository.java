@@ -12,6 +12,8 @@ import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerEstadosIdiomaBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerReservasClienteBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerReservaClienteBean;
 
 @Repository
 public class ReservasRepository {
@@ -79,5 +81,32 @@ public class ReservasRepository {
     return jdbcCallFactory.executeQuery("sp_get_estados_reserva_por_idioma", "dbo", params,
         "turnos_sucursales_restaurantes",
         ObtenerEstadosIdiomaBean.class);
+  }
+
+  // OBTENER LA RESERVA DE UN CLIENTE
+  public ObtenerReservaClienteBean obtenerReservaCliente(Integer nroCliente, Integer nroReserva) {
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_cliente", nroCliente)
+        .addValue("nro_reserva", nroReserva);
+
+    return jdbcCallFactory.executeQuery("sp_get_reserva_cliente", "dbo", params,
+        "reservas_restaurantes",
+        ObtenerReservaClienteBean.class).get(0);
+  }
+
+  // ACTUALIZAR LA RESERVA DE UN CLIENTE
+  public void actualizarReservaCliente(Integer nroCliente, Integer nroReserva,
+      ActualizarReservaClienteRequestBean body) {
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_cliente", nroCliente)
+        .addValue("nro_reserva", nroReserva)
+        .addValue("cant_adultos", body.getCantAdultos())
+        .addValue("fecha_reserva", body.getFechaReserva())
+        .addValue("hora_reserva", body.getHoraReserva())
+        .addValue("fecha_cancelacion", body.getFechaCancelacion())
+        .addValue("cod_estado", body.getFechaCancelacion() != null ? "CAN" : null);
+
+    jdbcCallFactory.executeWithOutputs(
+        "sp_actualizar_reserva_cliente", "dbo", params);
   }
 }

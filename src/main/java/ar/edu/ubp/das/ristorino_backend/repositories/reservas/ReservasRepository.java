@@ -20,7 +20,9 @@ public class ReservasRepository {
   @Autowired
   private SimpleJdbcCallFactory jdbcCallFactory;
 
+  // =====================================================================
   // GET DISPONIBILIDAD DE TURNOS (POR NRO_RESTAURANTE, SUCURSAL Y FECHA)
+  // =====================================================================
   public List<ObtenerDisponibilidadTurnosBean> obtenerDisponibilidadDeTurnos(Integer nroRestaurante,
       Integer nroSucursal, LocalDate fechaAReservar) {
 
@@ -34,21 +36,37 @@ public class ReservasRepository {
         ObtenerDisponibilidadTurnosBean.class);
   }
 
-  // INSERT TURNO RESERVADO
-  public void insertarTurnoSucursal(
+  // =====================================
+  // REALIZAR UNA RESERVA EN UNA SUCURSAL
+  // =====================================
+  public void crearReservaRestaurante(
+      Integer nroCliente,
+      LocalDate fechaReserva,
       Integer nroRestaurante,
       Integer nroSucursal,
-      LocalTime horaDesde,
-      LocalTime horaHasta) {
+      String codZona,
+      LocalTime horaReserva,
+      Integer cantAdultos,
+      Integer cantMenores,
+      String codEstado,
+      Double costoReserva,
+      String codReservaSucursal) {
 
     MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_cliente", nroCliente)
+        .addValue("fecha_reserva", fechaReserva)
         .addValue("nro_restaurante", nroRestaurante)
         .addValue("nro_sucursal", nroSucursal)
-        .addValue("hora_desde", horaDesde)
-        .addValue("hora_hasta", horaHasta);
+        .addValue("cod_zona", codZona)
+        .addValue("hora_reserva", horaReserva)
+        .addValue("cant_adultos", cantAdultos)
+        .addValue("cant_menores", cantMenores)
+        .addValue("cod_estado", codEstado)
+        .addValue("costo_reserva", costoReserva)
+        .addValue("cod_reserva_sucursal", codReservaSucursal);
 
     jdbcCallFactory.execute(
-        "sp_insertar_turno_sucursal",
+        "sp_crear_reserva_restaurante",
         "dbo",
         params);
   }

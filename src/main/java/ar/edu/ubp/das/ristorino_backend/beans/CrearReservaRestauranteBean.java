@@ -1,19 +1,40 @@
-package ar.edu.ubp.das.ristorino_backend.resources.reservas.beans;
+package ar.edu.ubp.das.ristorino_backend.beans;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class CrearReservaRequestBean {
+public class CrearReservaRestauranteBean {
 
+  private String codReserva;
+  private LocalDateTime fechaHoraRegistro;
   private Integer nroCliente;
+  private LocalDate fechaReserva;
   private Integer nroRestaurante;
   private Integer nroSucursal;
-  private LocalDate fechaReserva;
+  private String codZona;
   private LocalTime horaReserva;
   private Integer cantAdultos;
   private Integer cantMenores;
+  private Double costoReserva;
 
-  public CrearReservaRequestBean() {
+  public CrearReservaRestauranteBean() {
+  }
+
+  public String getCodReserva() {
+    return codReserva;
+  }
+
+  public void setCodReserva(String codReserva) {
+    this.codReserva = codReserva;
+  }
+
+  public LocalDateTime getFechaHoraRegistro() {
+    return fechaHoraRegistro;
+  }
+
+  public void setFechaHoraRegistro(LocalDateTime fechaHoraRegistro) {
+    this.fechaHoraRegistro = fechaHoraRegistro;
   }
 
   public Integer getNroCliente() {
@@ -22,6 +43,14 @@ public class CrearReservaRequestBean {
 
   public void setNroCliente(Integer nroCliente) {
     this.nroCliente = nroCliente;
+  }
+
+  public LocalDate getFechaReserva() {
+    return fechaReserva;
+  }
+
+  public void setFechaReserva(LocalDate fechaReserva) {
+    this.fechaReserva = fechaReserva;
   }
 
   public Integer getNroRestaurante() {
@@ -40,12 +69,12 @@ public class CrearReservaRequestBean {
     this.nroSucursal = nroSucursal;
   }
 
-  public LocalDate getFechaReserva() {
-    return fechaReserva;
+  public String getCodZona() {
+    return codZona;
   }
 
-  public void setFechaReserva(LocalDate fechaReserva) {
-    this.fechaReserva = fechaReserva;
+  public void setCodZona(String codZona) {
+    this.codZona = codZona;
   }
 
   public LocalTime getHoraReserva() {
@@ -70,5 +99,13 @@ public class CrearReservaRequestBean {
 
   public void setCantMenores(Integer cantMenores) {
     this.cantMenores = cantMenores;
+  }
+
+  public Double getCostoReserva() {
+    return costoReserva;
+  }
+
+  public void setCostoReserva(Double costoReserva) {
+    this.costoReserva = costoReserva;
   }
 }

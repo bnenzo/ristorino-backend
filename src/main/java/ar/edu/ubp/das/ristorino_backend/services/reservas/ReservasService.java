@@ -1,53 +1,108 @@
 package ar.edu.ubp.das.ristorino_backend.services.reservas;
 
-import java.time.LocalTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ar.edu.ubp.das.ristorino_backend.beans.ClienteBean;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
-import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksRestClient;
-import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksSoapClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasRestClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasSoapClient;
+import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.ClienteRestauranteDTO;
+import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.CrearReservaConClienteDTO;
+import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.CrearReservaRestauranteDTO;
+import ar.edu.ubp.das.ristorino_backend.utils.GeneradorCodigoReserva;
 
 @Service
 public class ReservasService {
-
-  private final ReservasRestClient rest;
-  private final ReservasSoapClient soap;
-
-  public ReservasService() {
-    this.rest = new ReservasRestClient();
-    this.soap = new ReservasSoapClient();
-  }
-
+  @Autowired
+  private ConfiguracionRepository configuracionRepository;
   @Autowired
   private ReservasRepository reservasRepository;
   @Autowired
-  private ConfiguracionRepository configuracionRepository;
+  private ClienteRepository clientesRepository;
 
-  // REVISAR!
+  private final ReservasRestClient restClient;
+  private final ReservasSoapClient soapClient;
+
+  public ReservasService() {
+    this.restClient = new ReservasRestClient();
+    this.soapClient = new ReservasSoapClient();
+  }
+
+  public ReservasService(ReservasRestClient restClient, ReservasSoapClient soapClient) {
+    this.restClient = restClient;
+    this.soapClient = soapClient;
+  }
+
   @Transactional
   public void crearReserva(CrearReservaRequestBean request) {
 
-    // Hora desde (viene del front)
-    LocalTime horaDesde = request.getHoraDesde();
+    // Generamos el codigo de reserva
+    String codReservaSucursal = GeneradorCodigoReserva.generarCodigoReserva();
 
-    // Hora hasta = hora desde + 1 hora
-    LocalTime horaHasta = horaDesde.plusHours(1);
-
-    // Insert en DB vía repository
-    reservasRepository.insertarTurnoSucursal(
+    // Insertamos en ristorino
+    reservasRepository.crearReservaRestaurante(
+        request.getNroCliente(),
+        request.getFechaReserva(),
         request.getNroRestaurante(),
         request.getNroSucursal(),
-        horaDesde,
-        horaHasta);
+        "ACBA", // ACBA
+        request.getHoraReserva(),
+        request.getCantAdultos(),
+        request.getCantMenores(),
+        "PEN",
+        10.50,
+        codReservaSucursal);
+
+    // Obtenemos todo el cliente
+    ClienteBean cliente = clientesRepository.obtenerClientePorId(
+        request.getNroCliente());
+    System.out.println("CLIENTE OBTENIDO: " + cliente.getNombre());
+
+    // Obtenemos la configuracion
+    ConfigBean config = configuracionRepository
+        .obtenerConfiguracionRestaunte(request.getNroRestaurante());
+
+    // Armamos DTO de RESERVA
+    CrearReservaRestauranteDTO reservaDTO = new CrearReservaRestauranteDTO();
+    reservaDTO.setCodReserva(codReservaSucursal);
+    reservaDTO.setNroCliente(request.getNroCliente());
+    reservaDTO.setFechaReserva(request.getFechaReserva().toString());
+    reservaDTO.setNroRestaurante(1);
+    reservaDTO.setNroSucursal(request.getNroSucursal());
+    reservaDTO.setCodZona("ACBA");
+    reservaDTO.setHoraReserva(request.getHoraReserva().toString());
+    reservaDTO.setCantAdultos(request.getCantAdultos());
+    reservaDTO.setCantMenores(request.getCantMenores());
+    reservaDTO.setCostoReserva(10.50);
+
+    // Armamos DTO de CLIENTE
+    ClienteRestauranteDTO clienteDTO = new ClienteRestauranteDTO();
+    clienteDTO.setNroCliente(cliente.getNroCliente());
+    clienteDTO.setApellido(cliente.getApellido());
+    clienteDTO.setNombre(cliente.getNombre());
+    clienteDTO.setCorreo(cliente.getCorreo());
+    clienteDTO.setTelefonos(cliente.getTelefonos());
+
+    // Wrapper (cliente + reserva)
+    CrearReservaConClienteDTO payload = new CrearReservaConClienteDTO();
+    payload.setCliente(clienteDTO);
+    payload.setReserva(reservaDTO);
+
+    // Envío al restaurante correspondiente
+    if ("SOAP".equalsIgnoreCase(config.getBackendType())) {
+      System.out.println(">>> Enviando reserva + cliente a RESTAURANTE SOAP");
+      soapClient.crearReserva(config, payload);
+    } else {
+      System.out.println(">>> Enviando reserva + cliente a RESTAURANTE REST");
+      restClient.crearReserva(config, payload);
+    }
   }
 
   public Void actualizarReservaCliente(Integer nroCliente, Integer nroReserva,
@@ -56,10 +111,10 @@ public class ReservasService {
     reservasRepository.actualizarReservaCliente(nroCliente, nroReserva, request);
     ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(request.getNroRestaurante());
     if ("SOAP".equals(config.getBackendType())) {
-      soap.actualizarReservaCliente(config, request);
+      soapClient.actualizarReservaCliente(config, request);
       return null;
     }
-    rest.actualizarReservaCliente(config, request);
+    restClient.actualizarReservaCliente(config, request);
     return null;
   }
 }

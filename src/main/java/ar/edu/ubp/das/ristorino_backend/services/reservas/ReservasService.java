@@ -9,6 +9,7 @@ import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasRestClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasSoapClient;
@@ -102,5 +103,18 @@ public class ReservasService {
       System.out.println(">>> Enviando reserva + cliente a RESTAURANTE REST");
       restClient.crearReserva(config, payload);
     }
+  }
+
+  public Void actualizarReservaCliente(Integer nroCliente, Integer nroReserva,
+      ActualizarReservaClienteRequestBean request) {
+
+    reservasRepository.actualizarReservaCliente(nroCliente, nroReserva, request);
+    ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(request.getNroRestaurante());
+    if ("SOAP".equals(config.getBackendType())) {
+      soapClient.actualizarReservaCliente(config, request);
+      return null;
+    }
+    restClient.actualizarReservaCliente(config, request);
+    return null;
   }
 }

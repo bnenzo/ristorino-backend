@@ -1442,4 +1442,15 @@ BEGIN
 END;
 GO
 
+-- OBTENER CLIENTE POR EMAIL
+CREATE OR ALTER PROCEDURE dbo.sp_obtener_cliente_por_email 
+(
+    @email VARCHAR(150)
+)
+AS
+BEGIN   
+    SELECT c.correo, c.apellido, c.nombre, c.nro_cliente from clientes c where c.correo = @email;
+END
+GO
+
 SELECT * FROM reservas_restaurantes

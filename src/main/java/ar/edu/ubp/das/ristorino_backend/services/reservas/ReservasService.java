@@ -52,7 +52,7 @@ public class ReservasService {
         request.getFechaReserva(),
         request.getNroRestaurante(),
         request.getNroSucursal(),
-        "NCBA", // ACBA
+        "ACBA", // ACBA
         request.getHoraReserva(),
         request.getCantAdultos(),
         request.getCantMenores(),
@@ -76,7 +76,7 @@ public class ReservasService {
     reservaDTO.setFechaReserva(request.getFechaReserva().toString());
     reservaDTO.setNroRestaurante(1);
     reservaDTO.setNroSucursal(request.getNroSucursal());
-    reservaDTO.setCodZona("NCBA");
+    reservaDTO.setCodZona("ACBA");
     reservaDTO.setHoraReserva(request.getHoraReserva().toString());
     reservaDTO.setCantAdultos(request.getCantAdultos());
     reservaDTO.setCantMenores(request.getCantMenores());

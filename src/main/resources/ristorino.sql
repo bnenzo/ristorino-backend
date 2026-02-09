@@ -1302,7 +1302,9 @@ CREATE OR ALTER PROCEDURE dbo.sp_insertar_turno_sucursal
   @cant_menores INT,
   @cod_estado VARCHAR(30),
   @costo_reserva DECIMAL(10,2),
-  @cod_reserva_sucursal VARCHAR(50)
+  @cod_reserva_sucursal VARCHAR(50),
+  @nro_cliente INT,
+  @fecha_reserva DATE
 AS
 BEGIN
   SET NOCOUNT ON;
@@ -1369,26 +1371,6 @@ BEGIN
     habilitado
   FROM clientes
   WHERE nro_cliente = @nro_cliente;
-END;
-GO
-
-
-
-SELECT *
-FROM reservas_restaurantes;
-
-DELETE FROM reservas_restaurantes
-WHERE cod_reserva_sucursal = 'GWSH260204170107';
-
-    IF @@ROWCOUNT = 0
-      THROW 50033, 'No existe la reserva para ese cliente/nro_reserva.', 1;
-
-    COMMIT TRAN;
-  END TRY
-  BEGIN CATCH
-    IF XACT_STATE() <> 0 ROLLBACK TRAN;
-    THROW;
-  END CATCH
 END;
 GO
 
@@ -1459,3 +1441,5 @@ BEGIN
   END CATCH
 END;
 GO
+
+SELECT * FROM reservas_restaurantes

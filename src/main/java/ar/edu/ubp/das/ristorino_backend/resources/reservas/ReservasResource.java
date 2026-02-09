@@ -52,7 +52,9 @@ public class ReservasResource {
     return reservasRepository.obtenerDisponibilidadDeTurnos(nroRestaurante, nroSucursal, fechaAReservar);
   }
 
-  // POST TURNO EN UNA SUCURSAL DE UN RESTAURANTE
+  // =====================================
+  // REALIZAR UNA RESERVA EN UNA SUCURSAL
+  // =====================================
   @PostMapping("/reservas")
   public ResponseEntity<Void> crearReserva(
       @RequestBody CrearReservaRequestBean request) {

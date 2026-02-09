@@ -17,7 +17,9 @@ public class ClienteRepository {
   @Autowired
   private SimpleJdbcCallFactory jdbcCallFactory;
 
-  // METODO PARA INSERTAR UN NUEVO CLIENTE
+  // ==========================
+  // INSERTAR UN NUEVO CLIENTE
+  // ==========================
   public void insertarCliente(ClienteBean cliente) {
 
     SqlParameterSource params = new MapSqlParameterSource()
@@ -31,6 +33,28 @@ public class ClienteRepository {
 
     jdbcCallFactory.executeWithOutputs(
         "sp_insert_cliente", "dbo", params);
+  }
+
+  // =======================
+  // OBTENER CLIENTE POR ID
+  // =======================
+  public ClienteBean obtenerClientePorId(Integer nroCliente) {
+
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_cliente", nroCliente);
+
+    var clientes = jdbcCallFactory.executeQuery(
+        "sp_get_cliente_por_id",
+        "dbo",
+        params,
+        "clientes",
+        ClienteBean.class);
+
+    if (clientes == null || clientes.isEmpty()) {
+      return null;
+    }
+
+    return clientes.get(0);
   }
 
   // OBTENER UN CLIENTE POR EMAIL

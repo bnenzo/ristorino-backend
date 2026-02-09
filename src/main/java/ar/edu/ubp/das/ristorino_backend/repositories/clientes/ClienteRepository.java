@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ClienteBean;
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
+import ar.edu.ubp.das.ristorino_backend.resources.auth.beans.ObtenerInformacionUsuarioResponseBean;
 
 @Repository
 public class ClienteRepository {
@@ -30,5 +31,15 @@ public class ClienteRepository {
 
     jdbcCallFactory.executeWithOutputs(
         "sp_insert_cliente", "dbo", params);
+  }
+
+  // OBTENER UN CLIENTE POR EMAIL
+  public ObtenerInformacionUsuarioResponseBean obtenerClientePorEmail(String email) {
+    SqlParameterSource params = new MapSqlParameterSource()
+        .addValue("email", email);
+
+    return jdbcCallFactory.executeQuery(
+        "sp_obtener_cliente_por_email", "dbo", params, "clientes", ObtenerInformacionUsuarioResponseBean.class).get(0);
+
   }
 }

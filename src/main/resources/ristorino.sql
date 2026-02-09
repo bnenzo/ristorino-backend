@@ -1208,37 +1208,93 @@ GO
 
 
 --INSERT DE UN TURNO PEDIDO POR EL USUARIO, PARA UNA SUCURSAL DE UN RESTAURANTE
-CREATE PROCEDURE dbo.sp_insertar_turno_sucursal
+CREATE OR ALTER PROCEDURE sp_crear_reserva_restaurante
+  @nro_cliente INT,
+  @fecha_reserva DATE,
   @nro_restaurante INT,
   @nro_sucursal INT,
-  @hora_desde TIME,
-  @hora_hasta TIME
+  @cod_zona CHAR(5),
+  @hora_reserva TIME,
+  @cant_adultos INT,
+  @cant_menores INT,
+  @cod_estado VARCHAR(30),
+  @costo_reserva DECIMAL(10,2),
+  @cod_reserva_sucursal VARCHAR(50)
 AS
 BEGIN
   SET NOCOUNT ON;
 
-  INSERT INTO turnos_sucursales_restaurantes (
+  DECLARE @nro_reserva INT;
+
+  /* 1️⃣ Generar nro_reserva (correlativo por cliente) */
+  SELECT 
+    @nro_reserva = ISNULL(MAX(nro_reserva), 0) + 1
+  FROM reservas_restaurantes
+  WHERE nro_cliente = @nro_cliente;
+
+  /* 2️⃣ Insertar reserva */
+  INSERT INTO reservas_restaurantes (
+    nro_cliente,
+    nro_reserva,
+    fecha_reserva,
     nro_restaurante,
     nro_sucursal,
-    hora_desde,
-    hora_hasta,
-    habilitado
+    cod_zona,
+    hora_reserva,
+    cant_adultos,
+    cant_menores,
+    cod_estado,
+    fecha_cancelacion,
+    costo_reserva,
+    cod_reserva_sucursal
   )
   VALUES (
+    @nro_cliente,
+    @nro_reserva,
+    @fecha_reserva,
     @nro_restaurante,
     @nro_sucursal,
-    @hora_desde,
-    @hora_hasta,
-    1
+    @cod_zona,
+    @hora_reserva,
+    @cant_adultos,
+    @cant_menores,
+    @cod_estado,
+    NULL,
+    @costo_reserva,
+    @cod_reserva_sucursal
   );
 END;
 GO
 
+-------------------------
+-- OBTENER CLIENTE POR ID
+-------------------------
+CREATE OR ALTER PROCEDURE sp_get_cliente_por_id
+  @nro_cliente INT
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  SELECT
+    nro_cliente,
+    apellido,
+    nombre,
+    clave,
+    correo,
+    telefonos,
+    nro_localidad,
+    habilitado
+  FROM clientes
+  WHERE nro_cliente = @nro_cliente;
+END;
+GO
+
+
 
 SELECT *
-FROM turnos_sucursales_restaurantes
-ORDER BY nro_restaurante, nro_sucursal, hora_desde;
+FROM reservas_restaurantes;
 
-
+DELETE FROM reservas_restaurantes
+WHERE cod_reserva_sucursal = 'GWSH260204170107';
 
 

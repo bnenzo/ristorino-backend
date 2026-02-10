@@ -1453,4 +1453,23 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE dbo.sp_validar_login_cliente
+    @correo VARCHAR(150),
+    @clave  VARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM dbo.clientes
+        WHERE correo = @correo
+          AND clave  = @clave
+          AND habilitado = 1
+    )
+    THROW 50040, 'Usuario o clave inválidos.', 1;
+    
+END;
+GO
+
 SELECT * FROM reservas_restaurantes

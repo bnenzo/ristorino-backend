@@ -41,12 +41,8 @@ public class AuthResource {
 
   @PostMapping("/auth/login")
   public ResponseEntity<LoginResponseBean> login(@RequestBody LoginRequestBean request) throws Exception {
-
-    // 🔐 VALIDACIÓN DE USUARIO (ejemplo simple)
-    if (!"renzo.letona@example.com".equals(request.getEmail()) ||
-        !"1234".equals(request.getClave())) {
-      return ResponseEntity.status(401).build();
-    }
+    // 🔐 VALIDACIÓN DE USUARIO
+    clienteRepository.validarUsuario(request.getEmail(), request.getClave());
 
     // 🕒 Fechas
     Instant now = Instant.now();

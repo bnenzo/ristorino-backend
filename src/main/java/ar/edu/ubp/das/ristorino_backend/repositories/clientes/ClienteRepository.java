@@ -64,6 +64,18 @@ public class ClienteRepository {
 
     return jdbcCallFactory.executeQuery(
         "sp_obtener_cliente_por_email", "dbo", params, "clientes", ObtenerInformacionUsuarioResponseBean.class).get(0);
+  }
+
+  // VALIDAR USUARIO
+  public void validarUsuario(String email, String clave) {
+    SqlParameterSource params = new MapSqlParameterSource()
+        .addValue("correo", email)
+        .addValue("clave", clave);
+
+    jdbcCallFactory.executeWithOutputs(
+        "sp_validar_login_cliente",
+        "dbo",
+        params);
 
   }
 }

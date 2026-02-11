@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
-import ar.edu.ubp.das.ristorino_backend.repositories.sucursales.beans.SucursalesBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.sucursales.beans.ZonasSucursalesBean;
 
 @Repository
 public class SucursalesRepository {
@@ -15,13 +15,13 @@ public class SucursalesRepository {
   private SimpleJdbcCallFactory jdbcCallFactory;
 
   // GET SUCURSALES DE UN RESTAURANTE (POR NRO_RESTAURANTE)
-  public List<SucursalesBean> obtenerSucursalesRestaurante(Integer nroRestaurante) {
+  public List<ZonasSucursalesBean> obtenerSucursalesRestaurante(Integer nroRestaurante) {
     MapSqlParameterSource params = new MapSqlParameterSource()
         .addValue("nro_restaurante", nroRestaurante);
 
     return jdbcCallFactory.executeQuery("sp_obtener_sucursales_por_nro_restaurante", "dbo", params,
         "sucursales_restaurantes",
-        SucursalesBean.class);
+        ZonasSucursalesBean.class);
   }
 
 }

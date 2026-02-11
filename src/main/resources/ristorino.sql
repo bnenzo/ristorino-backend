@@ -1135,17 +1135,23 @@ END
 GO
 
 -- GET SUCURSALES DE UN RESTAURANTE (POR NRO_RESTAURANTE)
-IF OBJECT_ID('dbo.sp_obtener_sucursales_por_nro_restaurante', 'P') IS NOT NULL
-    DROP PROCEDURE dbo.sp_obtener_sucursales_por_nro_restaurante;
-GO
 CREATE OR ALTER PROCEDURE dbo.sp_obtener_sucursales_por_nro_restaurante
 (
     @nro_restaurante INT
 )
 AS
 BEGIN
-    SELECT * 
-    FROM dbo.sucursales_restaurantes as sr 
+    SET NOCOUNT ON;
+
+    SELECT 
+        sr.*,
+        zsr.cod_zona,
+        zsr.permite_menores,
+        zsr.habilitada
+    FROM dbo.sucursales_restaurantes AS sr
+    INNER JOIN dbo.zonas_sucursales_restaurantes AS zsr
+        ON zsr.nro_restaurante = sr.nro_restaurante
+       AND zsr.nro_sucursal    = sr.nro_sucursal
     WHERE sr.nro_restaurante = @nro_restaurante;
 END
 GO
@@ -1472,4 +1478,71 @@ BEGIN
 END;
 GO
 
-SELECT * FROM reservas_restaurantes
+CREATE OR ALTER PROCEDURE sp_crear_reserva_restaurante
+  @nro_cliente INT,
+  @fecha_reserva DATE,
+  @nro_restaurante INT,
+  @nro_sucursal INT,
+  @hora_reserva TIME,
+  @cant_adultos INT,
+  @cant_menores INT,
+  @cod_estado VARCHAR(30),
+  @costo_reserva DECIMAL(10,2),
+  @cod_reserva_sucursal VARCHAR(50)
+AS
+BEGIN
+  SET NOCOUNT ON;
+
+  DECLARE @nro_reserva INT;
+  DECLARE @cod_zona CHAR(5);
+
+  /* 1️⃣ Generar nro_reserva (correlativo por cliente) */
+  SELECT 
+    @nro_reserva = ISNULL(MAX(nro_reserva), 0) + 1
+  FROM reservas_restaurantes
+  WHERE nro_cliente = @nro_cliente;
+
+  /* Obtener el codigo zona */
+   SELECT @cod_zona =
+        zsr.cod_zona
+    FROM zonas_sucursales_restaurantes zsr
+    WHERE 
+        zsr.nro_restaurante = @nro_restaurante AND
+        zsr.nro_sucursal = @nro_sucursal
+
+
+  /* 2️⃣ Insertar reserva */
+  INSERT INTO reservas_restaurantes (
+    nro_cliente,
+    nro_reserva,
+    fecha_reserva,
+    nro_restaurante,
+    nro_sucursal,
+    cod_zona,
+    hora_reserva,
+    cant_adultos,
+    cant_menores,
+    cod_estado,
+    fecha_cancelacion,
+    costo_reserva,
+    cod_reserva_sucursal
+  )
+  VALUES (
+    @nro_cliente,
+    @nro_reserva,
+    @fecha_reserva,
+    @nro_restaurante,
+    @nro_sucursal,
+    @cod_zona,
+    @hora_reserva,
+    @cant_adultos,
+    @cant_menores,
+    @cod_estado,
+    NULL,
+    @costo_reserva,
+    @cod_reserva_sucursal
+  );
+END;
+GO
+
+select * from reservas_restaurantes

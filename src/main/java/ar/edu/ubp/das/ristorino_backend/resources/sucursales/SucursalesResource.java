@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.repositories.sucursales.SucursalesRepository;
-import ar.edu.ubp.das.ristorino_backend.repositories.sucursales.beans.SucursalesBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.sucursales.beans.ZonasSucursalesBean;
 
 @RestController
 @RequestMapping("/ristorino")
@@ -21,7 +21,7 @@ public class SucursalesResource {
 
   // GET SUCURSALES DE UN RESTAURANTE (POR NRO_RESTAURANTE)
   @GetMapping("/sucursales/{nro_restaurante}")
-  public ResponseEntity<List<SucursalesBean>> obtenerSucursalesRestaurante(
+  public ResponseEntity<List<ZonasSucursalesBean>> obtenerSucursalesRestaurante(
       @PathVariable("nro_restaurante") Integer nroRestaurante) {
 
     return ResponseEntity.ok(sucursalesRepository.obtenerSucursalesRestaurante(nroRestaurante));

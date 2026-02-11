@@ -5,23 +5,23 @@ import java.time.LocalTime;
 
 public class CrearReservaRequestBean {
 
-  private Integer nroCliente;
   private Integer nroRestaurante;
   private Integer nroSucursal;
   private LocalDate fechaReserva;
   private LocalTime horaReserva;
   private Integer cantAdultos;
   private Integer cantMenores;
+  private String codZona;
 
   public CrearReservaRequestBean() {
   }
 
-  public Integer getNroCliente() {
-    return nroCliente;
+  public void setCodZona(String codZona) {
+    this.codZona = codZona;
   }
 
-  public void setNroCliente(Integer nroCliente) {
-    this.nroCliente = nroCliente;
+  public String getCodZona() {
+    return codZona;
   }
 
   public Integer getNroRestaurante() {

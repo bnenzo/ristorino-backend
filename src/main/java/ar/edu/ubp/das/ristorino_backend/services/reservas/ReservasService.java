@@ -1,5 +1,8 @@
 package ar.edu.ubp.das.ristorino_backend.services.reservas;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +12,7 @@ import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasRestClient;
@@ -41,18 +45,50 @@ public class ReservasService {
   }
 
   @Transactional
-  public void crearReserva(CrearReservaRequestBean request) {
+  public void crearReserva(CrearReservaRequestBean request, Integer nroCliente) {
+
+    List<ObtenerDisponibilidadTurnosBean> horariosDisponibles = reservasRepository.obtenerDisponibilidadDeTurnos(
+        request.getNroRestaurante(), request.getNroSucursal(),
+        request.getFechaReserva());
+
+    Optional<ObtenerDisponibilidadTurnosBean> opt = horariosDisponibles.stream()
+        .filter(h -> request.getNroRestaurante().equals(h.getNroRestaurante()) &&
+            request.getNroSucursal().equals(h.getNroSucursal()) &&
+            request.getFechaReserva().equals(h.getFechaReserva()) &&
+            request.getHoraReserva().equals(h.getHoraReserva()))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+      // no existe turno para esa hora
+      throw new RuntimeException("No hay turno para la hora solicitada");
+    }
+
+    ObtenerDisponibilidadTurnosBean turno = opt.get();
+
+    // Validaciones sobre el encontrado
+    if (turno.getTurnoCerrado() != null && turno.getTurnoCerrado() == 1) {
+      throw new RuntimeException("El turno está cerrado");
+    }
+    if (turno.getTurnoHabilitado() != null && turno.getTurnoHabilitado() == 0) {
+      throw new RuntimeException("El turno no está habilitado");
+    }
+    if (turno.getCupoDisponible() == null || turno.getCupoDisponible() <= 0) {
+      throw new RuntimeException("No hay cupo disponible");
+    }
+    if (turno.getCupoDisponible() < request.getCantAdultos() + request.getCantMenores()) {
+      throw new RuntimeException("No hay cupo disponible para la cantidad de comensales solicitada");
+    }
 
     // Generamos el codigo de reserva
     String codReservaSucursal = GeneradorCodigoReserva.generarCodigoReserva();
 
     // Insertamos en ristorino
     reservasRepository.crearReservaRestaurante(
-        request.getNroCliente(),
+        nroCliente,
         request.getFechaReserva(),
         request.getNroRestaurante(),
         request.getNroSucursal(),
-        "ACBA", // ACBA
+        request.getCodZona(),
         request.getHoraReserva(),
         request.getCantAdultos(),
         request.getCantMenores(),
@@ -62,7 +98,7 @@ public class ReservasService {
 
     // Obtenemos todo el cliente
     ClienteBean cliente = clientesRepository.obtenerClientePorId(
-        request.getNroCliente());
+        nroCliente);
     System.out.println("CLIENTE OBTENIDO: " + cliente.getNombre());
 
     // Obtenemos la configuracion
@@ -72,7 +108,7 @@ public class ReservasService {
     // Armamos DTO de RESERVA
     CrearReservaRestauranteDTO reservaDTO = new CrearReservaRestauranteDTO();
     reservaDTO.setCodReserva(codReservaSucursal);
-    reservaDTO.setNroCliente(request.getNroCliente());
+    reservaDTO.setNroCliente(nroCliente);
     reservaDTO.setFechaReserva(request.getFechaReserva().toString());
     reservaDTO.setNroRestaurante(1);
     reservaDTO.setNroSucursal(request.getNroSucursal());

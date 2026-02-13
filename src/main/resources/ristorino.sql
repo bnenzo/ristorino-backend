@@ -1543,7 +1543,6 @@ BEGIN
 END;
 GO
 
-select * from reservas_restaurantes
 
 --------------------------------------------
 -- REGISTRAR CLIENTE E INSERTAR PREFERENCIAS
@@ -1787,3 +1786,7 @@ GO
 
 EXEC dbo.sp_get_contenidos_restaurante_por_sucursal
     @nro_restaurante = 1;
+
+
+    select * from reservas_restaurantes;
+    select * from clientes;

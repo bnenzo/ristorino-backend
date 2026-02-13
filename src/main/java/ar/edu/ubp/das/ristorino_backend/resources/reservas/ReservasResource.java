@@ -45,10 +45,6 @@ public class ReservasResource {
       @RequestParam Integer nroSucursal,
       @RequestParam LocalDate fechaAReservar) {
 
-    System.out.println(nroRestaurante);
-    System.out.println(nroSucursal);
-    System.out.println(fechaAReservar);
-
     return reservasRepository.obtenerDisponibilidadDeTurnos(nroRestaurante, nroSucursal, fechaAReservar);
   }
 
@@ -57,8 +53,9 @@ public class ReservasResource {
   // =====================================
   @PostMapping("/reservas")
   public ResponseEntity<Void> crearReserva(
+      @RequestHeader(value = "nroCliente") Integer nroCliente,
       @RequestBody CrearReservaRequestBean request) {
-    reservasService.crearReserva(request);
+    reservasService.crearReserva(request, nroCliente);
     return ResponseEntity.ok().build();
   }
 

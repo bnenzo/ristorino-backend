@@ -1136,17 +1136,23 @@ END
 GO
 
 -- GET SUCURSALES DE UN RESTAURANTE (POR NRO_RESTAURANTE)
-IF OBJECT_ID('dbo.sp_obtener_sucursales_por_nro_restaurante', 'P') IS NOT NULL
-    DROP PROCEDURE dbo.sp_obtener_sucursales_por_nro_restaurante;
-GO
 CREATE OR ALTER PROCEDURE dbo.sp_obtener_sucursales_por_nro_restaurante
 (
     @nro_restaurante INT
 )
 AS
 BEGIN
-    SELECT * 
-    FROM dbo.sucursales_restaurantes as sr 
+    SET NOCOUNT ON;
+
+    SELECT 
+        sr.*,
+        zsr.cod_zona,
+        zsr.permite_menores,
+        zsr.habilitada
+    FROM dbo.sucursales_restaurantes AS sr
+    INNER JOIN dbo.zonas_sucursales_restaurantes AS zsr
+        ON zsr.nro_restaurante = sr.nro_restaurante
+       AND zsr.nro_sucursal    = sr.nro_sucursal
     WHERE sr.nro_restaurante = @nro_restaurante;
 END
 GO
@@ -1473,144 +1479,71 @@ BEGIN
 END;
 GO
 
-
---------------------------------------------
--- REGISTRAR CLIENTE E INSERTAR PREFERENCIAS
---------------------------------------------
-CREATE OR ALTER PROCEDURE dbo.sp_registrar_cliente
-  @apellido            VARCHAR(100),
-  @nombre              VARCHAR(100),
-  @dni                 INT,
-  @clave               VARCHAR(100),
-  @correo              VARCHAR(150),
-  @telefonos           VARCHAR(50),
-  @nro_localidad       INT,
-  @preferencias        VARCHAR(200)
+CREATE OR ALTER PROCEDURE sp_crear_reserva_restaurante
+  @nro_cliente INT,
+  @fecha_reserva DATE,
+  @nro_restaurante INT,
+  @nro_sucursal INT,
+  @hora_reserva TIME,
+  @cant_adultos INT,
+  @cant_menores INT,
+  @cod_estado VARCHAR(30),
+  @costo_reserva DECIMAL(10,2),
+  @cod_reserva_sucursal VARCHAR(50)
 AS
 BEGIN
   SET NOCOUNT ON;
 
-  BEGIN TRY
+  DECLARE @nro_reserva INT;
+  DECLARE @cod_zona CHAR(5);
 
-    -- Validar correo único
-    IF EXISTS (
-      SELECT 1
-      FROM clientes
-      WHERE correo = @correo
-    )
-    BEGIN
-      SELECT 
-        0 AS success,
-        'El correo ya se encuentra registrado' AS message;
-      RETURN;
-    END
+  /* 1️⃣ Generar nro_reserva (correlativo por cliente) */
+  SELECT 
+    @nro_reserva = ISNULL(MAX(nro_reserva), 0) + 1
+  FROM reservas_restaurantes
+  WHERE nro_cliente = @nro_cliente;
 
-    -- Insertar cliente
-    INSERT INTO clientes (
-      apellido,
-      nombre,
-      dni,
-      clave,
-      correo,
-      telefonos,
-      nro_localidad
-    )
-    VALUES (
-      @apellido,
-      @nombre,
-      @dni,
-      @clave,
-      @correo,
-      @telefonos,
-      @nro_localidad
-    );
+  /* Obtener el codigo zona */
+   SELECT @cod_zona =
+        zsr.cod_zona
+    FROM zonas_sucursales_restaurantes zsr
+    WHERE 
+        zsr.nro_restaurante = @nro_restaurante AND
+        zsr.nro_sucursal = @nro_sucursal
 
-    DECLARE @nro_cliente INT;
-    SET @nro_cliente = SCOPE_IDENTITY();
 
-    -- Insertar preferencias SOLO si vienen datos
-    IF @preferencias IS NOT NULL AND LEN(@preferencias) > 0
-    BEGIN
-      INSERT INTO preferencias_clientes (
-        nro_cliente,
-        cod_categoria,
-        nro_valor_dominio,
-        observaciones
-      )
-      SELECT
-        @nro_cliente,
-        'tc',
-        CAST(value AS INT),
-        NULL
-      FROM STRING_SPLIT(@preferencias, ',');
-    END
-
-    SELECT
-      1 AS success,
-      @nro_cliente AS nro_cliente;
-
-  END TRY
-  BEGIN CATCH
-    SELECT 
-      0 AS success,
-      ERROR_MESSAGE() AS message;
-  END CATCH
-
+  /* 2️⃣ Insertar reserva */
+  INSERT INTO reservas_restaurantes (
+    nro_cliente,
+    nro_reserva,
+    fecha_reserva,
+    nro_restaurante,
+    nro_sucursal,
+    cod_zona,
+    hora_reserva,
+    cant_adultos,
+    cant_menores,
+    cod_estado,
+    fecha_cancelacion,
+    costo_reserva,
+    cod_reserva_sucursal
+  )
+  VALUES (
+    @nro_cliente,
+    @nro_reserva,
+    @fecha_reserva,
+    @nro_restaurante,
+    @nro_sucursal,
+    @cod_zona,
+    @hora_reserva,
+    @cant_adultos,
+    @cant_menores,
+    @cod_estado,
+    NULL,
+    @costo_reserva,
+    @cod_reserva_sucursal
+  );
 END;
 GO
 
-
-
-----------------------
--- OBTENER LOCALIDADES
-----------------------
-CREATE OR ALTER PROCEDURE dbo.sp_get_localidades
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    SELECT 
-        nro_localidad,
-        nom_localidad,
-        cod_provincia
-    FROM localidades
-    ORDER BY nom_localidad;
-END;
-GO
-
------------------------
--- OBTENER PREFERENCIAS
------------------------
-CREATE OR ALTER PROCEDURE dbo.sp_get_preferencias_gastronomicas
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    SELECT
-        cod_categoria,
-        nro_valor_dominio,
-        nom_valor_dominio
-    FROM dominio_categorias_preferencias
-    WHERE cod_categoria = 'tc'
-    ORDER BY nom_valor_dominio;
-END;
-GO
-
-
-
-
-SELECT * FROM clientes;
-SELECT * FROM preferencias_clientes;
-SELECT * FROM localidades;
-
-DELETE FROM clientes WHERE clientes.correo = 'rnz.leto@gmail.com';
-
-EXEC dbo.sp_registrar_cliente
-  @apellido = 'Test',
-  @nombre = 'Test',
-  @dni = 12345678,
-  @clave = '123',
-  @correo = 'test123@gmail.com',
-  @telefonos = '123',
-  @nro_localidad = 1,
-  @preferencias = '2';
+select * from reservas_restaurantes

@@ -18,11 +18,12 @@ public class ContenidosRepository {
   @Autowired
   private SimpleJdbcCallFactory jdbcCallFactory;
 
-  public List<PromocionContenidoBean> getPromociones() {
+  public List<PromocionContenidoBean> getPromociones(Integer nroRestaurante, Integer nroIdioma) {
     MapSqlParameterSource p = new MapSqlParameterSource()
-        .addValue("nro_restaurante", null)
+        .addValue("nro_restaurante", nroRestaurante)
         .addValue("nro_sucursal", null)
         .addValue("solo_vigentes", 1)
+        .addValue("nro_idioma", nroIdioma)
         .addValue("fecha_ref", null);
 
     return jdbcCallFactory.executeQuery("sp_get_promociones_contenidos", "dbo", p, "contenidos_restaurantes",

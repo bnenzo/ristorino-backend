@@ -33,11 +33,12 @@ public class ClicksService {
 
   public Void registrarClickContenido(ClicksContenidosRestaurantesBean clickContenido) {
     ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(clickContenido.getNroRestaurante());
-    if ("SOAP".equals(config.getBackendType())) {
-      soap.registrarClickContenido(config, clickContenido);
-      return null;
-    }
-    rest.registrarClickContenido(config, clickContenido);
+    // if ("SOAP".equals(config.getBackendType())) {
+    // soap.registrarClickContenido(config, clickContenido);
+    // return null;
+    // }
+    // rest.registrarClickContenido(config, clickContenido);
+    // return null;
     return null;
   }
 

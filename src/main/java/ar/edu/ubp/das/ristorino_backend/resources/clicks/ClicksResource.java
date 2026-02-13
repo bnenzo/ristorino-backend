@@ -1,6 +1,7 @@
 package ar.edu.ubp.das.ristorino_backend.resources.clicks;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +18,9 @@ public class ClicksResource {
   private ClicksRepository clicksRepository;
 
   @PostMapping("/registrar-click-promocion")
-  public ResponseEntity<String> registrarClickContenido(@RequestBody RegistrarClickPromocionBody req) {
+  public ResponseEntity<Void> registrarClickContenido(@RequestBody RegistrarClickPromocionBody req) {
     clicksRepository.registrarClickContenido(req);
-    return ResponseEntity.ok("Se registro el click correctamente");
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
 }

@@ -1547,3 +1547,146 @@ END;
 GO
 
 select * from reservas_restaurantes
+
+--------------------------------------------
+-- REGISTRAR CLIENTE E INSERTAR PREFERENCIAS
+--------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.sp_registrar_cliente
+ @apellido            VARCHAR(100),
+ @nombre              VARCHAR(100),
+ @dni                 INT,
+ @clave               VARCHAR(100),
+ @correo              VARCHAR(150),
+ @telefonos           VARCHAR(50),
+ @nro_localidad       INT,
+ @preferencias        VARCHAR(200)
+AS
+BEGIN
+ SET NOCOUNT ON;
+
+
+ BEGIN TRY
+
+
+   -- Validar correo único
+   IF EXISTS (
+     SELECT 1
+     FROM clientes
+     WHERE correo = @correo
+   )
+   BEGIN
+     SELECT
+       0 AS success,
+       'El correo ya se encuentra registrado' AS message;
+     RETURN;
+   END
+
+
+   -- Insertar cliente
+   INSERT INTO clientes (
+     apellido,
+     nombre,
+     dni,
+     clave,
+     correo,
+     telefonos,
+     nro_localidad
+   )
+   VALUES (
+     @apellido,
+     @nombre,
+     @dni,
+     @clave,
+     @correo,
+     @telefonos,
+     @nro_localidad
+   );
+
+
+   DECLARE @nro_cliente INT;
+   SET @nro_cliente = SCOPE_IDENTITY();
+
+
+   -- Insertar preferencias SOLO si vienen datos
+   IF @preferencias IS NOT NULL AND LEN(@preferencias) > 0
+   BEGIN
+     INSERT INTO preferencias_clientes (
+       nro_cliente,
+       cod_categoria,
+       nro_valor_dominio,
+       observaciones
+     )
+     SELECT
+       @nro_cliente,
+       'tc',
+       CAST(value AS INT),
+       NULL
+     FROM STRING_SPLIT(@preferencias, ',');
+   END
+
+
+   SELECT
+     1 AS success,
+     @nro_cliente AS nro_cliente;
+
+
+ END TRY
+ BEGIN CATCH
+   SELECT
+     0 AS success,
+     ERROR_MESSAGE() AS message;
+ END CATCH
+
+
+END;
+GO
+
+
+
+
+
+
+----------------------
+-- OBTENER LOCALIDADES
+----------------------
+CREATE OR ALTER PROCEDURE dbo.sp_get_localidades
+AS
+BEGIN
+   SET NOCOUNT ON;
+
+
+   SELECT
+       nro_localidad,
+       nom_localidad,
+       cod_provincia
+   FROM localidades
+   ORDER BY nom_localidad;
+END;
+GO
+
+
+-----------------------
+-- OBTENER PREFERENCIAS
+-----------------------
+CREATE OR ALTER PROCEDURE dbo.sp_get_preferencias_gastronomicas
+AS
+BEGIN
+   SET NOCOUNT ON;
+
+
+   SELECT
+       cod_categoria,
+       nro_valor_dominio,
+       nom_valor_dominio
+   FROM dominio_categorias_preferencias
+   WHERE cod_categoria = 'tc'
+   ORDER BY nom_valor_dominio;
+END;
+GO
+
+
+
+SELECT * FROM clientes;
+SELECT * FROM preferencias_clientes;
+SELECT * FROM localidades;
+

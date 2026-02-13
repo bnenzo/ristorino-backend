@@ -1,6 +1,7 @@
 package ar.edu.ubp.das.ristorino_backend.repositories.clientes;
 
 import java.sql.Types;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -78,4 +79,34 @@ public class ClienteRepository {
         params);
 
   }
+
+  // =================================================
+  // REGISTRAR CLIENTE + PREFERENCIAS GASTRONÓMICAS
+  // =================================================
+  public Map<String, Object> registrarClienteConPreferencias(
+      String apellido,
+      String nombre,
+      Integer dni,
+      String clave,
+      String correo,
+      String telefonos,
+      Integer nroLocalidad,
+      String preferencias) {
+
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("apellido", apellido)
+        .addValue("nombre", nombre)
+        .addValue("dni", dni)
+        .addValue("clave", clave)
+        .addValue("correo", correo)
+        .addValue("telefonos", telefonos)
+        .addValue("nro_localidad", nroLocalidad)
+        .addValue("preferencias", preferencias);
+
+    return jdbcCallFactory.executeWithOutputs(
+        "sp_registrar_cliente",
+        "dbo",
+        params);
+  }
+
 }

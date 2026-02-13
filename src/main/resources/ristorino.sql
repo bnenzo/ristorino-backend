@@ -1681,9 +1681,109 @@ BEGIN
 END;
 GO
 
+IF OBJECT_ID('dbo.sp_get_contenidos_restaurante_por_sucursal', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_contenidos_restaurante_por_sucursal;
+GO
 
+CREATE OR ALTER PROCEDURE dbo.sp_get_contenidos_restaurante_por_sucursal
+    @nro_restaurante INT,          -- restaurante a consultar (obligatorio)
+    @nro_idioma      INT = NULL,   -- filtro opcional
+    @solo_vigentes   BIT = 1,      -- 1 = solo vigentes
+    @fecha_ref       DATE = NULL,  -- si NULL usa GETDATE()
+    @incluir_global  BIT = 1       -- 1 = incluye contenidos con nro_sucursal NULL en cada sucursal
+AS
+BEGIN
+    SET NOCOUNT ON;
 
-SELECT * FROM clientes;
-SELECT * FROM preferencias_clientes;
-SELECT * FROM localidades;
+    IF @fecha_ref IS NULL
+        SET @fecha_ref = CONVERT(date, GETDATE());
 
+    ;WITH base AS (
+        SELECT
+            cr.nro_restaurante,
+            cr.nro_sucursal,
+            cr.nro_idioma,
+            cr.nro_contenido,
+            cr.cod_contenido_restaurante,
+            cr.contenido_promocional,
+            cr.imagen_promocional,
+            cr.contenido_a_publicar,
+            cr.fecha_ini_vigencia,
+            cr.fecha_fin_vigencia,
+            cr.costo_click
+        FROM dbo.contenidos_restaurantes cr
+        WHERE cr.nro_restaurante = @nro_restaurante
+          AND (@nro_idioma IS NULL OR cr.nro_idioma = @nro_idioma)
+          AND (
+                @solo_vigentes = 0
+                OR (@fecha_ref BETWEEN cr.fecha_ini_vigencia AND cr.fecha_fin_vigencia)
+              )
+    )
+    SELECT
+        r.nro_restaurante,
+        r.razon_social,
+        r.cuit,
+
+        sr.nro_sucursal,
+        sr.nom_sucursal,
+        sr.calle,
+        sr.nro_calle,
+        sr.barrio,
+        sr.cod_postal,
+        sr.telefonos,
+        l.nom_localidad,
+        p.nom_provincia,
+
+        b.nro_contenido,
+        b.nro_idioma,
+        b.cod_contenido_restaurante,
+        b.contenido_promocional,
+        b.imagen_promocional,
+        b.contenido_a_publicar,
+        b.fecha_ini_vigencia,
+        b.fecha_fin_vigencia,
+        b.costo_click,
+
+        ISNULL(clk.total_clicks, 0)   AS total_clicks,
+        ISNULL(clk.total_costo, 0.00) AS total_costo_clicks,
+        clk.ultima_interaccion,
+
+        CASE WHEN b.nro_sucursal IS NULL THEN 1 ELSE 0 END AS es_global
+    FROM dbo.restaurantes r
+    INNER JOIN dbo.sucursales_restaurantes sr
+        ON sr.nro_restaurante = r.nro_restaurante
+    LEFT JOIN dbo.localidades l
+        ON l.nro_localidad = sr.nro_localidad
+    LEFT JOIN dbo.provincias p
+        ON p.cod_provincia = l.cod_provincia
+    INNER JOIN base b
+        ON b.nro_restaurante = sr.nro_restaurante
+       AND (
+             b.nro_sucursal = sr.nro_sucursal
+             OR (@incluir_global = 1 AND b.nro_sucursal IS NULL)
+           )
+    LEFT JOIN (
+        SELECT
+            nro_restaurante,
+            nro_idioma,
+            nro_contenido,
+            COUNT(*)                 AS total_clicks,
+            SUM(costo_click)         AS total_costo,
+            MAX(fecha_hora_registro) AS ultima_interaccion
+        FROM dbo.clicks_contenidos_restaurantes
+        GROUP BY nro_restaurante, nro_idioma, nro_contenido
+    ) clk
+        ON clk.nro_restaurante = b.nro_restaurante
+       AND clk.nro_idioma      = b.nro_idioma
+       AND clk.nro_contenido   = b.nro_contenido
+    WHERE r.nro_restaurante = @nro_restaurante
+    ORDER BY
+        sr.nro_sucursal,
+        es_global,                       -- primero contenidos por sucursal (0) y luego globales (1) o al revés si querés
+        b.fecha_ini_vigencia DESC,
+        b.nro_contenido;
+END
+GO
+
+EXEC dbo.sp_get_contenidos_restaurante_por_sucursal
+    @nro_restaurante = 1;

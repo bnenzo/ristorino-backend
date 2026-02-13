@@ -163,9 +163,10 @@ INSERT INTO localidades (nro_localidad, nom_localidad, cod_provincia) VALUES
 ------------------------------------------------------------ CLIENTES ------------------------------------------------------------ 
 
 CREATE TABLE clientes (
-    nro_cliente INT PRIMARY KEY,
+    nro_cliente INT IDENTITY(1,1) PRIMARY KEY,
     apellido VARCHAR(100) NOT NULL,
     nombre VARCHAR(100) NOT NULL,
+    dni INT,
     clave VARCHAR(100) NOT NULL,
     correo VARCHAR(150) UNIQUE NOT NULL,
     telefonos VARCHAR(50),
@@ -174,12 +175,12 @@ CREATE TABLE clientes (
     FOREIGN KEY (nro_localidad) REFERENCES localidades(nro_localidad)
 );
 
-INSERT INTO clientes (nro_cliente, apellido, nombre, clave, correo, telefonos, nro_localidad, habilitado) VALUES
-(1,'Letona','Renzo','letonaRenzo','renzo.letona@example.com','351-1112233',1,1),
-(2,'Gómez','María','abcd','maria.gomez@example.com','351-2345678',2,1),
-(3,'Rodríguez','Lucas','pass','lucas.rodriguez@example.com','351-3456789',3,1),
-(4,'Fernández','Ana','clave','ana.fernandez@example.com','351-4567890',4,1),
-(5,'Díaz','Carla','qwerty','carla.diaz@example.com','351-5678901',5,1);
+INSERT INTO clientes (apellido, nombre, clave, correo, telefonos, nro_localidad, habilitado) VALUES
+('Letona','Renzo','letonaRenzo','renzo.letona@example.com','351-1112233',1,1),
+('Gómez','María','abcd','maria.gomez@example.com','351-2345678',2,1),
+('Rodríguez','Lucas','pass','lucas.rodriguez@example.com','351-3456789',3,1),
+('Fernández','Ana','clave','ana.fernandez@example.com','351-4567890',4,1),
+('Díaz','Carla','qwerty','carla.diaz@example.com','351-5678901',5,1);
 
 ------------------------------------------------------------ PREFERENCIAS_CLIENTES ------------------------------------------------------------ 
 
@@ -1543,3 +1544,146 @@ END;
 GO
 
 select * from reservas_restaurantes
+
+--------------------------------------------
+-- REGISTRAR CLIENTE E INSERTAR PREFERENCIAS
+--------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.sp_registrar_cliente
+ @apellido            VARCHAR(100),
+ @nombre              VARCHAR(100),
+ @dni                 INT,
+ @clave               VARCHAR(100),
+ @correo              VARCHAR(150),
+ @telefonos           VARCHAR(50),
+ @nro_localidad       INT,
+ @preferencias        VARCHAR(200)
+AS
+BEGIN
+ SET NOCOUNT ON;
+
+
+ BEGIN TRY
+
+
+   -- Validar correo único
+   IF EXISTS (
+     SELECT 1
+     FROM clientes
+     WHERE correo = @correo
+   )
+   BEGIN
+     SELECT
+       0 AS success,
+       'El correo ya se encuentra registrado' AS message;
+     RETURN;
+   END
+
+
+   -- Insertar cliente
+   INSERT INTO clientes (
+     apellido,
+     nombre,
+     dni,
+     clave,
+     correo,
+     telefonos,
+     nro_localidad
+   )
+   VALUES (
+     @apellido,
+     @nombre,
+     @dni,
+     @clave,
+     @correo,
+     @telefonos,
+     @nro_localidad
+   );
+
+
+   DECLARE @nro_cliente INT;
+   SET @nro_cliente = SCOPE_IDENTITY();
+
+
+   -- Insertar preferencias SOLO si vienen datos
+   IF @preferencias IS NOT NULL AND LEN(@preferencias) > 0
+   BEGIN
+     INSERT INTO preferencias_clientes (
+       nro_cliente,
+       cod_categoria,
+       nro_valor_dominio,
+       observaciones
+     )
+     SELECT
+       @nro_cliente,
+       'tc',
+       CAST(value AS INT),
+       NULL
+     FROM STRING_SPLIT(@preferencias, ',');
+   END
+
+
+   SELECT
+     1 AS success,
+     @nro_cliente AS nro_cliente;
+
+
+ END TRY
+ BEGIN CATCH
+   SELECT
+     0 AS success,
+     ERROR_MESSAGE() AS message;
+ END CATCH
+
+
+END;
+GO
+
+
+
+
+
+
+----------------------
+-- OBTENER LOCALIDADES
+----------------------
+CREATE OR ALTER PROCEDURE dbo.sp_get_localidades
+AS
+BEGIN
+   SET NOCOUNT ON;
+
+
+   SELECT
+       nro_localidad,
+       nom_localidad,
+       cod_provincia
+   FROM localidades
+   ORDER BY nom_localidad;
+END;
+GO
+
+
+-----------------------
+-- OBTENER PREFERENCIAS
+-----------------------
+CREATE OR ALTER PROCEDURE dbo.sp_get_preferencias_gastronomicas
+AS
+BEGIN
+   SET NOCOUNT ON;
+
+
+   SELECT
+       cod_categoria,
+       nro_valor_dominio,
+       nom_valor_dominio
+   FROM dominio_categorias_preferencias
+   WHERE cod_categoria = 'tc'
+   ORDER BY nom_valor_dominio;
+END;
+GO
+
+
+
+SELECT * FROM clientes;
+SELECT * FROM preferencias_clientes;
+SELECT * FROM localidades;
+

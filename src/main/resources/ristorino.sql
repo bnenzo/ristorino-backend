@@ -477,17 +477,17 @@ CREATE TABLE contenidos_restaurantes (
 );
 
 INSERT INTO contenidos_restaurantes VALUES
-(1,1,1,1, null, 'https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2026-02-10',15.00,'LBP-1-1'),
-(1,1,2,1, 'nn','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2026-02-10',12.50,'LBP-1-1'),
-(1,1,3,2, 'nn','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2026-02-10',10.00,'LBP-1-2'),
+(1,1,1,1, null, 'https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2027-02-10',15.00,'LBP-1-1'),
+(1,1,2,1, 'nn','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2027-02-10',12.50,'LBP-1-1'),
+(1,1,3,2, 'nn','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2027-02-10',10.00,'LBP-1-2'),
 
-(2,1,1,1, null,'https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2026-02-10',15.00,'PK-1-1'),
-(2,1,2,1, null,'https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2026-02-10',15.00,'PK-1-1'),
-(2,1,3,1, 'nn','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2026-02-10',15.00,'PK-1-1'),
+(2,1,1,1, null,'https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2027-02-10',15.00,'PK-1-1'),
+(2,1,2,1, null,'https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2027-02-10',15.00,'PK-1-1'),
+(2,1,3,1, 'nn','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2027-02-10',15.00,'PK-1-1'),
 
-(3,1,1,1, null,'https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
-(3,1,2,1, 'nn','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2026-02-10',15.00,'LFB-1-1'),
-(3,1,3,1, 'nn','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2026-02-10',15.00,'LFB-1-1');
+(3,1,1,1, null,'https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
+(3,1,2,1, 'nn','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
+(3,1,3,1, 'nn','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2027-02-10',15.00,'LFB-1-1');
 
 ------------------------------------------------------------ CLICKS_CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -582,14 +582,10 @@ BEGIN
 END;
 GO
 
-
-IF OBJECT_ID('dbo.sp_get_promociones_contenidos', 'P') IS NOT NULL
-    DROP PROCEDURE dbo.sp_get_promociones_contenidos;
-GO
-
 CREATE OR ALTER PROCEDURE dbo.sp_get_promociones_contenidos
     @nro_restaurante INT = NULL,   -- filtro opcional
     @nro_sucursal    INT = NULL,   -- filtro opcional
+    @nro_idioma      INT = NULL,   -- filtro opcional
     @solo_vigentes   BIT = 1,      -- 1 = solo vigentes
     @fecha_ref       DATE = NULL   -- si es NULL se usa GETDATE()
 AS
@@ -612,7 +608,7 @@ BEGIN
         p.nom_provincia,
 
         cr.nro_contenido,
-        cr.nro_idioma,                          -- sin join a idiomas
+        cr.nro_idioma,
         cr.cod_contenido_restaurante,
         cr.contenido_promocional,
         cr.imagen_promocional,
@@ -651,6 +647,7 @@ BEGIN
     WHERE
         (@nro_restaurante IS NULL OR cr.nro_restaurante = @nro_restaurante)
         AND (@nro_sucursal  IS NULL OR cr.nro_sucursal  = @nro_sucursal)
+        AND (@nro_idioma    IS NULL OR cr.nro_idioma    = @nro_idioma)   -- NUEVO
         AND (
             @solo_vigentes = 0
             OR (@fecha_ref BETWEEN cr.fecha_ini_vigencia AND cr.fecha_fin_vigencia)
@@ -1684,9 +1681,109 @@ BEGIN
 END;
 GO
 
+IF OBJECT_ID('dbo.sp_get_contenidos_restaurante_por_sucursal', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.sp_get_contenidos_restaurante_por_sucursal;
+GO
 
+CREATE OR ALTER PROCEDURE dbo.sp_get_contenidos_restaurante_por_sucursal
+    @nro_restaurante INT,          -- restaurante a consultar (obligatorio)
+    @nro_idioma      INT = NULL,   -- filtro opcional
+    @solo_vigentes   BIT = 1,      -- 1 = solo vigentes
+    @fecha_ref       DATE = NULL,  -- si NULL usa GETDATE()
+    @incluir_global  BIT = 1       -- 1 = incluye contenidos con nro_sucursal NULL en cada sucursal
+AS
+BEGIN
+    SET NOCOUNT ON;
 
-SELECT * FROM clientes;
-SELECT * FROM preferencias_clientes;
-SELECT * FROM localidades;
+    IF @fecha_ref IS NULL
+        SET @fecha_ref = CONVERT(date, GETDATE());
 
+    ;WITH base AS (
+        SELECT
+            cr.nro_restaurante,
+            cr.nro_sucursal,
+            cr.nro_idioma,
+            cr.nro_contenido,
+            cr.cod_contenido_restaurante,
+            cr.contenido_promocional,
+            cr.imagen_promocional,
+            cr.contenido_a_publicar,
+            cr.fecha_ini_vigencia,
+            cr.fecha_fin_vigencia,
+            cr.costo_click
+        FROM dbo.contenidos_restaurantes cr
+        WHERE cr.nro_restaurante = @nro_restaurante
+          AND (@nro_idioma IS NULL OR cr.nro_idioma = @nro_idioma)
+          AND (
+                @solo_vigentes = 0
+                OR (@fecha_ref BETWEEN cr.fecha_ini_vigencia AND cr.fecha_fin_vigencia)
+              )
+    )
+    SELECT
+        r.nro_restaurante,
+        r.razon_social,
+        r.cuit,
+
+        sr.nro_sucursal,
+        sr.nom_sucursal,
+        sr.calle,
+        sr.nro_calle,
+        sr.barrio,
+        sr.cod_postal,
+        sr.telefonos,
+        l.nom_localidad,
+        p.nom_provincia,
+
+        b.nro_contenido,
+        b.nro_idioma,
+        b.cod_contenido_restaurante,
+        b.contenido_promocional,
+        b.imagen_promocional,
+        b.contenido_a_publicar,
+        b.fecha_ini_vigencia,
+        b.fecha_fin_vigencia,
+        b.costo_click,
+
+        ISNULL(clk.total_clicks, 0)   AS total_clicks,
+        ISNULL(clk.total_costo, 0.00) AS total_costo_clicks,
+        clk.ultima_interaccion,
+
+        CASE WHEN b.nro_sucursal IS NULL THEN 1 ELSE 0 END AS es_global
+    FROM dbo.restaurantes r
+    INNER JOIN dbo.sucursales_restaurantes sr
+        ON sr.nro_restaurante = r.nro_restaurante
+    LEFT JOIN dbo.localidades l
+        ON l.nro_localidad = sr.nro_localidad
+    LEFT JOIN dbo.provincias p
+        ON p.cod_provincia = l.cod_provincia
+    INNER JOIN base b
+        ON b.nro_restaurante = sr.nro_restaurante
+       AND (
+             b.nro_sucursal = sr.nro_sucursal
+             OR (@incluir_global = 1 AND b.nro_sucursal IS NULL)
+           )
+    LEFT JOIN (
+        SELECT
+            nro_restaurante,
+            nro_idioma,
+            nro_contenido,
+            COUNT(*)                 AS total_clicks,
+            SUM(costo_click)         AS total_costo,
+            MAX(fecha_hora_registro) AS ultima_interaccion
+        FROM dbo.clicks_contenidos_restaurantes
+        GROUP BY nro_restaurante, nro_idioma, nro_contenido
+    ) clk
+        ON clk.nro_restaurante = b.nro_restaurante
+       AND clk.nro_idioma      = b.nro_idioma
+       AND clk.nro_contenido   = b.nro_contenido
+    WHERE r.nro_restaurante = @nro_restaurante
+    ORDER BY
+        sr.nro_sucursal,
+        es_global,                       -- primero contenidos por sucursal (0) y luego globales (1) o al revés si querés
+        b.fecha_ini_vigencia DESC,
+        b.nro_contenido;
+END
+GO
+
+EXEC dbo.sp_get_contenidos_restaurante_por_sucursal
+    @nro_restaurante = 1;

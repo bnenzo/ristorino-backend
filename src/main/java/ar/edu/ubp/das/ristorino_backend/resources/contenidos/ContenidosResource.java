@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
@@ -42,8 +44,13 @@ public class ContenidosResource {
   private GenAI genAI;
 
   @GetMapping("/promociones")
-  public ResponseEntity<List<PromocionContenidoBean>> obtenerPromociones() {
-    List<PromocionContenidoBean> promociones = contenidosRepository.getPromociones();
+  public ResponseEntity<List<PromocionContenidoBean>> obtenerPromociones(
+      @RequestParam(name = "nroRestaurante", required = false) Integer nroRestaurante,
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma
+
+  ) {
+    List<PromocionContenidoBean> promociones = contenidosRepository.getPromociones(nroRestaurante, nroIdioma);
+    System.out.println(promociones.size());
     return ResponseEntity.ok(promociones);
   }
 

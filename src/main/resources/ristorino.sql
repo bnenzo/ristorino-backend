@@ -36,7 +36,10 @@ CREATE TABLE categorias_preferencias (
 );
 
 INSERT INTO categorias_preferencias (cod_categoria, nom_categoria) VALUES
-('tc', 'Tipo de cocina');
+('tc', 'Tipo de cocina'),
+('ea', 'Especialidad alimentaria'),
+('est', 'Estilo'),
+('cp', 'Categoria Precio');
 
 ------------------------------------------------------------ DOMINIO_CATEGORIAS_PREFERENCIAS ------------------------------------------------------------ 
 
@@ -49,6 +52,10 @@ CREATE TABLE dominio_categorias_preferencias (
 );
 
 INSERT INTO dominio_categorias_preferencias (cod_categoria, nro_valor_dominio, nom_valor_dominio) VALUES
+
+-- =========================
+-- Tipo de cocina (tc)
+-- =========================
 ('tc', 1, 'Italiana'),
 ('tc', 2, 'Mexicana'),
 ('tc', 3, 'Española'),
@@ -63,7 +70,43 @@ INSERT INTO dominio_categorias_preferencias (cod_categoria, nro_valor_dominio, n
 ('tc', 12, 'Árabe / Medio Oriente'),
 ('tc', 13, 'Americana'),
 ('tc', 14, 'Fusión'),
-('tc', 15, 'Internacional');
+('tc', 15, 'Internacional'),
+
+-- =========================
+-- Especialidades alimentarias (ea)
+-- =========================
+('ea', 1, 'Vegetariana'),
+('ea', 2, 'Vegana'),
+('ea', 3, 'Sin gluten / Celíaco'),
+('ea', 4, 'Sin lactosa'),
+('ea', 5, 'Baja en calorías'),
+('ea', 6, 'Orgánica'),
+('ea', 7, 'Diabéticos (sin azúcar añadida)'),
+
+-- =========================
+-- Estilos (est)
+-- =========================
+('est', 1, 'Gourmet'),
+('est', 2, 'Casual'),
+('est', 3, 'Comida rápida / Fast food'),
+('est', 4, 'Buffet libre'),
+('est', 5, 'Bistró'),
+('est', 6, 'Food truck'),
+('est', 7, 'Restaurante tradicional'),
+('est', 8, 'Bar / Tapas'),
+('est', 9, 'Cafetería'),
+('est', 10, 'Delivery'),
+('est', 11, 'Fine dining'),
+
+-- =========================
+-- Categorías de precios (pre)
+-- =========================
+('cp', 1, 'Económico/Bajo'),
+('cp', 2, 'Medio'),
+('cp', 3, 'Alto/Premium'),
+('cp', 4, 'De lujo');
+
+
 
 ------------------------------------------------------------ RESTAURANTES ------------------------------------------------------------ 
 CREATE TABLE restaurantes (
@@ -238,7 +281,7 @@ CREATE TABLE idiomas_estados (
 INSERT INTO idiomas_estados (cod_estado, nro_idioma, estado) VALUES
 ('PEN',1,'Pendiente'),('PEN',2,'Pending'),
 ('CONF',1,'Confirmada'),('CONF',2,'Confirmed'),
-('CAN',1,'Cancelada'),('CAN',2,'Cancelled'),
+('CAN',1,'Cancelada'),('CAN',2,'Canceled'),
 ('COMP',1,'Completada'),('COMP',2,'Completed');
 
 ------------------------------------------------------------ IDIOMAS_DOMINIO_CAT_PREFERENCIAS ------------------------------------------------------------ 
@@ -255,10 +298,134 @@ CREATE TABLE idiomas_dominio_cat_preferencias (
     FOREIGN KEY (nro_idioma) REFERENCES idiomas(nro_idioma)
 );
 
+
 INSERT INTO idiomas_dominio_cat_preferencias
 (cod_categoria, nro_valor_dominio, nro_idioma, valor_dominio, desc_valor_dominio) VALUES
+
+-- =========================
+-- Tipo de cocina (tc)
+-- =========================
 ('tc',1,1,'Italiana',NULL),
-('tc',1,2,'Italian',NULL);
+('tc',1,2,'Italian',NULL),
+
+('tc',2,1,'Mexicana',NULL),
+('tc',2,2,'Mexican',NULL),
+
+('tc',3,1,'Española',NULL),
+('tc',3,2,'Spanish',NULL),
+
+('tc',4,1,'Francesa',NULL),
+('tc',4,2,'French',NULL),
+
+('tc',5,1,'Japonesa',NULL),
+('tc',5,2,'Japanese',NULL),
+
+('tc',6,1,'China',NULL),
+('tc',6,2,'Chinese',NULL),
+
+('tc',7,1,'Tailandesa',NULL),
+('tc',7,2,'Thai',NULL),
+
+('tc',8,1,'India',NULL),
+('tc',8,2,'Indian',NULL),
+
+('tc',9,1,'Mediterránea',NULL),
+('tc',9,2,'Mediterranean',NULL),
+
+('tc',10,1,'Argentina',NULL),
+('tc',10,2,'Argentinian',NULL),
+
+('tc',11,1,'Peruana',NULL),
+('tc',11,2,'Peruvian',NULL),
+
+('tc',12,1,'Árabe / Medio Oriente',NULL),
+('tc',12,2,'Arab / Middle Eastern',NULL),
+
+('tc',13,1,'Americana',NULL),
+('tc',13,2,'American',NULL),
+
+('tc',14,1,'Fusión',NULL),
+('tc',14,2,'Fusion',NULL),
+
+('tc',15,1,'Internacional',NULL),
+('tc',15,2,'International',NULL),
+
+-- =========================
+-- Especialidades alimentarias (ea)
+-- =========================
+('ea',1,1,'Vegetariana',NULL),
+('ea',1,2,'Vegetarian',NULL),
+
+('ea',2,1,'Vegana',NULL),
+('ea',2,2,'Vegan',NULL),
+
+('ea',3,1,'Sin gluten / Celíaco',NULL),
+('ea',3,2,'Gluten-free / Celiac',NULL),
+
+('ea',4,1,'Sin lactosa',NULL),
+('ea',4,2,'Lactose-free',NULL),
+
+('ea',5,1,'Baja en calorías',NULL),
+('ea',5,2,'Low-calorie',NULL),
+
+('ea',6,1,'Orgánica',NULL),
+('ea',6,2,'Organic',NULL),
+
+('ea',7,1,'Diabéticos (sin azúcar añadida)',NULL),
+('ea',7,2,'Diabetic-friendly (no added sugar)',NULL),
+
+-- =========================
+-- Estilos (est)
+-- =========================
+('est',1,1,'Gourmet',NULL),
+('est',1,2,'Gourmet',NULL),
+
+('est',2,1,'Casual',NULL),
+('est',2,2,'Casual',NULL),
+
+('est',3,1,'Comida rápida / Fast food',NULL),
+('est',3,2,'Fast food',NULL),
+
+('est',4,1,'Buffet libre',NULL),
+('est',4,2,'All-you-can-eat buffet',NULL),
+
+('est',5,1,'Bistró',NULL),
+('est',5,2,'Bistro',NULL),
+
+('est',6,1,'Food truck',NULL),
+('est',6,2,'Food truck',NULL),
+
+('est',7,1,'Restaurante tradicional',NULL),
+('est',7,2,'Traditional restaurant',NULL),
+
+('est',8,1,'Bar / Tapas',NULL),
+('est',8,2,'Bar / Tapas',NULL),
+
+('est',9,1,'Cafetería',NULL),
+('est',9,2,'Cafe',NULL),
+
+('est',10,1,'Delivery',NULL),
+('est',10,2,'Delivery',NULL),
+
+('est',11,1,'Fine dining',NULL),
+('est',11,2,'Fine dining',NULL),
+
+-- =========================
+-- Categorías de precios (cp)
+-- =========================
+('cp',1,1,'Económico/Bajo',NULL),
+('cp',1,2,'Budget / Low',NULL),
+
+('cp',2,1,'Medio',NULL),
+('cp',2,2,'Mid-range',NULL),
+
+('cp',3,1,'Alto/Premium',NULL),
+('cp',3,2,'High / Premium',NULL),
+
+('cp',4,1,'De lujo',NULL),
+('cp',4,2,'Luxury',NULL);
+
+
 
 ------------------------------------------------------------ IDIOMAS_CATEGORIAS_PREFERENCIAS ------------------------------------------------------------ 
 
@@ -274,8 +441,22 @@ CREATE TABLE idiomas_categorias_preferencias (
 
 INSERT INTO idiomas_categorias_preferencias
 (cod_categoria, nro_idioma, categoria, desc_categoria) VALUES
+-- Tipo de cocina
 ('tc',1,'Tipo de cocina','Clasifica el tipo de cocina del restaurante'),
-('tc',2,'Type of cuisine','Classifies the type of cuisine of the restaurant.');
+('tc',2,'Type of cuisine','Classifies the type of cuisine of the restaurant'),
+
+-- Especialidades alimentarias
+('ea',1,'Especialidades alimentarias','Indica si el restaurante ofrece opciones según preferencias o restricciones alimentarias'),
+('ea',2,'Dietary options','Indicates whether the restaurant offers options for dietary preferences or restrictions'),
+
+-- Estilos
+('est',1,'Estilo','Describe el estilo o formato del restaurante (casual, gourmet, etc.)'),
+('est',2,'Style','Describes the restaurant style or format (casual, gourmet, etc.)'),
+
+-- Categorías de precios
+('cp',1,'Categoría de precios','Estima el nivel de gasto en el restaurante (barato, medio, caro, etc.)'),
+('cp',2,'Price range','Estimates the expected spending level at the restaurant (low, medium, high, etc.)');
+
 
 
 ------------------------------------------------------------ SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
@@ -329,7 +510,7 @@ INSERT INTO zonas_sucursales_restaurantes VALUES
 (1,2,'GPZ','Se encuentra en general paz',20,1,1),
 
 (2,1,'NCBA','Se encuentra en nueva cordoba',50,1,1),
-(2,2,'CTR','Se encuentra en guemes',45,1,1),
+(2,2,'GUE','Se encuentra en guemes',45,1,1),
 
 (3,1,'CDLR','Se encuentra en el cerro de las rosas',60,1,1);
 
@@ -349,16 +530,21 @@ CREATE TABLE turnos_sucursales_restaurantes (
 
 INSERT INTO turnos_sucursales_restaurantes
 (nro_restaurante, nro_sucursal, hora_desde, hora_hasta, habilitado) VALUES
-(1,1,'12:00','13:30',1),(1,1,'20:00','21:30',1),
-(1,1,'13:30','14:30',1),(1,1,'21:30','22:30',1),
-(1,1,'14:30','15:30',1),(1,1,'22:30','23:30',1),
-(1,2,'12:00','13:15',1),(1,2,'20:00','21:00',0),
+(1,1,'12:00','13:30',1),
+(1,1,'13:30','14:30',1),
+(1,1,'14:30','15:30',1),
+(1,1,'20:00','21:30',1),
+(1,1,'21:30','22:30',1),
+(1,1,'22:30','23:30',1),
+
+(1,2,'12:00','13:15',1),
+(1,2,'20:00','21:00',0),
 
 (2,1,'12:00','14:00',1),
 (2,1,'20:00','22:30',1),
+
 (2,2,'12:00','14:00',1),
 (2,2,'20:00','22:30',1),
-(2,2,'23:00','23:30',0),
 
 (3,1,'12:00','13:30',1),
 (3,1,'13:30','14:30',1),
@@ -383,14 +569,25 @@ CREATE TABLE zonas_turnos_sucursales_restaurantes (
         REFERENCES zonas_sucursales_restaurantes (nro_restaurante, nro_sucursal, cod_zona)
 );
 
+
 INSERT INTO zonas_turnos_sucursales_restaurantes VALUES
-(1,1,'ACBA','12:00',1),(1,1,'ACBA','20:00',0),
-(1,2,'GPZ','12:00',1),(1,2,'GPZ','20:00',1),
+(1,1,'ACBA','12:00',1),
+(1,1,'ACBA','13:30',1),
+(1,1,'ACBA','14:30',1),
+(1,1,'ACBA','20:00',1),
+(1,1,'ACBA','21:30',1),
+(1,1,'ACBA','22:30',1),
+
+
+(1,2,'GPZ','12:00',1),
+(1,2,'GPZ','20:00',1),
 
 (2,1,'NCBA','12:00',1),
 (2,1,'NCBA','20:00',1),
-(2,2,'CTR','12:00',1),
-(2,2,'CTR','20:00',1),
+
+(2,2,'GUE','12:00',1),
+(2,2,'GUE','20:00',1),
+
 
 (3,1,'CDLR','12:00',1),
 (3,1,'CDLR','20:00',1);
@@ -420,8 +617,8 @@ INSERT INTO idiomas_zonas_suc_restaurantes
 
 (2,1,'NCBA',1,'Nueva Córdoba','Se encuentra en Nueva Córdoba'),
 (2,1,'NCBA',2,'Nueva Córdoba','Located in Nueva Córdoba'),
-(2,2,'CTR',1,'Centro','Se encuentra en Centro'),
-(2,2,'CTR',2,'Centro','Located in Centro'),
+(2,2,'GUE',1,'Güemes','Se encuentra en Güemes'),
+(2,2,'GUE',2,'Güemes','Located in Güemes'),
 
 (3,1,'CDLR',1,'Cerro de las Rosas','Se encuentra en Cerro de las Rosas'),
 (3,1,'CDLR',2,'Cerro de las Rosas','Located in Cerro de las Rosas');
@@ -432,9 +629,9 @@ CREATE TABLE preferencias_restaurantes (
     nro_restaurante INT NOT NULL,
     cod_categoria VARCHAR(30) NOT NULL,
     nro_valor_dominio INT NOT NULL,
-    nro_preferencia INT NOT NULL,      -- ranking interno
+    nro_preferencia INT NOT NULL,
     observaciones VARCHAR(255),
-    nro_sucursal INT NULL,             -- NULL = aplica global
+    nro_sucursal INT NULL,
     PRIMARY KEY (nro_restaurante, cod_categoria, nro_valor_dominio, nro_preferencia),
     FOREIGN KEY (nro_restaurante) REFERENCES restaurantes(nro_restaurante),
     FOREIGN KEY (cod_categoria, nro_valor_dominio)
@@ -444,14 +641,35 @@ CREATE TABLE preferencias_restaurantes (
 );
 
 INSERT INTO preferencias_restaurantes
-(nro_restaurante, cod_categoria, nro_valor_dominio, nro_preferencia, observaciones, nro_sucursal) VALUES
-(1,'tc',1,1,'Especializada en pizzas',1),
-(1,'tc',1,2,'Especializada en pizzas',2),
+(nro_restaurante, nro_sucursal,cod_categoria, nro_valor_dominio, nro_preferencia, observaciones) VALUES
+(1,1,'tc',1,1,'Especializada en pizzas'),
+(1,1,'cp',1,2,'Costo medio'),
+(1,1,'est',2,3,'Casual'),
+(1,1,'est',3,4,'Comida Rapida'),
+(1,1,'ea',1,5,'Vegetariana'),
+(1,1,'ea',3,6,'Celiacos'),
 
-(2,'tc',11,1,'Especializada en ceviche',1),
-(2,'tc',11,2,'Especializada en ceviche',2),
+(1,2,'tc',1,7,'Especializada en pizzas'),
+(1,2,'cp',1,8,'Costo medio'),
+(1,2,'est',2,9,'Casual'),
+(1,2,'est',3,10,'Comida Rapida'),
+(1,2,'ea',1,11,'Vegetariana'),
+(1,2,'ea',3,12,'Celiacos'),
 
-(3,'tc',13,1,'Especializada en hamburguesas',1);
+(2,1,'tc',11,13,'Especializada en ceviche'),
+(2,1,'ea',1,14,'Vegetariana'),
+(2,1,'est',1,15,'Gourmet'),
+(2,1,'cp',3,16,'Alto/Premium'),
+
+
+(2,2,'tc',11,17,'Especializada en ceviche'),
+(2,2,'ea',1,18,'Vegetariana'),
+(2,2,'est',1,19,'Gourmet'),
+(2,2,'cp',3,20,'Alto/Premium'),
+
+
+(3,1, 'tc',13,21,'Especializada en hamburguesas'),
+(3,1, 'tc',13,22,'Focus on burgers');
 
 
 ------------------------------------------------------------ CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
@@ -476,18 +694,18 @@ CREATE TABLE contenidos_restaurantes (
         REFERENCES sucursales_restaurantes (nro_restaurante, nro_sucursal)
 );
 
-INSERT INTO contenidos_restaurantes VALUES
-(1,1,1,1, null, 'https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2027-02-10',15.00,'LBP-1-1'),
-(1,1,2,1, 'nn','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2027-02-10',12.50,'LBP-1-1'),
-(1,1,3,2, 'nn','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2027-02-10',10.00,'LBP-1-2'),
+-- INSERT INTO contenidos_restaurantes VALUES
+-- (1,1,1,1, null, 'https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2027-02-10',15.00,'LBP-1-1'),
+-- (1,1,2,1, 'nn','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2027-02-10',12.50,'LBP-1-1'),
+-- (1,1,3,2, 'nn','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2027-02-10',10.00,'LBP-1-2'),
 
-(2,1,1,1, null,'https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2027-02-10',15.00,'PK-1-1'),
-(2,1,2,1, null,'https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2027-02-10',15.00,'PK-1-1'),
-(2,1,3,1, 'nn','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2027-02-10',15.00,'PK-1-1'),
+-- (2,1,1,1, null,'https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2027-02-10',15.00,'PK-1-1'),
+-- (2,1,2,1, null,'https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2027-02-10',15.00,'PK-1-1'),
+-- (2,1,3,1, 'nn','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2027-02-10',15.00,'PK-1-1'),
 
-(3,1,1,1, null,'https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
-(3,1,2,1, 'nn','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
-(3,1,3,1, 'nn','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2027-02-10',15.00,'LFB-1-1');
+-- (3,1,1,1, null,'https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
+-- (3,1,2,1, 'nn','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
+-- (3,1,3,1, 'nn','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2027-02-10',15.00,'LFB-1-1');
 
 ------------------------------------------------------------ CLICKS_CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -533,11 +751,6 @@ CREATE TABLE reservas_restaurantes (
     FOREIGN KEY (cod_estado) REFERENCES estados_reservas(cod_estado)
 );
 
-INSERT INTO reservas_restaurantes VALUES
-(1,1,'2025-11-02 18:30:00','2026-05-02',1,1, 'ACBA', '12:00',2,0, 'CONF', NULL, 12000.00, 'LBP-001-R001'),
-(1,2,'2025-11-03 18:30:00','2025-11-06',1,1, 'ACBA', '12:00',3,0, 'PEN', NULL, 13000.00, 'LBP-001-R003'),
-(1,3,'2025-11-02 18:30:00','2025-11-05',2,1, 'NCBA', '12:00',2,0, 'CONF', NULL, 12000.00, 'PERUKAI-001-R001'),
-(2,2,'2025-11-02 18:45:00','2025-11-05',1,1, 'ACBA', '20:00',4,2, 'CONF', NULL, 18000.00, 'LBP-001-R002');
 
 ------------------------------------------------------------ PREFERENCIAS_RESERVAS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -558,13 +771,6 @@ CREATE TABLE preferencias_reservas_restaurantes (
     FOREIGN KEY (nro_restaurante, cod_categoria, nro_valor_dominio, nro_preferencia)
         REFERENCES preferencias_restaurantes (nro_restaurante, cod_categoria, nro_valor_dominio, nro_preferencia)
 );
-
-INSERT INTO preferencias_reservas_restaurantes
-(nro_cliente, nro_reserva, nro_restaurante, cod_categoria, nro_valor_dominio, nro_preferencia, observaciones)
-VALUES
-(1, 1, 1, 'tc', 1, 1, 'El cliente prefiere cocina italiana durante la reserva');
-
-
 
 IF OBJECT_ID('sp_get_provincias', 'P') IS NOT NULL
     DROP PROCEDURE sp_get_provincias;
@@ -1542,7 +1748,6 @@ BEGIN
   );
 END;
 GO
-
 
 --------------------------------------------
 -- REGISTRAR CLIENTE E INSERTAR PREFERENCIAS

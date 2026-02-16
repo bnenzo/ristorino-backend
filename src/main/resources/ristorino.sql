@@ -134,7 +134,8 @@ INSERT INTO atributos (cod_atributo, nom_atributo, tipo_dato) VALUES
 ('service_name','serviceName','string'),
 ('port_name','portName','string'),
 ('namespace','namespace','string'),
-('backend_type', 'backendType', 'string');
+('backend_type', 'backendType', 'string'),
+('prefix', 'prefix', 'string');
 
 ------------------------------------------------------------ CONFIGURACION_RESTAURANTES ------------------------------------------------------------ 
 
@@ -150,11 +151,13 @@ CREATE TABLE configuracion_restaurantes (
 INSERT INTO configuracion_restaurantes (nro_restaurante, cod_atributo, valor) VALUES
 (1, 'api_base', 'http://localhost:8086/api/v1/la-bella-pizza'),
 (1, 'backend_type', 'REST'),
+(1, 'prefix', 'LBP'),
 (2, 'api_base', 'http://localhost:8087/services/perukai.wsdl'),
 (2, 'service_name', 'PerukaiWSPortService'),
 (2, 'port_name', 'PerukaiWSPortSoap11'),
 (2, 'namespace', 'http://services.perukai.das.ubp.edu.ar/'),
-(2, 'backend_type', 'SOAP');
+(2, 'backend_type', 'SOAP'),
+(2, 'prefix', 'PK');
 
 select * from configuracion_restaurantes
 
@@ -1995,3 +1998,5 @@ EXEC dbo.sp_get_contenidos_restaurante_por_sucursal
 
     select * from reservas_restaurantes;
     select * from clientes;
+
+select * from clicks_contenidos_restaurantes

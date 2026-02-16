@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.IdiomasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosRestClient;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosSoapClient;
+import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.ActualizarContenidosNoPublicadosDTO;
 
 @Service
 public class ContenidosService {
@@ -104,20 +106,15 @@ public class ContenidosService {
       ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(
           c.getNroRestaurante());
 
-      String prefijo;
-
-      if ("SOAP".equals(config.getBackendType())) {
-        prefijo = "PK";
-      } else {
-        prefijo = "LBP";
-      }
-
-      String codContenidoRestaurante = prefijo + "-" + c.getNroRestaurante() + "-" + c.getNroContenido();
+      String codContenidoRestaurante = config.getPrefix() + "-" + c.getNroRestaurante() + "-" + c.getNroContenido();
 
       contenidosRepository.insertarContenidoNoPublicado(
           c,
           codContenidoRestaurante);
     }
+
+    this.actualizarContenidoNoPublicadosAPublicados(contenidos);
+
   }
 
   public List<ObtenerContenidosSinContenidosIABean> generarContenidosIA()
@@ -157,6 +154,29 @@ public class ContenidosService {
     }
 
     return resultAll;
+  }
+
+  // ACTUALIZAR LOS CONTENIDOS NO PUBLICADOS A PUBLICADOS
+  public void actualizarContenidoNoPublicadosAPublicados(List<ContenidoNoPublicadoBean> contenidos) {
+    Map<Integer, List<ContenidoNoPublicadoBean>> contenidosPorRestaurante = contenidos.stream()
+        .collect(Collectors.groupingBy(ContenidoNoPublicadoBean::getNroRestaurante));
+
+    for (Map.Entry<Integer, List<ContenidoNoPublicadoBean>> entry : contenidosPorRestaurante.entrySet()) {
+
+      Integer nroRestaurante = entry.getKey();
+      List<ContenidoNoPublicadoBean> listaContenidos = entry.getValue();
+
+      ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(nroRestaurante);
+
+      ActualizarContenidosNoPublicadosDTO actualizarContenidosNoPublicadosBody = new ActualizarContenidosNoPublicadosDTO();
+      actualizarContenidosNoPublicadosBody.setContenidos(listaContenidos);
+
+      if ("SOAP".equals(config.getBackendType())) {
+        soap.actualizarContenidoNoPublicadosAPublicados(config, actualizarContenidosNoPublicadosBody);
+      } else {
+        rest.actualizarContenidoNoPublicadosAPublicados(config, actualizarContenidosNoPublicadosBody);
+      }
+    }
   }
 
 }

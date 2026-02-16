@@ -118,7 +118,7 @@ CREATE TABLE restaurantes (
 INSERT INTO restaurantes VALUES (1, 'La Bella Pizza', '30717101975');
 INSERT INTO restaurantes VALUES (2, 'Perukai', '20999999222');
 INSERT INTO restaurantes VALUES (3, 'La Fabrica Burger', '30999999333');
-INSERT INTO restaurantes VALUES (4, 'Sabores del Norte', '40999999444');
+-- INSERT INTO restaurantes VALUES (4, 'Sabores del Norte', '40999999444');
 
 
 ------------------------------------------------------------ ATRIBUTOS ------------------------------------------------------------ 
@@ -679,7 +679,7 @@ CREATE TABLE contenidos_restaurantes (
     nro_idioma INT NOT NULL,
     nro_contenido INT NOT NULL,
     nro_sucursal INT NULL,
-    contenido_promocional VARCHAR(255),
+    contenido_promocional NVARCHAR(255),
     imagen_promocional VARCHAR(255),
     contenido_a_publicar NVARCHAR(MAX) NOT NULL,
     fecha_ini_vigencia DATE NOT NULL,
@@ -1197,7 +1197,7 @@ CREATE OR ALTER PROCEDURE sp_insert_contenido_restaurante
   @nro_idioma INT,
   @nro_contenido INT,
   @nro_sucursal INT = NULL,
-  @contenido_promocional VARCHAR(255),
+  @contenido_promocional NVARCHAR(255) NULL,
   @imagen_promocional VARCHAR(255),
   @contenido_a_publicar NVARCHAR(MAX),
   @fecha_ini_vigencia DATE,
@@ -1270,7 +1270,7 @@ CREATE OR ALTER PROCEDURE dbo.sp_insertar_o_actualizar_contenido_generado_con_ia
     @nro_idioma INT,
     @nro_contenido INT,
     @nro_sucursal INT = NULL,
-    @contenido_promocional VARCHAR(255) = NULL,
+    @contenido_promocional NVARCHAR(255) = NULL,
     @imagen_promocional VARCHAR(255) = NULL,
     @contenido_a_publicar NVARCHAR(MAX),
     @fecha_ini_vigencia DATE,

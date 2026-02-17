@@ -2005,7 +2005,130 @@ END
 GO
 
 
+CREATE OR ALTER PROCEDURE dbo.sp_get_restaurantes_tags_flat
+  @nro_idioma INT = 1
+AS
+BEGIN
+  SET NOCOUNT ON;
 
-select * from reservas_restaurantes;
-select * from clientes;
-select * from clicks_contenidos_restaurantes
+  ;WITH pref AS (
+    SELECT
+      pr.nro_restaurante,
+      pr.nro_sucursal,
+      idcp.valor_dominio
+    FROM dbo.preferencias_restaurantes pr
+    INNER JOIN dbo.idiomas_dominio_cat_preferencias idcp
+      ON idcp.cod_categoria = pr.cod_categoria
+     AND idcp.nro_valor_dominio = pr.nro_valor_dominio
+     AND idcp.nro_idioma = @nro_idioma
+    WHERE pr.nro_sucursal IS NOT NULL                     
+  ),
+  dedup AS (
+    SELECT DISTINCT
+      nro_restaurante,
+      nro_sucursal,
+      LTRIM(RTRIM(valor_dominio)) AS tag
+    FROM pref
+    WHERE valor_dominio IS NOT NULL
+      AND LTRIM(RTRIM(valor_dominio)) <> ''
+  )
+  SELECT
+    CAST(d.nro_restaurante AS varchar(10)) + '-' + CAST(d.nro_sucursal AS varchar(10)) AS id,
+    STRING_AGG(d.tag, '|') WITHIN GROUP (ORDER BY d.tag) AS tags
+  FROM dedup d
+  GROUP BY d.nro_restaurante, d.nro_sucursal
+  ORDER BY d.nro_restaurante, d.nro_sucursal;
+END
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.sp_get_promociones_por_lista
+    @json          NVARCHAR(MAX),
+    @solo_vigentes BIT = 1,
+    @fecha_ref     DATE = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @fecha_ref IS NULL
+        SET @fecha_ref = CONVERT(date, GETDATE());
+
+    ;WITH items AS (
+        SELECT DISTINCT
+            j.nroRestaurante AS nro_restaurante,
+            j.nroContenido   AS nro_contenido,
+            j.nroIdioma      AS nro_idioma
+        FROM OPENJSON(@json)
+        WITH (
+            nroRestaurante INT '$.nroRestaurante',
+            nroContenido   INT '$.nroContenido',
+            nroIdioma      INT '$.nroIdioma'
+        ) AS j
+        WHERE j.nroRestaurante IS NOT NULL
+          AND j.nroContenido   IS NOT NULL
+          AND j.nroIdioma      IS NOT NULL
+    ),
+    clk AS (
+        SELECT
+            nro_restaurante,
+            nro_idioma,
+            nro_contenido,
+            COUNT(*)                 AS total_clicks,
+            SUM(costo_click)         AS total_costo,
+            MAX(fecha_hora_registro) AS ultima_interaccion
+        FROM dbo.clicks_contenidos_restaurantes
+        GROUP BY nro_restaurante, nro_idioma, nro_contenido
+    )
+    SELECT
+        cr.nro_restaurante,
+        r.razon_social,
+        r.cuit,
+        cr.nro_sucursal,
+        sr.nom_sucursal,
+        sr.calle,
+        sr.nro_calle,
+        sr.barrio,
+        l.nom_localidad,
+        p.nom_provincia,
+
+        cr.nro_contenido,
+        cr.nro_idioma,
+        cr.cod_contenido_restaurante,
+        cr.contenido_promocional,
+        cr.imagen_promocional,
+        cr.contenido_a_publicar,
+        cr.fecha_ini_vigencia,
+        cr.fecha_fin_vigencia,
+        cr.costo_click,
+
+        ISNULL(c.total_clicks, 0)    AS total_clicks,
+        ISNULL(c.total_costo, 0.00)  AS total_costo_clicks,
+        c.ultima_interaccion
+    FROM items i
+    INNER JOIN dbo.contenidos_restaurantes cr
+        ON cr.nro_restaurante = i.nro_restaurante
+       AND cr.nro_contenido   = i.nro_contenido
+       AND cr.nro_idioma      = i.nro_idioma
+    INNER JOIN dbo.restaurantes r
+        ON r.nro_restaurante = cr.nro_restaurante
+    LEFT JOIN dbo.sucursales_restaurantes sr
+        ON sr.nro_restaurante = cr.nro_restaurante
+       AND sr.nro_sucursal    = cr.nro_sucursal
+    LEFT JOIN dbo.localidades l
+        ON l.nro_localidad = sr.nro_localidad
+    LEFT JOIN dbo.provincias p
+        ON p.cod_provincia = l.cod_provincia
+    LEFT JOIN clk c
+        ON c.nro_restaurante = cr.nro_restaurante
+       AND c.nro_idioma      = cr.nro_idioma
+       AND c.nro_contenido   = cr.nro_contenido
+    WHERE
+        @solo_vigentes = 0
+        OR (@fecha_ref BETWEEN cr.fecha_ini_vigencia AND cr.fecha_fin_vigencia)
+    ORDER BY
+        r.razon_social,
+        sr.nom_sucursal,
+        cr.fecha_ini_vigencia DESC,
+        cr.nro_contenido;
+END
+GO

@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.beans.RegistrarClickPromocionBody;
-import ar.edu.ubp.das.ristorino_backend.repositories.clicks.ClicksRepository;
+import ar.edu.ubp.das.ristorino_backend.services.clicks.ClicksService;
 
 @RestController
 @RequestMapping("/ristorino")
 public class ClicksResource {
   @Autowired
-  private ClicksRepository clicksRepository;
+  private ClicksService clicksService;
 
   @PostMapping("/registrar-click-promocion")
   public ResponseEntity<Void> registrarClickContenido(@RequestBody RegistrarClickPromocionBody req) {
-    clicksRepository.registrarClickContenido(req);
+    clicksService.registrarCostoClickContenido(req);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 

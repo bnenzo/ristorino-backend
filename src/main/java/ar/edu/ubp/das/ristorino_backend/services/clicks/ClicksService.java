@@ -1,12 +1,15 @@
 package ar.edu.ubp.das.ristorino_backend.services.clicks;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
+import ar.edu.ubp.das.ristorino_backend.beans.RegistrarClickPromocionBody;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clicks.ClicksRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
+import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
 import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksRestClient;
 import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksSoapClient;
 
@@ -17,6 +20,8 @@ public class ClicksService {
 
   @Autowired
   private ClicksRepository clicksRepository;
+  @Autowired
+  private CostosRepository costosRepository;
 
   private final ClicksRestClient rest;
   private final ClicksSoapClient soap;
@@ -51,5 +56,16 @@ public class ClicksService {
       this.registrarClickContenido(clickSinNotificar);
       clicksRepository.actualizarClickSinNotificarANotificado(clickSinNotificar);
     }
+  }
+
+  public void registrarCostoClickContenido(RegistrarClickPromocionBody body) {
+
+    BigDecimal costoClick = costosRepository
+        .obtenerCostoPorTipo("CLICK")
+        .getMonto();
+
+    body.setCostoClick(costoClick);
+
+    clicksRepository.registrarClickContenido(body);
   }
 }

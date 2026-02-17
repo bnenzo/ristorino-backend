@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
+import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.RestauranteIdBean;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.GenAI;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.SystemPrompts;
@@ -25,9 +26,14 @@ import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.ContenidosReposi
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.beans.ObtenerContenidosSinContenidosIABean;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.IdiomasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.PreferenciaRepository;
+import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.beans.ObtenerPreferenciasSucursalRestauranteBean;
+import ar.edu.ubp.das.ristorino_backend.resources.contenidos.beans.BuscarPromocionesIARequestBean;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosRestClient;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosSoapClient;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.ActualizarContenidosNoPublicadosDTO;
+import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadoPromocionesIAOutput;
+import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadorPromocionesIAInputDTO;
 
 @Service
 public class ContenidosService {
@@ -37,6 +43,8 @@ public class ContenidosService {
   private ContenidosRepository contenidosRepository;
   @Autowired
   private IdiomasRepository idiomasRepository;
+  @Autowired
+  private PreferenciaRepository preferenciaRepository;
 
   @Autowired
   private GenAI genAI;
@@ -177,6 +185,43 @@ public class ContenidosService {
         rest.actualizarContenidoNoPublicadosAPublicados(config, actualizarContenidosNoPublicadosBody);
       }
     }
+  }
+
+  public List<PromocionContenidoBean> buscarContenidosConIA(BuscarPromocionesIARequestBean search, Integer nroIdioma)
+      throws JsonProcessingException {
+
+    List<PromocionContenidoBean> promociones = contenidosRepository.getPromociones(null, nroIdioma);
+    List<ObtenerPreferenciasSucursalRestauranteBean> preferenciasRestaurantesSucursales = preferenciaRepository
+        .obtenerPreferenciasSucursalRestaurante();
+    List<BuscadorPromocionesIAInputDTO> promosDTO = promociones.stream()
+        .map(p -> new BuscadorPromocionesIAInputDTO(
+            p.getNroRestaurante() + "-"
+                + p.getNroContenido() + "-"
+                + p.getNroIdioma(),
+            p.getContenidoAPublicar()))
+        .toList();
+
+    Map<String, Object> input = new LinkedHashMap<>();
+    input.put("search", search.getSearch());
+    input.put("promociones", promosDTO);
+    input.put("restaurantes", preferenciasRestaurantesSucursales);
+
+    ObjectMapper om = new ObjectMapper();
+    om.registerModule(new JavaTimeModule());
+    om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+    String inputString = om.writeValueAsString(input);
+
+    System.out.println(inputString);
+    String text = genAI.generate(inputString, SystemPrompts.PROMO_SEARCH);
+
+    List<BuscadoPromocionesIAOutput> list = om.readValue(text,
+        new TypeReference<List<BuscadoPromocionesIAOutput>>() {
+        });
+
+    System.out.println(list);
+
+    return contenidosRepository.obtenerContenidosPorListaDeContenidosIds(list);
   }
 
 }

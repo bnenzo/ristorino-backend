@@ -28,6 +28,8 @@ import ar.edu.ubp.das.ristorino_backend.services.contenidos.ContenidosService;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.beans.ObtenerContenidosSinContenidosIABean;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.IdiomasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
+import ar.edu.ubp.das.ristorino_backend.resources.contenidos.beans.BuscarPromocionesIARequestBean;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/ristorino")
@@ -116,6 +118,14 @@ public class ContenidosResource {
     }
 
     return ResponseEntity.ok(list);
+  }
+
+  @PostMapping("/contenidos/busqueda")
+  public ResponseEntity<List<PromocionContenidoBean>> buscarContenidosIA(
+      @RequestBody BuscarPromocionesIARequestBean request,
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma)
+      throws JsonProcessingException {
+    return ResponseEntity.ok(contenidosService.buscarContenidosConIA(request, nroIdioma));
   }
 
 }

@@ -7,11 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.RestauranteIdBean;
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.beans.ObtenerContenidosSinContenidosIABean;
+import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadoPromocionesIAOutput;
 
 @Repository
 public class ContenidosRepository {
@@ -86,6 +90,25 @@ public class ContenidosRepository {
         .addValue("cod_contenido_restaurante", contenidoGenerado.getCodContenidoRestaurante());
 
     jdbcCallFactory.executeWithOutputs("sp_insertar_o_actualizar_contenido_generado_con_ia", "dbo", p);
+  }
+
+  public List<PromocionContenidoBean> obtenerContenidosPorListaDeContenidosIds(List<BuscadoPromocionesIAOutput> lista)
+      throws JsonProcessingException {
+    ObjectMapper om = new ObjectMapper();
+    String json = om.writeValueAsString(lista);
+
+    MapSqlParameterSource p = new MapSqlParameterSource();
+    p.addValue("json", json);
+    p.addValue("solo_vigentes", null);
+    p.addValue("fecha_ref", null);
+
+    return jdbcCallFactory.executeQuery(
+        "sp_get_promociones_por_lista",
+        "dbo",
+        p,
+        "contenidos_restaurante",
+        PromocionContenidoBean.class);
+
   }
 
 }

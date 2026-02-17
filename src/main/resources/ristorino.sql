@@ -1992,11 +1992,20 @@ BEGIN
 END
 GO
 
-EXEC dbo.sp_get_contenidos_restaurante_por_sucursal
-    @nro_restaurante = 1;
+
+-- OBTENER CLIENTE POR EMAIL PARA PROCESO DE LOGIN
+CREATE OR ALTER PROCEDURE dbo.sp_obtener_cliente_por_email_para_login
+(
+   @email VARCHAR(150)
+)
+AS
+BEGIN  
+   SELECT c.correo, c.nro_cliente, c.clave from clientes c where c.correo = @email;
+END
+GO
 
 
-    select * from reservas_restaurantes;
-    select * from clientes;
 
+select * from reservas_restaurantes;
+select * from clientes;
 select * from clicks_contenidos_restaurantes

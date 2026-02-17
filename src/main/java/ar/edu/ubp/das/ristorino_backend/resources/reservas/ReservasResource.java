@@ -52,11 +52,12 @@ public class ReservasResource {
   // REALIZAR UNA RESERVA EN UNA SUCURSAL
   // =====================================
   @PostMapping("/reservas")
-  public ResponseEntity<Void> crearReserva(
+  public ResponseEntity<String> crearReserva(
       @RequestHeader(value = "nroCliente") Integer nroCliente,
       @RequestBody CrearReservaRequestBean request) {
-    reservasService.crearReserva(request, nroCliente);
-    return ResponseEntity.ok().build();
+
+    String codigoReserva = reservasService.crearReserva(request, nroCliente);
+    return ResponseEntity.ok("\"" + codigoReserva + "\"");
   }
 
   // GET LAS RESERVAS DE UN CLIENTE

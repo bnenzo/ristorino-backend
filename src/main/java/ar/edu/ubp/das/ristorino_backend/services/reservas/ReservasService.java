@@ -45,7 +45,7 @@ public class ReservasService {
   }
 
   @Transactional
-  public void crearReserva(CrearReservaRequestBean request, Integer nroCliente) {
+  public String crearReserva(CrearReservaRequestBean request, Integer nroCliente) {
 
     List<ObtenerDisponibilidadTurnosBean> horariosDisponibles = reservasRepository.obtenerDisponibilidadDeTurnos(
         request.getNroRestaurante(), request.getNroSucursal(),
@@ -139,6 +139,8 @@ public class ReservasService {
       System.out.println(">>> Enviando reserva + cliente a RESTAURANTE REST");
       restClient.crearReserva(config, payload);
     }
+
+    return codReservaSucursal;
   }
 
   public Void actualizarReservaCliente(Integer nroCliente, Integer nroReserva,

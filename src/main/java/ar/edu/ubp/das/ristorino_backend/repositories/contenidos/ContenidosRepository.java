@@ -52,7 +52,7 @@ public class ContenidosRepository {
         .addValue("nro_idioma", 1)
         .addValue("nro_contenido", c.getNroContenido())
         .addValue("nro_sucursal", c.getNroSucursal())
-        .addValue("contenido_promocional", "esta es una IA promo")
+        .addValue("contenido_promocional", null)
         .addValue("imagen_promocional", c.getImagenAPublicar())
         .addValue("contenido_a_publicar", c.getContenidoAPublicar())
         .addValue("fecha_ini_vigencia", LocalDate.now())

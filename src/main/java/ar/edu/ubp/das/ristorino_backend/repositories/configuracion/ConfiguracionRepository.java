@@ -26,6 +26,7 @@ public class ConfiguracionRepository {
     String serviceName = null;
     String portName = null;
     String backendType = null;
+    String prefix = null;
 
     for (ConfiguracionRestauranteBean a : attrs) {
       if (a == null || a.getCodAtributo() == null) {
@@ -53,6 +54,10 @@ public class ConfiguracionRepository {
           backendType = a.getValor();
           break;
 
+        case "prefix":
+          prefix = a.getValor();
+          break;
+
       }
     }
 
@@ -61,7 +66,8 @@ public class ConfiguracionRepository {
         namespace,
         serviceName,
         portName,
-        backendType);
+        backendType,
+        prefix);
   }
 
   public ConfigBean obtenerConfiguracionRestaunte(int nroRestaurante) {

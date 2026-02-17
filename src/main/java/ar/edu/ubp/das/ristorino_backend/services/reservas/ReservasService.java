@@ -1,5 +1,6 @@
 package ar.edu.ubp.das.ristorino_backend.services.reservas;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import ar.edu.ubp.das.ristorino_backend.beans.ClienteBean;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
+import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
@@ -30,6 +32,8 @@ public class ReservasService {
   private ReservasRepository reservasRepository;
   @Autowired
   private ClienteRepository clientesRepository;
+  @Autowired
+  private CostosRepository costosRepository;
 
   private final ReservasRestClient restClient;
   private final ReservasSoapClient soapClient;
@@ -82,6 +86,11 @@ public class ReservasService {
     // Generamos el codigo de reserva
     String codReservaSucursal = GeneradorCodigoReserva.generarCodigoReserva();
 
+    // Obtener costo dinámico
+    BigDecimal costoReserva = costosRepository
+        .obtenerCostoPorTipo("RESERVA")
+        .getMonto();
+
     // Insertamos en ristorino
     reservasRepository.crearReservaRestaurante(
         nroCliente,
@@ -93,7 +102,7 @@ public class ReservasService {
         request.getCantAdultos(),
         request.getCantMenores(),
         "PEN",
-        10.50,
+        costoReserva.doubleValue(),
         codReservaSucursal);
 
     // Obtenemos todo el cliente
@@ -116,7 +125,7 @@ public class ReservasService {
     reservaDTO.setHoraReserva(request.getHoraReserva().toString());
     reservaDTO.setCantAdultos(request.getCantAdultos());
     reservaDTO.setCantMenores(request.getCantMenores());
-    reservaDTO.setCostoReserva(10.50);
+    reservaDTO.setCostoReserva(costoReserva.doubleValue());
 
     // Armamos DTO de CLIENTE
     ClienteRestauranteDTO clienteDTO = new ClienteRestauranteDTO();

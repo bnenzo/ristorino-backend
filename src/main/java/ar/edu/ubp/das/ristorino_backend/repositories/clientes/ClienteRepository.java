@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ClienteBean;
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
+import ar.edu.ubp.das.ristorino_backend.resources.auth.beans.ObtenerInformacionUsuarioParaLogin;
 import ar.edu.ubp.das.ristorino_backend.resources.auth.beans.ObtenerInformacionUsuarioResponseBean;
 
 @Repository
@@ -65,6 +66,16 @@ public class ClienteRepository {
 
     return jdbcCallFactory.executeQuery(
         "sp_obtener_cliente_por_email", "dbo", params, "clientes", ObtenerInformacionUsuarioResponseBean.class).get(0);
+  }
+
+  // OBTENER UN CLIENTE POR EMAIL PARA VALIDACION DE LOGIN
+  public ObtenerInformacionUsuarioParaLogin obtenerClientePorEmailParaLogin(String email) {
+    SqlParameterSource params = new MapSqlParameterSource()
+        .addValue("email", email);
+
+    return jdbcCallFactory.executeQuery(
+        "sp_obtener_cliente_por_email_para_login", "dbo", params, "clientes",
+        ObtenerInformacionUsuarioParaLogin.class).get(0);
   }
 
   // VALIDAR USUARIO

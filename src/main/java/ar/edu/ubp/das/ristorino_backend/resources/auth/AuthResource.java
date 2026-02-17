@@ -23,7 +23,9 @@ import com.nimbusds.jwt.SignedJWT;
 import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
 import ar.edu.ubp.das.ristorino_backend.resources.auth.beans.LoginRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.auth.beans.LoginResponseBean;
+import ar.edu.ubp.das.ristorino_backend.resources.auth.beans.ObtenerInformacionUsuarioParaLogin;
 import ar.edu.ubp.das.ristorino_backend.resources.auth.beans.ObtenerInformacionUsuarioResponseBean;
+import ar.edu.ubp.das.ristorino_backend.utils.PasswordUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,8 +43,23 @@ public class AuthResource {
 
   @PostMapping("/auth/login")
   public ResponseEntity<LoginResponseBean> login(@RequestBody LoginRequestBean request) throws Exception {
-    // 🔐 VALIDACIÓN DE USUARIO
-    clienteRepository.validarUsuario(request.getEmail(), request.getClave());
+
+    // Buscar usuario para login
+    ObtenerInformacionUsuarioParaLogin usuario = clienteRepository.obtenerClientePorEmailParaLogin(request.getEmail());
+
+    if (usuario == null) {
+      throw new RuntimeException("Usuario o contraseña inválidos");
+    }
+
+    // Validar password con BCrypt
+    boolean passwordOk = PasswordUtils.matches(
+        request.getClave(),
+        usuario.getClave() // hash guardado en DB
+    );
+
+    if (!passwordOk) {
+      throw new RuntimeException("Usuario o contraseña inválidos");
+    }
 
     // 🕒 Fechas
     Instant now = Instant.now();

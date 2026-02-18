@@ -121,7 +121,7 @@ public class ContenidosService {
 
       c.setCostoClick(costoContenido);
 
-      // Obtener configuración para saber REST o SOAP
+      // Obtener configuración para obtener el prefijo
       ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(
           c.getNroRestaurante());
 
@@ -176,9 +176,13 @@ public class ContenidosService {
 
   // ACTUALIZAR LOS CONTENIDOS NO PUBLICADOS A PUBLICADOS
   public void actualizarContenidoNoPublicadosAPublicados(List<ContenidoNoPublicadoBean> contenidos) {
+    // 1) Agrupamos todos los contenidos por nroRestaurante, para poder recorrer
+    // esto en un array y mandar todos los contenidos a actualizar en la misma
+    // request
     Map<Integer, List<ContenidoNoPublicadoBean>> contenidosPorRestaurante = contenidos.stream()
         .collect(Collectors.groupingBy(ContenidoNoPublicadoBean::getNroRestaurante));
 
+    // 2) Recorremos los lotes de restaurantes - contenido.
     for (Map.Entry<Integer, List<ContenidoNoPublicadoBean>> entry : contenidosPorRestaurante.entrySet()) {
 
       Integer nroRestaurante = entry.getKey();
@@ -186,6 +190,8 @@ public class ContenidosService {
 
       ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(nroRestaurante);
 
+      // 3) cargamos la lista de contenidos en un nuevo dto para poder enviarlo en el
+      // body de la request
       ActualizarContenidosNoPublicadosDTO actualizarContenidosNoPublicadosBody = new ActualizarContenidosNoPublicadosDTO();
       actualizarContenidosNoPublicadosBody.setContenidos(listaContenidos);
 

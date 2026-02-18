@@ -131,12 +131,13 @@ INSERT INTO dominio_categorias_preferencias (cod_categoria, nro_valor_dominio, n
 CREATE TABLE restaurantes (
     nro_restaurante INT PRIMARY KEY,
     razon_social VARCHAR(150) NOT NULL,
-    cuit CHAR(11) UNIQUE NOT NULL
+    cuit CHAR(11) UNIQUE NOT NULL,
+    icono_src VARCHAR(300) NOT NULL,
 );
 
-INSERT INTO restaurantes VALUES (1, 'La Bella Pizza', '30717101975');
-INSERT INTO restaurantes VALUES (2, 'Perukai', '20999999222');
-INSERT INTO restaurantes VALUES (3, 'La Fabrica Burger', '30999999333');
+INSERT INTO restaurantes VALUES (1, 'La Bella Pizza', '30717101975', 'https://pedidosya.dhmedia.io/image/pedidosya/restaurants/0758a0aa-51df-40f6-88b1-8cfe1fe1fb4e.jpg?quality=100');
+INSERT INTO restaurantes VALUES (2, 'Perukai', '20999999222', 'https://pedidosya.dhmedia.io/image/pedidosya/restaurants/sabores-del-peru.jpg?quality=100');
+INSERT INTO restaurantes VALUES (3, 'La Fabrica Burger', '30999999333', 'https://pedidosya.dhmedia.io/image/pedidosya/restaurants/eb900313-c34b-4e09-98ff-51f934b209f7.jpg?quality=100');
 -- INSERT INTO restaurantes VALUES (4, 'Sabores del Norte', '40999999444');
 
 
@@ -798,7 +799,7 @@ IF OBJECT_ID('sp_get_provincias', 'P') IS NOT NULL
     DROP PROCEDURE sp_get_provincias;
 GO
 
-CREATE PROCEDURE sp_get_provincias
+CREATE OR ALTER PROCEDURE sp_get_provincias
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -1466,6 +1467,7 @@ rr.nro_reserva,
 rr.fecha_reserva,
 rr.nro_restaurante,
 r.razon_social,
+r.icono_src,
 rr.nro_sucursal,
 sr.nom_sucursal,
 sr.calle,

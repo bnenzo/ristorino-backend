@@ -14,6 +14,7 @@ public class ObtenerReservasClienteBean {
 
   private Integer nroRestaurante;
   private String razonSocial;
+  private String iconoSrc;
 
   private Integer nroSucursal;
   private String nomSucursal;
@@ -38,6 +39,14 @@ public class ObtenerReservasClienteBean {
   private String codReservaSucursal;
 
   public ObtenerReservasClienteBean() {
+  }
+
+  public String getIconoSrc() {
+    return iconoSrc;
+  }
+
+  public void setIconoSrc(String iconoSrc) {
+    this.iconoSrc = iconoSrc;
   }
 
   public Integer getNroCliente() {

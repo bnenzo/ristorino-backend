@@ -1,5 +1,6 @@
 package ar.edu.ubp.das.ristorino_backend.services.contenidos;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.ContenidosRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.beans.ObtenerContenidosSinContenidosIABean;
+import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.IdiomasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.PreferenciaRepository;
@@ -45,6 +47,8 @@ public class ContenidosService {
   private IdiomasRepository idiomasRepository;
   @Autowired
   private PreferenciaRepository preferenciaRepository;
+  @Autowired
+  private CostosRepository costosRepository;
 
   @Autowired
   private GenAI genAI;
@@ -108,7 +112,14 @@ public class ContenidosService {
 
     List<ContenidoNoPublicadoBean> contenidos = obtenerTodosLosContenidosNoPublicados();
 
+    // Obtener costo dinámico UNA sola vez
+    BigDecimal costoContenido = costosRepository
+        .obtenerCostoPorTipo("CONTENIDO")
+        .getMonto();
+
     for (ContenidoNoPublicadoBean c : contenidos) {
+
+      c.setCostoClick(costoContenido);
 
       // Obtener configuración para saber REST o SOAP
       ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(
@@ -122,7 +133,6 @@ public class ContenidosService {
     }
 
     this.actualizarContenidoNoPublicadosAPublicados(contenidos);
-
   }
 
   public List<ObtenerContenidosSinContenidosIABean> generarContenidosIA()

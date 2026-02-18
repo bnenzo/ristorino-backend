@@ -26,6 +26,25 @@ DROP TABLE IF EXISTS estados_reservas;
 DROP TABLE IF EXISTS idiomas;
 DROP TABLE IF EXISTS provincias;
 DROP TABLE IF EXISTS restaurantes;
+DROP TABLE IF EXISTS costos;
+
+
+------------------------------------------------------------ COSTOS ------------------------------------------------------------ 
+
+CREATE TABLE costos (
+    tipo_costo VARCHAR(50) NOT NULL,
+    fecha_ini_vigencia DATE NOT NULL,
+    fecha_fin_vigencia DATE NOT NULL,
+    monto DECIMAL(10,2) NOT NULL
+    PRIMARY KEY (tipo_costo, fecha_ini_vigencia)
+);
+
+INSERT INTO costos (tipo_costo, fecha_ini_vigencia, fecha_fin_vigencia, monto)
+VALUES
+('click', '2026-01-01', '2027-01-01', 2000),
+('reserva', '2026-01-01', '2027-01-01', 3000),
+('contenido', '2026-01-01', '2027-01-01', 5000);
+
 
 
 ------------------------------------------------------------ CATEGORIAS_PREFERENCIAS ------------------------------------------------------------ 
@@ -2136,5 +2155,19 @@ BEGIN
 END
 GO
 
-select * from reservas_restaurantes
 
+CREATE OR ALTER PROCEDURE dbo.sp_obtener_costo_por_tipo
+(
+    @tipo_costo VARCHAR(50)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT monto
+    FROM dbo.costos
+    WHERE tipo_costo = @tipo_costo
+      AND CAST(GETDATE() AS DATE) >= fecha_ini_vigencia
+      AND CAST(GETDATE() AS DATE) < fecha_fin_vigencia;
+END
+GO

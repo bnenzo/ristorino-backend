@@ -30,9 +30,11 @@ public class ReservasRestClient {
     JsonObject body = new JsonObject();
     body.addProperty("fechaReserva", request.getFechaReserva());
     body.addProperty("cantAdultos", request.getCantAdultos());
+    body.addProperty("cantMenores", request.getCantMenores());
     body.addProperty("horaReserva", request.getHoraReserva());
     body.addProperty("codReservaSucursal", request.getCodReservaSucursal());
     body.addProperty("fechaCancelacion", request.getFechaCancelacion());
+    body.addProperty("codEstado", request.getCodEstado());
 
     Httpful http = new Httpful(config.getBaseUrl())
         .path("/reservas/cliente")

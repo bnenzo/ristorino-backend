@@ -119,10 +119,11 @@ public class ReservasRepository {
         .addValue("nro_cliente", nroCliente)
         .addValue("nro_reserva", nroReserva)
         .addValue("cant_adultos", body.getCantAdultos())
+        .addValue("cant_menores", body.getCantMenores())
         .addValue("fecha_reserva", body.getFechaReserva())
         .addValue("hora_reserva", body.getHoraReserva())
         .addValue("fecha_cancelacion", body.getFechaCancelacion())
-        .addValue("cod_estado", body.getFechaCancelacion() != null ? "CAN" : null);
+        .addValue("cod_estado", body.getFechaCancelacion() != null ? "CAN" : body.getCodEstado());
 
     jdbcCallFactory.executeWithOutputs(
         "sp_actualizar_reserva_cliente", "dbo", params);

@@ -1605,7 +1605,8 @@ BEGIN
       rr.cod_estado,
       rr.fecha_reserva,
       rr.cant_adultos,
-      rr.cod_reserva_sucursal
+      rr.cod_reserva_sucursal,
+      rr.cant_menores
   FROM dbo.reservas_restaurantes AS rr
   INNER JOIN dbo.restaurantes AS r
       ON r.nro_restaurante = rr.nro_restaurante
@@ -1622,6 +1623,7 @@ CREATE OR ALTER PROCEDURE dbo.sp_actualizar_reserva_cliente
   @nro_reserva   INT,
   @nro_cliente   INT,
   @cant_adultos  INT,
+  @cant_menores  INT,
   @fecha_reserva DATE,
   @fecha_cancelacion DATE,
   @hora_reserva  TIME,
@@ -1638,7 +1640,8 @@ BEGIN
         rr.fecha_reserva = COALESCE(@fecha_reserva, rr.fecha_reserva),
         rr.hora_reserva  = COALESCE(@hora_reserva,  rr.hora_reserva),
         rr.fecha_cancelacion = COALESCE(@fecha_cancelacion,  rr.fecha_cancelacion),
-        rr.cod_estado = COALESCE(@cod_estado,  rr.cod_estado)
+        rr.cod_estado = COALESCE(@cod_estado,  rr.cod_estado),
+        rr.cant_menores = COALESCE(@cant_menores, rr.cant_menores)
     FROM dbo.reservas_restaurantes AS rr
     WHERE rr.nro_cliente = @nro_cliente
       AND rr.nro_reserva = @nro_reserva;
@@ -2132,3 +2135,6 @@ BEGIN
         cr.nro_contenido;
 END
 GO
+
+select * from reservas_restaurantes
+

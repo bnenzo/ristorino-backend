@@ -13,6 +13,16 @@ public class ObtenerReservaClienteBean {
   private String codEstado;
   private LocalDate fechaReserva;
   private Integer cantAdultos;
+  private Integer cantMenores;
+
+  public Integer getCantMenores() {
+    return cantMenores;
+  }
+
+  public void setCantMenores(Integer cantMenores) {
+    this.cantMenores = cantMenores;
+  }
+
   private String codReservaSucursal;
 
   public ObtenerReservaClienteBean() {

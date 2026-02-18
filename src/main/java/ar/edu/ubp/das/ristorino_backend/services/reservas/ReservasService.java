@@ -112,7 +112,7 @@ public class ReservasService {
     reservaDTO.setFechaReserva(request.getFechaReserva().toString());
     reservaDTO.setNroRestaurante(1);
     reservaDTO.setNroSucursal(request.getNroSucursal());
-    reservaDTO.setCodZona("ACBA");
+    reservaDTO.setCodZona(request.getCodZona());
     reservaDTO.setHoraReserva(request.getHoraReserva().toString());
     reservaDTO.setCantAdultos(request.getCantAdultos());
     reservaDTO.setCantMenores(request.getCantMenores());

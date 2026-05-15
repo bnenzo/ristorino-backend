@@ -2,6 +2,8 @@ package ar.edu.ubp.das.ristorino_backend.services.clicks;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
@@ -10,8 +12,7 @@ import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clicks.ClicksRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
-import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksRestClient;
-import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksSoapClient;
+import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksBackendClient;
 
 @Service
 public class ClicksService {
@@ -23,27 +24,15 @@ public class ClicksService {
   @Autowired
   private CostosRepository costosRepository;
 
-  private final ClicksRestClient rest;
-  private final ClicksSoapClient soap;
+  @Autowired
+  private Map<String, ClicksBackendClient> clients;
 
   public ClicksService() {
-    this.rest = new ClicksRestClient();
-    this.soap = new ClicksSoapClient();
-  }
-
-  public ClicksService(ClicksRestClient rest, ClicksSoapClient soap) {
-    this.rest = rest;
-    this.soap = soap;
   }
 
   public Void registrarClickContenido(ClicksContenidosRestaurantesBean clickContenido) {
     ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(clickContenido.getNroRestaurante());
-    // if ("SOAP".equals(config.getBackendType())) {
-    // soap.registrarClickContenido(config, clickContenido);
-    // return null;
-    // }
-    // rest.registrarClickContenido(config, clickContenido);
-    // return null;
+    clients.get(config.getBackendType() + "-CLICKS").registrarClickContenido(config, clickContenido);
     return null;
   }
 

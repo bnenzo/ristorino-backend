@@ -45,6 +45,9 @@ public class ContenidosResource {
   @Autowired
   private GenAI genAI;
 
+  /*
+   * Obtener todos los contenidos
+   */
   @GetMapping("/promociones")
   public ResponseEntity<List<PromocionContenidoBean>> obtenerPromociones(
       @RequestParam(name = "nroRestaurante", required = false) Integer nroRestaurante,
@@ -56,39 +59,25 @@ public class ContenidosResource {
     return ResponseEntity.ok(promociones);
   }
 
-  @GetMapping("/restaurantes/ids")
-  public ResponseEntity<List<Integer>> obtenerIdsRestaurantes() {
-
-    List<Integer> ids = contenidosRepository
-        .getRestaurantesId()
-        .stream()
-        .map(r -> r.getNro_restaurante())
-        .toList();
-
-    return ResponseEntity.ok(ids);
-  }
-
-  // @GetMapping("/test/rest")
-  // public ResponseEntity<String> testRest() {
-  // contenidosService.testRestClient();
-  // return ResponseEntity.ok("ok");
-  // }
-
-  // Endpoint de prueba nomas . . . borrar luego
-  @GetMapping("/contenidos/no-publicados")
-  public ResponseEntity<List<ContenidoNoPublicadoBean>> obtenerContenidosNoPublicados() {
-
-    List<ContenidoNoPublicadoBean> contenidos = contenidosService.obtenerTodosLosContenidosNoPublicados();
-
-    return ResponseEntity.ok(contenidos);
-  }
-
+  /*
+   * Obtener contenidos no publicados de restaurantes, guardarlos y actualizar el
+   * publicado
+   */
   @PostMapping("/contenidos/sincronizar")
   public ResponseEntity<String> sincronizarContenidos() {
-
     contenidosService.sincronizarContenidosNoPublicados();
-
     return ResponseEntity.ok("contenidos sincronizados correctamente");
+  }
+
+  /*
+   * Obtener contenidos en base a la entrada de un input del usuario
+   */
+  @PostMapping("/contenidos/busqueda")
+  public ResponseEntity<List<PromocionContenidoBean>> buscarContenidosIA(
+      @RequestBody BuscarPromocionesIARequestBean request,
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma)
+      throws JsonProcessingException {
+    return ResponseEntity.ok(contenidosService.buscarContenidosConIA(request, nroIdioma));
   }
 
   @GetMapping("/test-promociones")
@@ -120,12 +109,13 @@ public class ContenidosResource {
     return ResponseEntity.ok(list);
   }
 
-  @PostMapping("/contenidos/busqueda")
-  public ResponseEntity<List<PromocionContenidoBean>> buscarContenidosIA(
-      @RequestBody BuscarPromocionesIARequestBean request,
-      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma)
-      throws JsonProcessingException {
-    return ResponseEntity.ok(contenidosService.buscarContenidosConIA(request, nroIdioma));
+  // Endpoint de prueba nomas . . . borrar luego
+  @GetMapping("/contenidos/no-publicados")
+  public ResponseEntity<List<ContenidoNoPublicadoBean>> obtenerContenidosNoPublicados() {
+
+    List<ContenidoNoPublicadoBean> contenidos = contenidosService.obtenerTodosLosContenidosNoPublicados();
+
+    return ResponseEntity.ok(contenidos);
   }
 
 }

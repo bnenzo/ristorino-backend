@@ -2,9 +2,6 @@ package ar.edu.ubp.das.ristorino_backend.beans;
 
 import java.math.BigDecimal;
 
-import jakarta.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "ContenidosNoPublicadosResponse")
 public class ContenidoNoPublicadoBean {
 
   private int nroRestaurante;
@@ -13,6 +10,15 @@ public class ContenidoNoPublicadoBean {
   private String imagenAPublicar;
   private BigDecimal costoClick;
   private Integer nroSucursal;
+  private int publicado;
+
+  public int getPublicado() {
+    return publicado;
+  }
+
+  public void setPublicado(int publicado) {
+    this.publicado = publicado;
+  }
 
   public int getNroRestaurante() {
     return nroRestaurante;

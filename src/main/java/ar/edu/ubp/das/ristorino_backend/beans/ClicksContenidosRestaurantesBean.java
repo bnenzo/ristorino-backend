@@ -2,9 +2,6 @@ package ar.edu.ubp.das.ristorino_backend.beans;
 
 import java.math.BigDecimal;
 
-import jakarta.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "ClicksContenidosRestaurantes")
 public class ClicksContenidosRestaurantesBean {
 
   private int nroRestaurante;

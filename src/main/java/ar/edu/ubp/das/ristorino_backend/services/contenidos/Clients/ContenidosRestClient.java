@@ -2,12 +2,16 @@ package ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
 import ar.edu.ubp.das.ristorino_backend.components.Httpful;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.ActualizarContenidosNoPublicadosDTO;
 
-public class ContenidosRestClient {
+@Component("REST")
+public class ContenidosRestClient implements ContenidosBackendClient {
 
   public List<ContenidoNoPublicadoBean> obtenerContenidosNoPublicados(ConfigBean config) {
 

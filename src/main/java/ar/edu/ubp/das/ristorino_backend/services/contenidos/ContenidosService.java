@@ -31,8 +31,7 @@ import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.PreferenciaRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.beans.ObtenerPreferenciasSucursalRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.resources.contenidos.beans.BuscarPromocionesIARequestBean;
-import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosRestClient;
-import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosSoapClient;
+import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosBackendClient;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.ActualizarContenidosNoPublicadosDTO;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadoPromocionesIAOutput;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadorPromocionesIAInputDTO;
@@ -51,19 +50,11 @@ public class ContenidosService {
   private CostosRepository costosRepository;
 
   @Autowired
+  private Map<String, ContenidosBackendClient> clients;
+
   private GenAI genAI;
 
-  private final ContenidosRestClient rest;
-  private final ContenidosSoapClient soap;
-
   public ContenidosService() {
-    this.rest = new ContenidosRestClient();
-    this.soap = new ContenidosSoapClient();
-  }
-
-  public ContenidosService(ContenidosRestClient rest, ContenidosSoapClient soap) {
-    this.rest = rest;
-    this.soap = soap;
   }
 
   public List<ContenidoNoPublicadoBean> obtenerTodosLosContenidosNoPublicados() {
@@ -82,15 +73,9 @@ public class ContenidosService {
       ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(nroRestaurante);
 
       List<ContenidoNoPublicadoBean> contenidosPorRestaurante;
-
       // 4) Decidir backend
-      if ("SOAP".equals(config.getBackendType())) {
-        System.out.println(">>> RESTAURANTE " + nroRestaurante + " ES SOAP");
-        contenidosPorRestaurante = soap.obtenerContenidosNoPublicados(config);
-      } else {
-        System.out.println(">>> RESTAURANTE " + nroRestaurante + " ES REST");
-        contenidosPorRestaurante = rest.obtenerContenidosNoPublicados(config);
-      }
+      contenidosPorRestaurante = clients.get(config.getBackendType())
+          .obtenerContenidosNoPublicados(config);
 
       // 5) Normalizar y unificar resultados
       if (contenidosPorRestaurante != null && !contenidosPorRestaurante.isEmpty()) {
@@ -195,11 +180,8 @@ public class ContenidosService {
       ActualizarContenidosNoPublicadosDTO actualizarContenidosNoPublicadosBody = new ActualizarContenidosNoPublicadosDTO();
       actualizarContenidosNoPublicadosBody.setContenidos(listaContenidos);
 
-      if ("SOAP".equals(config.getBackendType())) {
-        soap.actualizarContenidoNoPublicadosAPublicados(config, actualizarContenidosNoPublicadosBody);
-      } else {
-        rest.actualizarContenidoNoPublicadosAPublicados(config, actualizarContenidosNoPublicadosBody);
-      }
+      clients.get(config.getBackendType())
+          .actualizarContenidoNoPublicadosAPublicados(config, actualizarContenidosNoPublicadosBody);
     }
   }
 

@@ -1,5 +1,7 @@
 package ar.edu.ubp.das.ristorino_backend.services.reservas.Clients;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,38 +13,38 @@ import ar.edu.ubp.das.ristorino_backend.utils.SOAPClient;
 
 public class ReservasSoapClient {
 
-  public void crearReserva(ConfigBean config, CrearReservaConClienteDTO payload) {
+    public void crearReserva(ConfigBean config, CrearReservaConClienteDTO payload) {
 
-    System.out.println(
-        "[ReservasSoapClient] Enviando reserva + cliente a backend SOAP: "
-            + config.getBaseUrl());
+        System.out.println(
+                "[ReservasSoapClient] Enviando reserva + cliente a backend SOAP: "
+                        + config.getBaseUrl());
 
-    SOAPClient client = SoapClientFactory.create(
-        config,
-        "CrearReservaDesdeRistorinoRequest");
+        SOAPClient client = SoapClientFactory.create(
+                config,
+                "CrearReservaDesdeRistorinoRequest");
 
-    Map<String, Object> params = new HashMap<>();
-    params.put("body", payload);
+        Map<String, Object> params = new HashMap<>();
+        params.put("body", payload);
 
-    client.callServiceForObject(
-        Void.class,
-        "",
-        params);
+        client.callServiceForObject(
+                Void.class,
+                "",
+                params);
 
-    System.out.println(
-        "[ReservasSoapClient] Reserva enviada correctamente por SOAP");
-  }
+        System.out.println(
+                "[ReservasSoapClient] Reserva enviada correctamente por SOAP");
+    }
 
-  public void actualizarReservaCliente(ConfigBean config, ActualizarReservaClienteRequestBean request) {
+    public void actualizarReservaCliente(ConfigBean config, ActualizarReservaClienteRequestBean request) {
 
-    SOAPClient client = SoapClientFactory.create(
-        config,
-        "ActualizarReservaClienteRequest");
+        SOAPClient client = SoapClientFactory.create(
+                config,
+                "ActualizarReservaClienteRequest");
 
-    Map<String, Object> params = new HashMap<>();
-    params.put("body", request);
+        Map<String, Object> params = new HashMap<>();
+        params.put("body", request);
 
-    client.callServiceForObject(Void.class,
-        "", params);
-  }
+        client.callServiceForObject(Void.class,
+                "", params);
+    }
 }

@@ -2,6 +2,7 @@ package ar.edu.ubp.das.ristorino_backend.services.reservas;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
+import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasBackendClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasRestClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasSoapClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.ClienteRestauranteDTO;
@@ -34,6 +36,9 @@ public class ReservasService {
   private ClienteRepository clientesRepository;
   @Autowired
   private CostosRepository costosRepository;
+
+  @Autowired
+  private Map<String, ReservasBackendClient> clients;
 
   private final ReservasRestClient restClient;
   private final ReservasSoapClient soapClient;
@@ -140,28 +145,22 @@ public class ReservasService {
     payload.setCliente(clienteDTO);
     payload.setReserva(reservaDTO);
 
-    // Envío al restaurante correspondiente
-    if ("SOAP".equalsIgnoreCase(config.getBackendType())) {
-      System.out.println(">>> Enviando reserva + cliente a RESTAURANTE SOAP");
-      soapClient.crearReserva(config, payload);
-    } else {
-      System.out.println(">>> Enviando reserva + cliente a RESTAURANTE REST");
-      restClient.crearReserva(config, payload);
-    }
+    clients.get(config.getBackendType() + "-RESERVAS").crearReserva(config, payload);
 
     return codReservaSucursal;
   }
 
   public Void actualizarReservaCliente(Integer nroCliente, Integer nroReserva,
       ActualizarReservaClienteRequestBean request) {
-
-    reservasRepository.actualizarReservaCliente(nroCliente, nroReserva, request);
-    ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(request.getNroRestaurante());
-    if ("SOAP".equals(config.getBackendType())) {
-      soapClient.actualizarReservaCliente(config, request);
-      return null;
-    }
-    restClient.actualizarReservaCliente(config, request);
     return null;
+    // reservasRepository.actualizarReservaCliente(nroCliente, nroReserva, request);
+    // ConfigBean config =
+    // configuracionRepository.obtenerConfiguracionRestaunte(request.getNroRestaurante());
+    // if ("SOAP".equals(config.getBackendType())) {
+    // soapClient.actualizarReservaCliente(config, request);
+    // return null;
+    // }
+    // restClient.actualizarReservaCliente(config, request);
+    // return null;
   }
 }

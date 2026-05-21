@@ -27,6 +27,9 @@ public class ConfiguracionRepository {
     String portName = null;
     String backendType = null;
     String prefix = null;
+    String soapUsername = null;
+    String soapPassword = null;
+    String restSecretKey = null;
 
     for (ConfiguracionRestauranteBean a : attrs) {
       if (a == null || a.getCodAtributo() == null) {
@@ -58,6 +61,17 @@ public class ConfiguracionRepository {
           prefix = a.getValor();
           break;
 
+        case "soap_username":
+          soapUsername = a.getValor();
+          break;
+
+        case "soap_password":
+          soapPassword = a.getValor();
+          break;
+
+        case "rest_secret_key":
+          restSecretKey = a.getValor();
+          break;
       }
     }
 
@@ -67,7 +81,10 @@ public class ConfiguracionRepository {
         serviceName,
         portName,
         backendType,
-        prefix);
+        prefix,
+        soapUsername,
+        soapPassword,
+        restSecretKey);
   }
 
   public ConfigBean obtenerConfiguracionRestaunte(int nroRestaurante) {

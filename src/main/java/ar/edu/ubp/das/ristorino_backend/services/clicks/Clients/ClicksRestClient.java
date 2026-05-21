@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
 import ar.edu.ubp.das.ristorino_backend.components.Httpful;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
+import ar.edu.ubp.das.ristorino_backend.utils.Utils;
 
 @Component("REST-CLICKS")
 public class ClicksRestClient implements ClicksBackendClient {
@@ -21,6 +22,7 @@ public class ClicksRestClient implements ClicksBackendClient {
     body.addProperty("costoClick", click.getCostoClick());
 
     Httpful http = new Httpful(config.getBaseUrl())
+        .bearer(Utils.generarToken(config.getRestSecretKey()))
         .path("/registrar_click_contenido")
         .post(body);
 

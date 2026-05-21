@@ -9,6 +9,7 @@ import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
 import ar.edu.ubp.das.ristorino_backend.components.Httpful;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.ActualizarContenidosNoPublicadosDTO;
+import ar.edu.ubp.das.ristorino_backend.utils.Utils;
 
 @Component("REST")
 public class ContenidosRestClient implements ContenidosBackendClient {
@@ -20,6 +21,7 @@ public class ContenidosRestClient implements ContenidosBackendClient {
 
     Httpful http = new Httpful(config.getBaseUrl())
         .path("/contenidos/no-publicados")
+        .bearer(Utils.generarToken(config.getRestSecretKey()))
         .get();
 
     ContenidoNoPublicadoBean[] response = http.execute(ContenidoNoPublicadoBean[].class);
@@ -41,6 +43,7 @@ public class ContenidosRestClient implements ContenidosBackendClient {
 
     Httpful http = new Httpful(config.getBaseUrl())
         .path("/contenidos/actualizar-publicados")
+        .bearer(Utils.generarToken(config.getRestSecretKey()))
         .post(body);
 
     http.execute(Void.class);

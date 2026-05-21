@@ -15,14 +15,16 @@ public class SoapClientFactory {
           "namespace": "%s",
           "serviceName": "%s",
           "portName": "%s",
-          "username": "",
-          "password": ""
+          "username": "%s",
+          "password": "%s"
         }
         """,
         config.getBaseUrl(),
         config.getNamespace(),
         config.getServiceName(),
-        config.getPortName());
+        config.getPortName(),
+        config.getSoapUsername(),
+        config.getSoapPassword());
 
     return SOAPClient.SOAPClientBuilder
         .fromConfig(jsonConfig)

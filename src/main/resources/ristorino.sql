@@ -137,7 +137,7 @@ CREATE TABLE restaurantes (
 
 INSERT INTO restaurantes VALUES (1, 'La Bella Pizza', '30717101975', 'https://pedidosya.dhmedia.io/image/pedidosya/restaurants/0758a0aa-51df-40f6-88b1-8cfe1fe1fb4e.jpg?quality=100');
 INSERT INTO restaurantes VALUES (2, 'Perukai', '20999999222', 'https://pedidosya.dhmedia.io/image/pedidosya/restaurants/sabores-del-peru.jpg?quality=100');
-INSERT INTO restaurantes VALUES (3, 'La Fabrica Burger', '30999999333', 'https://pedidosya.dhmedia.io/image/pedidosya/restaurants/eb900313-c34b-4e09-98ff-51f934b209f7.jpg?quality=100');
+-- INSERT INTO restaurantes VALUES (3, 'La Fabrica Burger', '30999999333', 'https://pedidosya.dhmedia.io/image/pedidosya/restaurants/eb900313-c34b-4e09-98ff-51f934b209f7.jpg?quality=100');
 -- INSERT INTO restaurantes VALUES (4, 'Sabores del Norte', '40999999444');
 
 
@@ -155,7 +155,10 @@ INSERT INTO atributos (cod_atributo, nom_atributo, tipo_dato) VALUES
 ('port_name','portName','string'),
 ('namespace','namespace','string'),
 ('backend_type', 'backendType', 'string'),
-('prefix', 'prefix', 'string');
+('prefix', 'prefix', 'string'),
+('soap_username', 'soapUsername', 'string'),
+('soap_password', 'soapPassword', 'string'),
+('rest_secret_key', 'restSecretKey', 'string');
 
 ------------------------------------------------------------ CONFIGURACION_RESTAURANTES ------------------------------------------------------------ 
 
@@ -172,14 +175,15 @@ INSERT INTO configuracion_restaurantes (nro_restaurante, cod_atributo, valor) VA
 (1, 'api_base', 'http://localhost:8086/api/v1/la-bella-pizza'),
 (1, 'backend_type', 'REST'),
 (1, 'prefix', 'LBP'),
+(1, 'rest_secret_key', 'Ristorino2024SecretKeyDAS12345!!'),
 (2, 'api_base', 'http://localhost:8087/services/perukai.wsdl'),
 (2, 'service_name', 'PerukaiWSPortService'),
 (2, 'port_name', 'PerukaiWSPortSoap11'),
 (2, 'namespace', 'http://services.perukai.das.ubp.edu.ar/'),
 (2, 'backend_type', 'SOAP'),
-(2, 'prefix', 'PK');
-
-select * from configuracion_restaurantes
+(2, 'prefix', 'PK'),
+(2, 'soap_username','usr_admin'),
+(2, 'soap_password','pwd_admin');
 
 ------------------------------------------------------------ PROVINCIAS ------------------------------------------------------------ 
 CREATE TABLE provincias (
@@ -241,13 +245,6 @@ CREATE TABLE clientes (
     FOREIGN KEY (nro_localidad) REFERENCES localidades(nro_localidad)
 );
 
-INSERT INTO clientes (apellido, nombre, clave, correo, telefonos, nro_localidad, habilitado) VALUES
-('Letona','Renzo','letonaRenzo','renzo.letona@example.com','351-1112233',1,1),
-('Gómez','María','abcd','maria.gomez@example.com','351-2345678',2,1),
-('Rodríguez','Lucas','pass','lucas.rodriguez@example.com','351-3456789',3,1),
-('Fernández','Ana','clave','ana.fernandez@example.com','351-4567890',4,1),
-('Díaz','Carla','qwerty','carla.diaz@example.com','351-5678901',5,1);
-
 ------------------------------------------------------------ PREFERENCIAS_CLIENTES ------------------------------------------------------------ 
 
 CREATE TABLE preferencias_clientes (
@@ -260,14 +257,6 @@ CREATE TABLE preferencias_clientes (
     FOREIGN KEY (cod_categoria, nro_valor_dominio)
         REFERENCES dominio_categorias_preferencias(cod_categoria, nro_valor_dominio)
 );
-
-INSERT INTO preferencias_clientes
-(nro_cliente, cod_categoria, nro_valor_dominio, observaciones) VALUES
-(1,'tc',1,'Prefiere sushi y ramen'),
-(2,'tc',3,'Busca experiencias premium'),
-(3,'tc',2,'Fan de BBQ coreana'),
-(4,'tc',1,''),
-(5,'tc',3,'Elige menús degustación');
 
 ------------------------------------------------------------ ESTADOS_RESERVAS ------------------------------------------------------------ 
 
@@ -302,10 +291,17 @@ CREATE TABLE idiomas_estados (
 );
 
 INSERT INTO idiomas_estados (cod_estado, nro_idioma, estado) VALUES
-('PEN',1,'Pendiente'),('PEN',2,'Pending'),
-('CONF',1,'Confirmada'),('CONF',2,'Confirmed'),
-('CAN',1,'Cancelada'),('CAN',2,'Canceled'),
-('COMP',1,'Completada'),('COMP',2,'Completed');
+('PEN',1,'Pendiente'),
+('PEN',2,'Pending'),
+
+('CONF',1,'Confirmada'),
+('CONF',2,'Confirmed'),
+
+('CAN',1,'Cancelada'),
+('CAN',2,'Canceled'),
+
+('COMP',1,'Completada'),
+('COMP',2,'Completed');
 
 ------------------------------------------------------------ IDIOMAS_DOMINIO_CAT_PREFERENCIAS ------------------------------------------------------------ 
 
@@ -507,9 +503,10 @@ INSERT INTO sucursales_restaurantes VALUES
 (1,2,'La Bella Pizza General Paz','Jacinto Ríos',170,'General Paz',1,'5004','03515388931',30,12,'LBP-002'),
 
 (2,1,'Perukai Nueva Córdoba','Hipólito Yrigoyen',500,'Nueva Córdoba',1,'5000','0351-4000001',50,10,'PK-001'),
-(2,2,'Perukai Güemes','Belgrano',700,'Güemes',1,'5000','0351-4000002',45,10,'PK-002'),
+(2,2,'Perukai Güemes','Belgrano',700,'Güemes',1,'5000','0351-4000002',45,10,'PK-002');
 
-(3,1,'La Fabrica Burger Cerro','Rafael Nuñez',4000,'Cerro de las Rosas',1,'5004','03515377931',60,10,'LFB-001');
+-- Restaurante 3, descomentar despues
+-- (3,1,'La Fabrica Burger Cerro','Rafael Nuñez',4000,'Cerro de las Rosas',1,'5004','03515377931',60,10,'LFB-001');
 
 
 
@@ -518,8 +515,8 @@ INSERT INTO sucursales_restaurantes VALUES
 CREATE TABLE zonas_sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(5) NOT NULL,
-    desc_zona VARCHAR(50),
+    cod_zona CHAR(15) NOT NULL,
+    desc_zona VARCHAR(100),
     cant_comensales INT NOT NULL,
     permite_menores INT NOT NULL,
     habilitada INT NOT NULL,
@@ -529,13 +526,21 @@ CREATE TABLE zonas_sucursales_restaurantes (
 );
 
 INSERT INTO zonas_sucursales_restaurantes VALUES
-(1,1,'ACBA','Se encuentra en alta cordoba',20,1,1),
-(1,2,'GPZ','Se encuentra en general paz',20,1,1),
+(1,1,'barra','Zona para aperitivos y comidas rápidas',10,0,1),
+(1,1,'salon','Zona principal con servicio de mesa',20,1,1),
+(1,1,'patio','Zona exterior con servicio de mesa y area para fumadores',20,1,1),
+(1,2,'barra','Zona para aperitivos y comidas rápidas',10,0,1),
+(1,2,'salon','Zona principal con servicio de mesa',10,1,1),
+(1,2,'patio','Zona exterior con servicio de mesa y area para fumadores',10,1,1),
 
-(2,1,'NCBA','Se encuentra en nueva cordoba',50,1,1),
-(2,2,'GUE','Se encuentra en guemes',45,1,1),
+(2,1,'barra','Zona para aperitivos y comidas rápidas',10,0,1),
+(2,1,'salon','Zona principal con servicio de mesa',20,1,1),
+(2,1,'patio','Zona exterior con servicio de mesa y area para fumadores',20,1,1),
+(2,2,'barra','Zona para aperitivos y comidas rápidas',5,0,1),
+(2,2,'salon','Zona principal con servicio de mesa',20,1,1),
+(2,2,'patio','Zona exterior con servicio de mesa y area para fumadores',20,1,1);
 
-(3,1,'CDLR','Se encuentra en el cerro de las rosas',60,1,1);
+
 
 
 ------------------------------------------------------------ TURNOS_SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
@@ -553,36 +558,34 @@ CREATE TABLE turnos_sucursales_restaurantes (
 
 INSERT INTO turnos_sucursales_restaurantes
 (nro_restaurante, nro_sucursal, hora_desde, hora_hasta, habilitado) VALUES
-(1,1,'12:00','13:30',1),
-(1,1,'13:30','14:30',1),
-(1,1,'14:30','15:30',1),
-(1,1,'20:00','21:30',1),
-(1,1,'21:30','22:30',1),
-(1,1,'22:30','23:30',1),
+(1,1,'12:00','13:00',1),
+(1,1,'13:00','14:00',1),
+(1,1,'15:00','16:00',1),
+(1,1,'20:00','21:00',1),
+(1,1,'21:00','22:00',1),
+(1,1,'22:00','23:00',1),
 
-(1,2,'12:00','13:15',1),
+(1,2,'12:00','13:00',1),
 (1,2,'20:00','21:00',0),
 
-(2,1,'12:00','14:00',1),
-(2,1,'20:00','22:30',1),
+(2,1,'13:00','14:00',1),
+(2,1,'21:00','22:00',1),
 
 (2,2,'12:00','14:00',1),
-(2,2,'20:00','22:30',1),
+(2,2,'20:00','22:30',1);
 
-(3,1,'12:00','13:30',1),
-(3,1,'13:30','14:30',1),
-(3,1,'20:00','21:30',1),
-(3,1,'21:30','22:30',1);
-
-
-
+-- (3,1,'12:00','13:30',1),
+-- (3,1,'13:30','14:30',1),
+-- (3,1,'20:00','21:30',1),
+-- (3,1,'21:30','22:30',1);
 
 ------------------------------------------------------------ ZONAS_TURNOS_SUCURSALES_RESTAURANTES ------------------------------------------------------------ 
 
+-- Podemos llenarla despues
 CREATE TABLE zonas_turnos_sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(5) NOT NULL,
+    cod_zona CHAR(15) NOT NULL,
     hora_desde TIME NOT NULL,
     permite_menores INT NOT NULL DEFAULT 1,
     PRIMARY KEY (nro_restaurante, nro_sucursal, cod_zona, hora_desde),
@@ -592,38 +595,14 @@ CREATE TABLE zonas_turnos_sucursales_restaurantes (
         REFERENCES zonas_sucursales_restaurantes (nro_restaurante, nro_sucursal, cod_zona)
 );
 
-
-INSERT INTO zonas_turnos_sucursales_restaurantes VALUES
-(1,1,'ACBA','12:00',1),
-(1,1,'ACBA','13:30',1),
-(1,1,'ACBA','14:30',1),
-(1,1,'ACBA','20:00',1),
-(1,1,'ACBA','21:30',1),
-(1,1,'ACBA','22:30',1),
-
-
-(1,2,'GPZ','12:00',1),
-(1,2,'GPZ','20:00',1),
-
-(2,1,'NCBA','12:00',1),
-(2,1,'NCBA','20:00',1),
-
-(2,2,'GUE','12:00',1),
-(2,2,'GUE','20:00',1),
-
-
-(3,1,'CDLR','12:00',1),
-(3,1,'CDLR','20:00',1);
-
-
 ------------------------------------------------------------ IDIOMAS_ZONAS_SUC_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE idiomas_zonas_suc_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(5) NOT NULL,
+    cod_zona CHAR(15) NOT NULL,
     nro_idioma INT NOT NULL,
-    zona VARCHAR(50) NOT NULL,
+    zona VARCHAR(100) NOT NULL,
     desc_zona VARCHAR(255),
     PRIMARY KEY (nro_restaurante, nro_sucursal, cod_zona, nro_idioma),
     FOREIGN KEY (nro_restaurante, nro_sucursal, cod_zona)
@@ -631,20 +610,24 @@ CREATE TABLE idiomas_zonas_suc_restaurantes (
     FOREIGN KEY (nro_idioma) REFERENCES idiomas(nro_idioma)
 );
 
+
 INSERT INTO idiomas_zonas_suc_restaurantes
 (nro_restaurante, nro_sucursal, cod_zona, nro_idioma, zona, desc_zona) VALUES
-(1,1,'ACBA',1,'Alta Córdoba','Se encuentra en Alta Córdoba'),
-(1,1,'ACBA',2,'Alta Córdoba','Located in Alta Córdoba'),
-(1,2,'GPZ',1,'General Paz','Se encuentra en General Paz'),
-(1,2,'GPZ',2,'General Paz','Located in General Paz'),
+(1,1,'barra',1,'Barra','Zona para aperitivos y comidas rápidas'),
+(1,1,'salon',1,'Salon','Zona principal con servicio de mesa'),
+(1,1,'patio',1,'Patio','Zona exterior con servicio de mesa y area para fumadores'),
 
-(2,1,'NCBA',1,'Nueva Córdoba','Se encuentra en Nueva Córdoba'),
-(2,1,'NCBA',2,'Nueva Córdoba','Located in Nueva Córdoba'),
-(2,2,'GUE',1,'Güemes','Se encuentra en Güemes'),
-(2,2,'GUE',2,'Güemes','Located in Güemes'),
+(1,2,'barra',2,'Bar','Area for appetizers and quick meals'),
+(1,2,'salon',2,'Main dining area','Main dining area with table service'),
+(1,2,'patio',2,'Outdoor dining area','Outdoor area with table service and smoking area'),
 
-(3,1,'CDLR',1,'Cerro de las Rosas','Se encuentra en Cerro de las Rosas'),
-(3,1,'CDLR',2,'Cerro de las Rosas','Located in Cerro de las Rosas');
+(2,1,'barra',1,'Barra','Zona para aperitivos y comidas rápidas'),
+(2,1,'salon',1,'Salon','Zona principal con servicio de mesa'),
+(2,1,'patio',1,'Patio','Zona exterior con servicio de mesa y area para fumadores'),
+
+(2,2,'barra',2,'Bar','Area for appetizers and quick meals'),
+(2,2,'salon',2,'Main dining area','Main dining area with table service'),
+(2,2,'patio',2,'Outdoor dining area','Outdoor area with table service and smoking area');
 
 ------------------------------------------------------------ PREFERENCIAS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -688,11 +671,11 @@ INSERT INTO preferencias_restaurantes
 (2,2,'tc',11,17,'Especializada en ceviche'),
 (2,2,'ea',1,18,'Vegetariana'),
 (2,2,'est',1,19,'Gourmet'),
-(2,2,'cp',3,20,'Alto/Premium'),
+(2,2,'cp',3,20,'Alto/Premium');
 
 
-(3,1, 'tc',13,21,'Especializada en hamburguesas'),
-(3,1, 'tc',13,22,'Focus on burgers');
+-- (3,1, 'tc',13,21,'Especializada en hamburguesas'),
+-- (3,1, 'tc',13,22,'Focus on burgers');
 
 
 ------------------------------------------------------------ CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
@@ -708,7 +691,7 @@ CREATE TABLE contenidos_restaurantes (
     fecha_ini_vigencia DATE NOT NULL,
     fecha_fin_vigencia DATE NOT NULL,
     costo_click DECIMAL(10,2) NOT NULL DEFAULT 0,
-    cod_contenido_restaurante VARCHAR(255),
+    cod_contenido_restaurante VARCHAR(255), -- LBP-1-1 {nroSucursal}-{nroContenido}
     
     PRIMARY KEY (nro_restaurante, nro_contenido, nro_idioma),
     FOREIGN KEY (nro_restaurante) REFERENCES restaurantes (nro_restaurante),
@@ -716,19 +699,6 @@ CREATE TABLE contenidos_restaurantes (
     FOREIGN KEY (nro_restaurante, nro_sucursal)
         REFERENCES sucursales_restaurantes (nro_restaurante, nro_sucursal)
 );
-
--- INSERT INTO contenidos_restaurantes VALUES
--- (1,1,1,1, null, 'https://tn.com.ar/resizer/z2Dke2M5Hbz4s3VRE_OClr_-fXU=/arc-anglerfish-arc2-prod-artear/public/FOTWE3GMANB6BPQKQB4GER55MM.jpeg','Promo mediodía: Pizza a la piedra + bebida','2025-11-03','2027-02-10',15.00,'LBP-1-1'),
--- (1,1,2,1, 'nn','https://www.paulinacocina.net/wp-content/uploads/2024/05/receta-de-pizza-frita-paulina-cocina-recetas-800x450.jpg','Noche de pizzas a la piedra 2x1','2025-11-03','2027-02-10',12.50,'LBP-1-1'),
--- (1,1,3,2, 'nn','https://external-preview.redd.it/dominos-50-off-pizza-deal-returns-april-21-27-2025-v0-fmRa26hiSj0oi3Ob8jddYxIJCAft4z0H26lGC1J9KvE.jpg?width=640&crop=smart&auto=webp&s=34ace06ed3c90f079c718796a0ce7496ea4f5f32','Degustacion de pizzas en sucursal Alta Cba','2025-11-03','2027-02-10',10.00,'LBP-1-2'),
-
--- (2,1,1,1, null,'https://www.grupolegovic.com/wp-content/uploads/2022/04/makis-acevichados.jpg','Promo 50% off Ceviche','2025-11-03','2027-02-10',15.00,'PK-1-1'),
--- (2,1,2,1, null,'https://imag.bonviveur.com/pulpo-al-olivo.jpg','Noche de Mar al 2x1','2025-11-03','2027-02-10',15.00,'PK-1-1'),
--- (2,1,3,1, 'nn','https://static.wixstatic.com/media/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg/v1/fill/w_980,h_849,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/f50a6c_55fcd867d0554e4a804e4ba98b8c11dc~mv2.jpg','Promo ceviche 3x2 + bebida gratis','2025-11-03','2027-02-10',15.00,'PK-1-1'),
-
--- (3,1,1,1, null,'https://www.beloleum.com/wp-content/uploads/2023/11/hamburguesas-caseras-gourmet.png','Promo 5 hamburguesas clasicas','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
--- (3,1,2,1, 'nn','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutYtVQvC4lG3PY78UDJE5SOuUZMMjxRLhYA&s','Quintuple monster','2025-11-03','2027-02-10',15.00,'LFB-1-1'),
--- (3,1,3,1, 'nn','https://media.istockphoto.com/id/1473452859/es/foto/sabrosa-hamburguesa-con-queso-vaso-de-cola-y-papas-fritas-en-primer-plano-de-bandeja-de-madera.jpg?s=612x612&w=0&k=20&c=cz14RIorGJFn3mFhBFL66PqvXD1nYC_28Cc_OO4mhps=','Promo Burger + papa y gaseosa','2025-11-03','2027-02-10',15.00,'LFB-1-1');
 
 ------------------------------------------------------------ CLICKS_CONTENIDOS_RESTAURANTES ------------------------------------------------------------ 
 
@@ -758,7 +728,7 @@ CREATE TABLE reservas_restaurantes (
     fecha_reserva DATE NOT NULL,
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(5) NOT NULL,
+    cod_zona CHAR(15) NOT NULL,
     hora_reserva TIME NOT NULL,
     cant_adultos INT NOT NULL,
     cant_menores INT NOT NULL,

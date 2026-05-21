@@ -1,13 +1,17 @@
 package ar.edu.ubp.das.ristorino_backend.services.reservas.Clients;
 
+import org.springframework.stereotype.Component;
+
 import com.google.gson.JsonObject;
 
 import ar.edu.ubp.das.ristorino_backend.components.Httpful;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.CrearReservaConClienteDTO;
+import ar.edu.ubp.das.ristorino_backend.utils.Utils;
 
-public class ReservasRestClient {
+@Component("REST-RESERVAS")
+public class ReservasRestClient implements ReservasBackendClient {
 
   public void crearReserva(ConfigBean config, CrearReservaConClienteDTO payload) {
 
@@ -17,6 +21,7 @@ public class ReservasRestClient {
 
     Httpful http = new Httpful(config.getBaseUrl())
         .path("/reservas")
+        .bearer(Utils.generarToken(config.getRestSecretKey()))
         .post(payload);
 
     http.execute(Void.class);

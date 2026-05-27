@@ -1750,28 +1750,19 @@ CREATE OR ALTER PROCEDURE sp_crear_reserva_restaurante
   @cant_menores INT,
   @cod_estado VARCHAR(30),
   @costo_reserva DECIMAL(10,2),
-  @cod_reserva_sucursal VARCHAR(50)
+  @cod_reserva_sucursal VARCHAR(50),
+  @cod_zona VARCHAR(15)
 AS
 BEGIN
   SET NOCOUNT ON;
 
   DECLARE @nro_reserva INT;
-  DECLARE @cod_zona CHAR(5);
 
   /* 1️⃣ Generar nro_reserva (correlativo por cliente) */
   SELECT 
     @nro_reserva = ISNULL(MAX(nro_reserva), 0) + 1
   FROM reservas_restaurantes
   WHERE nro_cliente = @nro_cliente;
-
-  /* Obtener el codigo zona */
-   SELECT @cod_zona =
-        zsr.cod_zona
-    FROM zonas_sucursales_restaurantes zsr
-    WHERE 
-        zsr.nro_restaurante = @nro_restaurante AND
-        zsr.nro_sucursal = @nro_sucursal
-
 
   /* 2️⃣ Insertar reserva */
   INSERT INTO reservas_restaurantes (

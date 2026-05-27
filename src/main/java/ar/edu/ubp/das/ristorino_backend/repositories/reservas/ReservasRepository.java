@@ -10,10 +10,13 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosResponseBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerEstadosIdiomaBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerReservasClienteBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerZonasSucursalesRestaurantesFormReservasResponseBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerReservaClienteBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerSucursalesFormReservasResponseBean;
 
 @Repository
 public class ReservasRepository {
@@ -34,6 +37,20 @@ public class ReservasRepository {
     return jdbcCallFactory.executeQuery("sp_obtener_disponibilidad_de_turnos", "dbo", params,
         "turnos_sucursales_restaurantes",
         ObtenerDisponibilidadTurnosBean.class);
+  }
+
+  public List<ObtenerDisponibilidadTurnosResponseBean> obtenerDisponibilidadDeTurnosV2(Integer nroRestaurante,
+      Integer nroSucursal, LocalDate fechaAReservar, String codZona) {
+
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_restaurante", nroRestaurante)
+        .addValue("nro_sucursal", nroSucursal)
+        .addValue("fecha_reserva", fechaAReservar)
+        .addValue("cod_zona", codZona);
+
+    return jdbcCallFactory.executeQuery("sp_obtener_disponibilidad_por_zona", "dbo", params,
+        "turnos_sucursales_restaurantes",
+        ObtenerDisponibilidadTurnosResponseBean.class);
   }
 
   // =====================================
@@ -127,5 +144,21 @@ public class ReservasRepository {
 
     jdbcCallFactory.executeWithOutputs(
         "sp_actualizar_reserva_cliente", "dbo", params);
+  }
+
+  public List<ObtenerSucursalesFormReservasResponseBean> obtenerSucursalesFormReservas() {
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    return jdbcCallFactory.executeQuery("sp_obtener_sucursales_form_reservas", "dbo", params,
+        "sucursales_restaurantes",
+        ObtenerSucursalesFormReservasResponseBean.class);
+  }
+
+  public List<ObtenerZonasSucursalesRestaurantesFormReservasResponseBean> obtenerZonasDeSucursalesRestaurantesFormReservas(
+      Integer nroIdioma) {
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("nro_idioma", nroIdioma);
+    return jdbcCallFactory.executeQuery("sp_obtener_zonas_restaurantes_form_reservas", "dbo", params,
+        "idiomas_zonas_suc_restaurantes",
+        ObtenerZonasSucursalesRestaurantesFormReservasResponseBean.class);
   }
 }

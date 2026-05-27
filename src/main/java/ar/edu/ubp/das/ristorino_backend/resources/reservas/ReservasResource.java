@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosResponseBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerReservaClienteBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerSucursalesFormReservasResponseBean;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.ReservasService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerEstadosIdiomaBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerReservasClienteBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerZonasSucursalesRestaurantesFormReservasResponseBean;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +49,16 @@ public class ReservasResource {
       @RequestParam LocalDate fechaAReservar) {
 
     return reservasRepository.obtenerDisponibilidadDeTurnos(nroRestaurante, nroSucursal, fechaAReservar);
+  }
+
+  @GetMapping("/reservas/disponibilidad-v2")
+  public List<ObtenerDisponibilidadTurnosResponseBean> obtenerDisponibilidadDeTurnosV2(
+      @RequestParam Integer nroRestaurante,
+      @RequestParam Integer nroSucursal,
+      @RequestParam String codZona,
+      @RequestParam LocalDate fechaAReservar) {
+
+    return reservasRepository.obtenerDisponibilidadDeTurnosV2(nroRestaurante, nroSucursal, fechaAReservar, codZona);
   }
 
   // =====================================
@@ -93,6 +106,18 @@ public class ReservasResource {
       @RequestHeader(value = "nroCliente") Integer nroCliente) {
     reservasService.actualizarReservaCliente(nroCliente, nroReserva, body);
     return ResponseEntity.ok().build();
+  }
+
+  // OBTENER SUCURSALES PARA INICIALIZAR EL FORM DE RESERVAS
+  @GetMapping("/reservas/obtener-sucursales")
+  public List<ObtenerSucursalesFormReservasResponseBean> obtenerSucursalesFromReservas() {
+    return reservasRepository.obtenerSucursalesFormReservas();
+  }
+
+  @GetMapping("/reservas/obtener-zonas-sucursales-restaurantes")
+  public List<ObtenerZonasSucursalesRestaurantesFormReservasResponseBean> obtenerZonasDeSucursalesRestaurantesFormReservas(
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma) {
+    return reservasRepository.obtenerZonasDeSucursalesRestaurantesFormReservas(nroIdioma);
   }
 
 }

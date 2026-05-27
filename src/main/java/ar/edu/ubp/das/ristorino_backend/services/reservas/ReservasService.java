@@ -16,8 +16,10 @@ import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.Configuracion
 import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosResponseBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
+import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerSucursalesFormReservasResponseBean;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasBackendClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasRestClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasSoapClient;
@@ -56,15 +58,17 @@ public class ReservasService {
   @Transactional
   public String crearReserva(CrearReservaRequestBean request, Integer nroCliente) {
 
-    List<ObtenerDisponibilidadTurnosBean> horariosDisponibles = reservasRepository.obtenerDisponibilidadDeTurnos(
-        request.getNroRestaurante(), request.getNroSucursal(),
-        request.getFechaReserva());
+    List<ObtenerDisponibilidadTurnosResponseBean> horariosDisponibles = reservasRepository
+        .obtenerDisponibilidadDeTurnosV2(
+            request.getNroRestaurante(), request.getNroSucursal(),
+            request.getFechaReserva(), request.getCodZona());
 
-    Optional<ObtenerDisponibilidadTurnosBean> opt = horariosDisponibles.stream()
+    String horaRequest = request.getHoraReserva().toString(); // "12:00"
+
+    Optional<ObtenerDisponibilidadTurnosResponseBean> opt = horariosDisponibles.stream()
         .filter(h -> request.getNroRestaurante().equals(h.getNroRestaurante()) &&
             request.getNroSucursal().equals(h.getNroSucursal()) &&
-            request.getFechaReserva().equals(h.getFechaReserva()) &&
-            request.getHoraReserva().equals(h.getHoraReserva()))
+            horaRequest.equals(h.getHoraDesde().substring(0, 5)))
         .findFirst();
 
     if (opt.isEmpty()) {
@@ -72,13 +76,10 @@ public class ReservasService {
       throw new RuntimeException("No hay turno para la hora solicitada");
     }
 
-    ObtenerDisponibilidadTurnosBean turno = opt.get();
+    ObtenerDisponibilidadTurnosResponseBean turno = opt.get();
 
     // Validaciones sobre el encontrado
-    if (turno.getTurnoCerrado() != null && turno.getTurnoCerrado() == 1) {
-      throw new RuntimeException("El turno está cerrado");
-    }
-    if (turno.getTurnoHabilitado() != null && turno.getTurnoHabilitado() == 0) {
+    if (turno.getHabilitado() != null && turno.getHabilitado() == 0) {
       throw new RuntimeException("El turno no está habilitado");
     }
     if (turno.getCupoDisponible() == null || turno.getCupoDisponible() <= 0) {

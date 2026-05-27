@@ -515,7 +515,7 @@ INSERT INTO sucursales_restaurantes VALUES
 CREATE TABLE zonas_sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(15) NOT NULL,
+    cod_zona VARCHAR(15) NOT NULL,
     desc_zona VARCHAR(100),
     cant_comensales INT NOT NULL,
     permite_menores INT NOT NULL,
@@ -585,7 +585,7 @@ INSERT INTO turnos_sucursales_restaurantes
 CREATE TABLE zonas_turnos_sucursales_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(15) NOT NULL,
+    cod_zona VARCHAR(15) NOT NULL,
     hora_desde TIME NOT NULL,
     permite_menores INT NOT NULL DEFAULT 1,
     PRIMARY KEY (nro_restaurante, nro_sucursal, cod_zona, hora_desde),
@@ -595,12 +595,61 @@ CREATE TABLE zonas_turnos_sucursales_restaurantes (
         REFERENCES zonas_sucursales_restaurantes (nro_restaurante, nro_sucursal, cod_zona)
 );
 
+INSERT INTO zonas_turnos_sucursales_restaurantes VALUES
+(1,1,'barra','12:00',0),
+(1,1,'barra','13:00',0),
+(1,1,'barra','15:00',0),
+(1,1,'barra','20:00',0),
+(1,1,'barra','21:00',0),
+(1,1,'barra','22:00',0),
+
+(1,1,'salon','12:00',1),
+(1,1,'salon','13:00',1),
+(1,1,'salon','15:00',1),
+(1,1,'salon','20:00',1),
+(1,1,'salon','21:00',1),
+(1,1,'salon','22:00',1),
+
+(1,1,'patio','12:00',1),
+(1,1,'patio','13:00',1),
+(1,1,'patio','15:00',1),
+(1,1,'patio','20:00',1),
+(1,1,'patio','21:00',1),
+(1,1,'patio','22:00',1),
+
+(1,2,'barra','12:00',0),
+(1,2,'barra','20:00',0),
+
+(1,2,'salon','12:00',1),
+(1,2,'salon','20:00',1),
+
+(1,2,'patio','12:00',1),
+(1,2,'patio','20:00',1),
+
+(2,1,'barra','13:00',0),
+(2,1,'barra','21:00',0),
+
+(2,1,'salon','13:00',1),
+(2,1,'salon','21:00',1),
+
+(2,1,'patio','13:00',1),
+(2,1,'patio','21:00',1),
+
+(2,2,'barra','12:00',0),
+(2,2,'barra','20:00',0),
+
+(2,2,'salon','12:00',0),
+(2,2,'salon','20:00',0),
+
+(2,2,'patio','12:00',0),
+(2,2,'patio','20:00',0);
+
 ------------------------------------------------------------ IDIOMAS_ZONAS_SUC_RESTAURANTES ------------------------------------------------------------ 
 
 CREATE TABLE idiomas_zonas_suc_restaurantes (
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(15) NOT NULL,
+    cod_zona VARCHAR(15) NOT NULL,
     nro_idioma INT NOT NULL,
     zona VARCHAR(100) NOT NULL,
     desc_zona VARCHAR(255),
@@ -616,7 +665,13 @@ INSERT INTO idiomas_zonas_suc_restaurantes
 (1,1,'barra',1,'Barra','Zona para aperitivos y comidas rápidas'),
 (1,1,'salon',1,'Salon','Zona principal con servicio de mesa'),
 (1,1,'patio',1,'Patio','Zona exterior con servicio de mesa y area para fumadores'),
+(1,1,'barra',2,'Bar','Area for appetizers and quick meals'),
+(1,1,'salon',2,'Main dining area','Main dining area with table service'),
+(1,1,'patio',2,'Outdoor dining area','Outdoor area with table service and smoking area'),
 
+(1,2,'barra',1,'Barra','Zona para aperitivos y comidas rápidas'),
+(1,2,'salon',1,'Salon','Zona principal con servicio de mesa'),
+(1,2,'patio',1,'Patio','Zona exterior con servicio de mesa y area para fumadores'),
 (1,2,'barra',2,'Bar','Area for appetizers and quick meals'),
 (1,2,'salon',2,'Main dining area','Main dining area with table service'),
 (1,2,'patio',2,'Outdoor dining area','Outdoor area with table service and smoking area'),
@@ -624,7 +679,13 @@ INSERT INTO idiomas_zonas_suc_restaurantes
 (2,1,'barra',1,'Barra','Zona para aperitivos y comidas rápidas'),
 (2,1,'salon',1,'Salon','Zona principal con servicio de mesa'),
 (2,1,'patio',1,'Patio','Zona exterior con servicio de mesa y area para fumadores'),
+(2,1,'barra',2,'Bar','Area for appetizers and quick meals'),
+(2,1,'salon',2,'Main dining area','Main dining area with table service'),
+(2,1,'patio',2,'Outdoor dining area','Outdoor area with table service and smoking area'),
 
+(2,2,'barra',1,'Barra','Zona para aperitivos y comidas rápidas'),
+(2,2,'salon',1,'Salon','Zona principal con servicio de mesa'),
+(2,2,'patio',1,'Patio','Zona exterior con servicio de mesa y area para fumadores'),
 (2,2,'barra',2,'Bar','Area for appetizers and quick meals'),
 (2,2,'salon',2,'Main dining area','Main dining area with table service'),
 (2,2,'patio',2,'Outdoor dining area','Outdoor area with table service and smoking area');
@@ -728,7 +789,7 @@ CREATE TABLE reservas_restaurantes (
     fecha_reserva DATE NOT NULL,
     nro_restaurante INT NOT NULL,
     nro_sucursal INT NOT NULL,
-    cod_zona CHAR(15) NOT NULL,
+    cod_zona VARCHAR(15) NOT NULL,
     hora_reserva TIME NOT NULL,
     cant_adultos INT NOT NULL,
     cant_menores INT NOT NULL,
@@ -2141,5 +2202,109 @@ BEGIN
     WHERE tipo_costo = @tipo_costo
       AND CAST(GETDATE() AS DATE) >= fecha_ini_vigencia
       AND CAST(GETDATE() AS DATE) < fecha_fin_vigencia;
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_obtener_sucursales_form_reservas
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        sr.nro_restaurante,
+        sr.nro_sucursal,
+        sr.nom_sucursal
+    FROM sucursales_restaurantes sr;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE sp_obtener_zonas_restaurantes_form_reservas
+    @nro_idioma INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        zsr.nro_restaurante,
+        zsr.nro_sucursal,
+        zsr.cod_zona,
+        zsr.permite_menores,
+        zsr.habilitada,
+        izsr.zona
+    FROM zonas_sucursales_restaurantes zsr
+    INNER JOIN idiomas_zonas_suc_restaurantes izsr
+        ON zsr.nro_restaurante = izsr.nro_restaurante
+        AND zsr.nro_sucursal = izsr.nro_sucursal
+        AND zsr.cod_zona = izsr.cod_zona
+    WHERE izsr.nro_idioma = @nro_idioma
+    ORDER BY 
+        zsr.nro_restaurante,
+        zsr.nro_sucursal,
+        zsr.cod_zona;
+END;
+GO
+CREATE OR ALTER PROCEDURE dbo.sp_obtener_disponibilidad_por_zona
+    @nro_restaurante INT,
+    @nro_sucursal    INT,
+    @fecha_reserva   DATE,
+    @cod_zona        VARCHAR(15)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        zts.nro_restaurante,
+        zts.nro_sucursal,
+        zts.cod_zona,
+        zsuc.cant_comensales,
+        zsuc.permite_menores,
+        zts.hora_desde,
+        tsr.hora_hasta,
+        tsr.habilitado,
+
+        ISNULL(SUM(rr.cant_adultos + rr.cant_menores), 0)        AS cantidad_reservada,
+        zsuc.cant_comensales
+            - ISNULL(SUM(rr.cant_adultos + rr.cant_menores), 0)  AS cupo_disponible
+
+    FROM dbo.zonas_turnos_sucursales_restaurantes AS zts
+
+    INNER JOIN dbo.zonas_sucursales_restaurantes AS zsuc
+        ON  zsuc.nro_restaurante = zts.nro_restaurante
+        AND zsuc.nro_sucursal    = zts.nro_sucursal
+        AND zsuc.cod_zona        = zts.cod_zona
+
+    INNER JOIN dbo.turnos_sucursales_restaurantes AS tsr
+        ON  tsr.nro_restaurante = zts.nro_restaurante
+        AND tsr.nro_sucursal    = zts.nro_sucursal
+        AND tsr.hora_desde      = zts.hora_desde
+
+    LEFT JOIN dbo.reservas_restaurantes AS rr
+        ON  rr.nro_restaurante = zts.nro_restaurante
+        AND rr.nro_sucursal    = zts.nro_sucursal
+        AND rr.cod_zona        = zts.cod_zona
+        AND rr.hora_reserva    = zts.hora_desde
+        AND rr.fecha_reserva   = @fecha_reserva
+        AND rr.cod_estado      IN ('PEN', 'CONF')
+
+    WHERE
+        zts.nro_restaurante = @nro_restaurante
+        AND zts.nro_sucursal = @nro_sucursal
+        AND zts.cod_zona     = @cod_zona
+        AND tsr.habilitado   = 1
+        AND zsuc.habilitada  = 1
+
+    GROUP BY
+        zts.nro_restaurante,
+        zts.nro_sucursal,
+        zts.cod_zona,
+        zsuc.cant_comensales,
+        zsuc.permite_menores,
+        zsuc.habilitada,
+        zts.hora_desde,
+        tsr.hora_hasta,
+        tsr.habilitado,
+        zts.permite_menores
+
+    ORDER BY
+        zts.hora_desde;
 END
 GO

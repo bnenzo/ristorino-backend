@@ -15,12 +15,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.gson.reflect.TypeToken;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.RestauranteIdBean;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.GenAI;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.SystemPrompts;
+import ar.edu.ubp.das.ristorino_backend.components.ApiHandler.ApiHandler;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.ContenidosRepository;
@@ -31,7 +33,6 @@ import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.PreferenciaRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.beans.ObtenerPreferenciasSucursalRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.resources.contenidos.beans.BuscarPromocionesIARequestBean;
-import ar.edu.ubp.das.ristorino_backend.services.contenidos.Clients.ContenidosBackendClient;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.ActualizarContenidosNoPublicadosDTO;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadoPromocionesIAOutput;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadorPromocionesIAInputDTO;
@@ -50,8 +51,6 @@ public class ContenidosService {
   private CostosRepository costosRepository;
 
   @Autowired
-  private Map<String, ContenidosBackendClient> clients;
-
   private GenAI genAI;
 
   public ContenidosService() {
@@ -74,8 +73,11 @@ public class ContenidosService {
 
       List<ContenidoNoPublicadoBean> contenidosPorRestaurante;
       // 4) Decidir backend
-      contenidosPorRestaurante = clients.get(config.getBackendType())
-          .obtenerContenidosNoPublicados(config);
+
+      contenidosPorRestaurante = new ApiHandler(config,
+          "ObtenerContenidosNoPublicados")
+          .execute(new TypeToken<List<ContenidoNoPublicadoBean>>() {
+          }.getType());
 
       // 5) Normalizar y unificar resultados
       if (contenidosPorRestaurante != null && !contenidosPorRestaurante.isEmpty()) {
@@ -180,8 +182,9 @@ public class ContenidosService {
       ActualizarContenidosNoPublicadosDTO actualizarContenidosNoPublicadosBody = new ActualizarContenidosNoPublicadosDTO();
       actualizarContenidosNoPublicadosBody.setContenidos(listaContenidos);
 
-      clients.get(config.getBackendType())
-          .actualizarContenidoNoPublicadosAPublicados(config, actualizarContenidosNoPublicadosBody);
+      new ApiHandler(config,
+          "ActualizarContenidoNoPublicadoAPublicados")
+          .execute(actualizarContenidosNoPublicadosBody);
     }
   }
 

@@ -2299,3 +2299,7 @@ BEGIN
         zts.hora_desde;
 END
 GO
+
+select * from contenidos_restaurantes
+
+select * from clicks_contenidos_restaurantes

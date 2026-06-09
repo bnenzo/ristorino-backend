@@ -8,11 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
 import ar.edu.ubp.das.ristorino_backend.beans.RegistrarClickPromocionBody;
+import ar.edu.ubp.das.ristorino_backend.components.ApiHandler.ApiHandler;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clicks.ClicksRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
-import ar.edu.ubp.das.ristorino_backend.services.clicks.Clients.ClicksBackendClient;
+import com.google.gson.JsonObject;
 
 @Service
 public class ClicksService {
@@ -24,15 +25,22 @@ public class ClicksService {
   @Autowired
   private CostosRepository costosRepository;
 
-  @Autowired
-  private Map<String, ClicksBackendClient> clients;
-
   public ClicksService() {
   }
 
   public Void registrarClickContenido(ClicksContenidosRestaurantesBean clickContenido) {
     ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(clickContenido.getNroRestaurante());
-    clients.get(config.getBackendType() + "-CLICKS").registrarClickContenido(config, clickContenido);
+
+    JsonObject body = new JsonObject();
+    body.addProperty("nroRestaurante", 1);
+    body.addProperty("nroContenido", clickContenido.getNroContenido());
+    body.addProperty("nroClick", clickContenido.getNroClick());
+    body.addProperty("fechaHoraRegistro", clickContenido.getFechaHoraRegistro());
+    body.addProperty("nroCliente", 1);
+    body.addProperty("costoClick", clickContenido.getCostoClick());
+
+    new ApiHandler(config, "RegistrarClickContenido").execute(body);
+
     return null;
   }
 

@@ -98,16 +98,6 @@ public class ReservasResource {
     return reservasRepository.obtenerReservaCliente(nroCliente, nroReserva);
   }
 
-  // ACTUALIZAR LA RESERVA DE UN CLIENTE
-  @PutMapping("/reservas/cliente/{nro_reserva}")
-  public ResponseEntity<Void> actualizarReservaCliente(
-      @PathVariable("nro_reserva") Integer nroReserva,
-      @RequestBody ActualizarReservaClienteRequestBean body,
-      @RequestHeader(value = "nroCliente") Integer nroCliente) {
-    reservasService.actualizarReservaCliente(nroCliente, nroReserva, body);
-    return ResponseEntity.ok().build();
-  }
-
   // OBTENER SUCURSALES PARA INICIALIZAR EL FORM DE RESERVAS
   @GetMapping("/reservas/obtener-sucursales")
   public List<ObtenerSucursalesFormReservasResponseBean> obtenerSucursalesFromReservas() {

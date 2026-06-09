@@ -2,7 +2,6 @@ package ar.edu.ubp.das.ristorino_backend.services.reservas;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,19 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ClienteBean;
+import ar.edu.ubp.das.ristorino_backend.components.ApiHandler.ApiHandler;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
-import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosResponseBean;
-import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
-import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerSucursalesFormReservasResponseBean;
-import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasBackendClient;
-import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasRestClient;
-import ar.edu.ubp.das.ristorino_backend.services.reservas.Clients.ReservasSoapClient;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.ClienteRestauranteDTO;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.CrearReservaConClienteDTO;
 import ar.edu.ubp.das.ristorino_backend.services.reservas.Dto.CrearReservaRestauranteDTO;
@@ -39,25 +33,10 @@ public class ReservasService {
   @Autowired
   private CostosRepository costosRepository;
 
-  @Autowired
-  private Map<String, ReservasBackendClient> clients;
-
-  private final ReservasRestClient restClient;
-  private final ReservasSoapClient soapClient;
-
-  public ReservasService() {
-    this.restClient = new ReservasRestClient();
-    this.soapClient = new ReservasSoapClient();
-  }
-
-  public ReservasService(ReservasRestClient restClient, ReservasSoapClient soapClient) {
-    this.restClient = restClient;
-    this.soapClient = soapClient;
-  }
-
   @Transactional
   public String crearReserva(CrearReservaRequestBean request, Integer nroCliente) {
 
+    // STEP-2: consumir del restaurante
     List<ObtenerDisponibilidadTurnosResponseBean> horariosDisponibles = reservasRepository
         .obtenerDisponibilidadDeTurnosV2(
             request.getNroRestaurante(), request.getNroSucursal(),
@@ -146,22 +125,8 @@ public class ReservasService {
     payload.setCliente(clienteDTO);
     payload.setReserva(reservaDTO);
 
-    clients.get(config.getBackendType() + "-RESERVAS").crearReserva(config, payload);
+    new ApiHandler(config, "CrearReserva").execute(payload);
 
     return codReservaSucursal;
-  }
-
-  public Void actualizarReservaCliente(Integer nroCliente, Integer nroReserva,
-      ActualizarReservaClienteRequestBean request) {
-    return null;
-    // reservasRepository.actualizarReservaCliente(nroCliente, nroReserva, request);
-    // ConfigBean config =
-    // configuracionRepository.obtenerConfiguracionRestaunte(request.getNroRestaurante());
-    // if ("SOAP".equals(config.getBackendType())) {
-    // soapClient.actualizarReservaCliente(config, request);
-    // return null;
-    // }
-    // restClient.actualizarReservaCliente(config, request);
-    // return null;
   }
 }

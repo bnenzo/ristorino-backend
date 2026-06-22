@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.reflect.TypeToken;
+
 import ar.edu.ubp.das.ristorino_backend.beans.ClienteBean;
+import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
 import ar.edu.ubp.das.ristorino_backend.components.ApiHandler.ApiHandler;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
@@ -36,59 +39,10 @@ public class ReservasService {
   @Transactional
   public String crearReserva(CrearReservaRequestBean request, Integer nroCliente) {
 
-    // STEP-2: consumir del restaurante
-    List<ObtenerDisponibilidadTurnosResponseBean> horariosDisponibles = reservasRepository
-        .obtenerDisponibilidadDeTurnosV2(
-            request.getNroRestaurante(), request.getNroSucursal(),
-            request.getFechaReserva(), request.getCodZona());
-
-    String horaRequest = request.getHoraReserva().toString(); // "12:00"
-
-    Optional<ObtenerDisponibilidadTurnosResponseBean> opt = horariosDisponibles.stream()
-        .filter(h -> request.getNroRestaurante().equals(h.getNroRestaurante()) &&
-            request.getNroSucursal().equals(h.getNroSucursal()) &&
-            horaRequest.equals(h.getHoraDesde().substring(0, 5)))
-        .findFirst();
-
-    if (opt.isEmpty()) {
-      // no existe turno para esa hora
-      throw new RuntimeException("No hay turno para la hora solicitada");
-    }
-
-    ObtenerDisponibilidadTurnosResponseBean turno = opt.get();
-
-    // Validaciones sobre el encontrado
-    if (turno.getHabilitado() != null && turno.getHabilitado() == 0) {
-      throw new RuntimeException("El turno no está habilitado");
-    }
-    if (turno.getCupoDisponible() == null || turno.getCupoDisponible() <= 0) {
-      throw new RuntimeException("No hay cupo disponible");
-    }
-    if (turno.getCupoDisponible() < request.getCantAdultos() + request.getCantMenores()) {
-      throw new RuntimeException("No hay cupo disponible para la cantidad de comensales solicitada");
-    }
-
-    // Generamos el codigo de reserva
-    String codReservaSucursal = GeneradorCodigoReserva.generarCodigoReserva();
-
     // Obtener costo dinámico
     BigDecimal costoReserva = costosRepository
         .obtenerCostoPorTipo("RESERVA")
         .getMonto();
-
-    // Insertamos en ristorino
-    reservasRepository.crearReservaRestaurante(
-        nroCliente,
-        request.getFechaReserva(),
-        request.getNroRestaurante(),
-        request.getNroSucursal(),
-        request.getCodZona(),
-        request.getHoraReserva(),
-        request.getCantAdultos(),
-        request.getCantMenores(),
-        "PEN",
-        costoReserva.doubleValue(),
-        codReservaSucursal);
 
     // Obtenemos todo el cliente
     ClienteBean cliente = clientesRepository.obtenerClientePorId(
@@ -101,7 +55,6 @@ public class ReservasService {
 
     // Armamos DTO de RESERVA
     CrearReservaRestauranteDTO reservaDTO = new CrearReservaRestauranteDTO();
-    reservaDTO.setCodReserva(codReservaSucursal);
     reservaDTO.setNroCliente(nroCliente);
     reservaDTO.setFechaReserva(request.getFechaReserva().toString());
     reservaDTO.setNroRestaurante(1);
@@ -125,7 +78,25 @@ public class ReservasService {
     payload.setCliente(clienteDTO);
     payload.setReserva(reservaDTO);
 
-    new ApiHandler(config, "CrearReserva").execute(payload);
+    String codReservaSucursal = new ApiHandler(config, "CrearReserva").execute(payload, new TypeToken<String>() {
+    }.getType());
+
+    if (codReservaSucursal == null)
+      return "";
+
+    // Insertamos en ristorino
+    reservasRepository.crearReservaRestaurante(
+        nroCliente,
+        request.getFechaReserva(),
+        request.getNroRestaurante(),
+        request.getNroSucursal(),
+        request.getCodZona(),
+        request.getHoraReserva(),
+        request.getCantAdultos(),
+        request.getCantMenores(),
+        "CONF",
+        costoReserva.doubleValue(),
+        codReservaSucursal);
 
     return codReservaSucursal;
   }

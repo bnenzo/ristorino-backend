@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.edu.ubp.das.ristorino_backend.beans.idiomas.IdiomasResponseBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.IdiomasRepository;
-import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
 
 @RestController
 @RequestMapping("/ristorino")
@@ -18,7 +18,7 @@ public class IdiomasResource {
 
   // OBTENER TODOS LOS IDIOMAS
   @GetMapping("/idiomas")
-  public List<IdiomasBean> obtenerReservasCliente() {
+  public List<IdiomasResponseBean> obtenerReservasCliente() {
     return idiomasRepository.obtenerIdiomas();
   }
 }

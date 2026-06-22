@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import ar.edu.ubp.das.ristorino_backend.beans.ConfiguracionRestauranteBean;
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
-import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.beans.ConfiguracionRestauranteBean;
 
 @Repository
 public class ConfiguracionRepository {

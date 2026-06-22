@@ -1,6 +1,6 @@
-package ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans;
+package ar.edu.ubp.das.ristorino_backend.beans.idiomas;
 
-public class IdiomasBean {
+public class IdiomasResponseBean {
   private Integer nroIdioma;
   private String nomIdioma;
   private String codIdioma;

@@ -14,20 +14,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
+import ar.edu.ubp.das.ristorino_backend.beans.contenidos.BuscarContenidosIAResponseBean;
+import ar.edu.ubp.das.ristorino_backend.beans.contenidos.ObtenerContenidosResponseBean;
+import ar.edu.ubp.das.ristorino_backend.beans.idiomas.IdiomasResponseBean;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.GenAI;
 import ar.edu.ubp.das.ristorino_backend.components.AI.genIA.SystemPrompts;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.ContenidosRepository;
 import ar.edu.ubp.das.ristorino_backend.services.contenidos.ContenidosService;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.beans.ObtenerContenidosSinContenidosIABean;
 import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.IdiomasRepository;
-import ar.edu.ubp.das.ristorino_backend.repositories.idiomas.beans.IdiomasBean;
 import ar.edu.ubp.das.ristorino_backend.resources.contenidos.beans.BuscarPromocionesIARequestBean;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -46,17 +48,30 @@ public class ContenidosResource {
   private GenAI genAI;
 
   /*
-   * Obtener todos los contenidos
+   * ------------------------
+   * OBTENER TODOS LOS CONTENIDOS PUBLICADOS -> Se llama para cargar los
+   * contenidos en la home page
+   * ------------------------
    */
   @GetMapping("/promociones")
-  public ResponseEntity<List<PromocionContenidoBean>> obtenerPromociones(
+  public ResponseEntity<List<ObtenerContenidosResponseBean>> obtenerPromociones(
       @RequestParam(name = "nroRestaurante", required = false) Integer nroRestaurante,
       @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma
 
   ) {
-    List<PromocionContenidoBean> promociones = contenidosRepository.getPromociones(nroRestaurante, nroIdioma);
-    System.out.println(promociones.size());
+    List<ObtenerContenidosResponseBean> promociones = contenidosRepository.getPromociones(nroRestaurante, nroIdioma);
     return ResponseEntity.ok(promociones);
+  }
+
+  /*
+   * Obtener contenidos en base a la entrada de un input del usuario
+   */
+  @PostMapping("/contenidos/busqueda")
+  public ResponseEntity<List<BuscarContenidosIAResponseBean>> buscarContenidosIA(
+      @RequestBody BuscarPromocionesIARequestBean request,
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma)
+      throws JsonProcessingException {
+    return ResponseEntity.ok(contenidosService.buscarContenidosConIA(request, nroIdioma));
   }
 
   /*
@@ -69,22 +84,11 @@ public class ContenidosResource {
     return ResponseEntity.ok("contenidos sincronizados correctamente");
   }
 
-  /*
-   * Obtener contenidos en base a la entrada de un input del usuario
-   */
-  @PostMapping("/contenidos/busqueda")
-  public ResponseEntity<List<PromocionContenidoBean>> buscarContenidosIA(
-      @RequestBody BuscarPromocionesIARequestBean request,
-      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma)
-      throws JsonProcessingException {
-    return ResponseEntity.ok(contenidosService.buscarContenidosConIA(request, nroIdioma));
-  }
-
   @GetMapping("/test-promociones")
   public ResponseEntity<List<ObtenerContenidosSinContenidosIABean>> obtenerContenidosSinContenidosIA()
       throws JsonProcessingException {
     List<ObtenerContenidosSinContenidosIABean> promociones = contenidosRepository.obtenerContenidosSinContenidosIA();
-    List<IdiomasBean> idiomas = idiomasRepository.obtenerIdiomas();
+    List<IdiomasResponseBean> idiomas = idiomasRepository.obtenerIdiomas();
 
     ObjectMapper om = new ObjectMapper();
     om.registerModule(new JavaTimeModule());

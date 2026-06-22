@@ -1,6 +1,6 @@
-package ar.edu.ubp.das.ristorino_backend.repositories.localidades.beans;
+package ar.edu.ubp.das.ristorino_backend.beans.localidades;
 
-public class LocalidadBean {
+public class LocalidadResponseBean {
 
   private Integer nro_localidad;
   private String nom_localidad;

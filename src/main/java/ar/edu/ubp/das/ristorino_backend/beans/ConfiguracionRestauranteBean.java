@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.ristorino_backend.repositories.configuracion.beans;
+package ar.edu.ubp.das.ristorino_backend.beans;
 
 public class ConfiguracionRestauranteBean {
   private Integer nroRestaurante;

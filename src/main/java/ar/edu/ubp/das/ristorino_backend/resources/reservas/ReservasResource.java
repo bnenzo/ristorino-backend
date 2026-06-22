@@ -9,10 +9,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.edu.ubp.das.ristorino_backend.components.ApiHandler.ApiHandler;
+import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
+import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.ReservasRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerDisponibilidadTurnosResponseBean;
-import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ActualizarReservaClienteRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.CrearReservaRequestBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerReservaClienteBean;
 import ar.edu.ubp.das.ristorino_backend.resources.reservas.beans.ObtenerSucursalesFormReservasResponseBean;
@@ -20,16 +22,16 @@ import ar.edu.ubp.das.ristorino_backend.services.reservas.ReservasService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerEstadosIdiomaBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerReservasClienteBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.reservas.beans.ObtenerZonasSucursalesRestaurantesFormReservasResponseBean;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 @RestController
 @RequestMapping("/ristorino")
@@ -40,6 +42,8 @@ public class ReservasResource {
   private ReservasRepository reservasRepository;
   @Autowired
   private ReservasService reservasService;
+  @Autowired
+  private ConfiguracionRepository configuracionRepository;
 
   // GET DISPONIBILIDAD DE TURNOS (POR NRO_RESTAURANTE, SUCURSAL Y FECHA)
   @GetMapping("/reservas/disponibilidad")
@@ -56,9 +60,17 @@ public class ReservasResource {
       @RequestParam Integer nroRestaurante,
       @RequestParam Integer nroSucursal,
       @RequestParam String codZona,
-      @RequestParam LocalDate fechaAReservar) {
+      @RequestParam String fechaAReservar) {
+    ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(nroRestaurante);
 
-    return reservasRepository.obtenerDisponibilidadDeTurnosV2(nroRestaurante, nroSucursal, fechaAReservar, codZona);
+    JsonObject body = new JsonObject();
+    body.addProperty("nroSucursal", nroSucursal);
+    body.addProperty("codZona", codZona);
+    body.addProperty("fechaAReservar", fechaAReservar);
+
+    return new ApiHandler(config, "ObtenerDisponibilidadHorariaZona").execute(body,
+        new TypeToken<List<ObtenerDisponibilidadTurnosResponseBean>>() {
+        }.getType());
   }
 
   // =====================================

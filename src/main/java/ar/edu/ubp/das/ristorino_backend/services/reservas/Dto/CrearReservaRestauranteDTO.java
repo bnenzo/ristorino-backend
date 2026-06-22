@@ -1,11 +1,7 @@
 package ar.edu.ubp.das.ristorino_backend.services.reservas.Dto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 public class CrearReservaRestauranteDTO {
 
-  private String codReserva; // cod_reserva / cod_reserva_sucursal
   private Integer nroCliente;
   private String fechaReserva;
   private Integer nroRestaurante;
@@ -17,14 +13,6 @@ public class CrearReservaRestauranteDTO {
   private Double costoReserva;
 
   public CrearReservaRestauranteDTO() {
-  }
-
-  public String getCodReserva() {
-    return codReserva;
-  }
-
-  public void setCodReserva(String codReserva) {
-    this.codReserva = codReserva;
   }
 
   public Integer getNroCliente() {

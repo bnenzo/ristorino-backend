@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import ar.edu.ubp.das.ristorino_backend.beans.preferencias.PreferenciaResponseBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.PreferenciaRepository;
-import ar.edu.ubp.das.ristorino_backend.repositories.preferencias.beans.PreferenciaBean;
 
 @RestController
 @RequestMapping("/ristorino")
@@ -16,7 +16,7 @@ public class PreferenciaResource {
   private PreferenciaRepository preferenciaRepository;
 
   @GetMapping("/preferencias")
-  public List<PreferenciaBean> obtenerPreferencias() {
+  public List<PreferenciaResponseBean> obtenerPreferencias() {
     return preferenciaRepository.obtenerPreferenciasGastronomicas();
   }
 }

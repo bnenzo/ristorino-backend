@@ -13,16 +13,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ar.edu.ubp.das.ristorino_backend.beans.ContenidoNoPublicadoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.PromocionContenidoBean;
 import ar.edu.ubp.das.ristorino_backend.beans.RestauranteIdBean;
+import ar.edu.ubp.das.ristorino_backend.beans.contenidos.BuscadoPromocionesIAOutput;
+import ar.edu.ubp.das.ristorino_backend.beans.contenidos.BuscarContenidosIAResponseBean;
+import ar.edu.ubp.das.ristorino_backend.beans.contenidos.ObtenerContenidosResponseBean;
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
 import ar.edu.ubp.das.ristorino_backend.repositories.contenidos.beans.ObtenerContenidosSinContenidosIABean;
-import ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto.BuscadoPromocionesIAOutput;
 
 @Repository
 public class ContenidosRepository {
   @Autowired
   private SimpleJdbcCallFactory jdbcCallFactory;
 
-  public List<PromocionContenidoBean> getPromociones(Integer nroRestaurante, Integer nroIdioma) {
+  public List<ObtenerContenidosResponseBean> getPromociones(Integer nroRestaurante, Integer nroIdioma) {
     MapSqlParameterSource p = new MapSqlParameterSource()
         .addValue("nro_restaurante", nroRestaurante)
         .addValue("nro_sucursal", null)
@@ -31,7 +33,7 @@ public class ContenidosRepository {
         .addValue("fecha_ref", null);
 
     return jdbcCallFactory.executeQuery("sp_get_promociones_contenidos", "dbo", p, "contenidos_restaurantes",
-        PromocionContenidoBean.class);
+        ObtenerContenidosResponseBean.class);
   }
 
   // POSIBLEMENTE MOVER A OTRO REPOSITORY?
@@ -92,7 +94,8 @@ public class ContenidosRepository {
     jdbcCallFactory.executeWithOutputs("sp_insertar_o_actualizar_contenido_generado_con_ia", "dbo", p);
   }
 
-  public List<PromocionContenidoBean> obtenerContenidosPorListaDeContenidosIds(List<BuscadoPromocionesIAOutput> lista)
+  public List<BuscarContenidosIAResponseBean> obtenerContenidosPorListaDeContenidosIds(
+      List<BuscadoPromocionesIAOutput> lista)
       throws JsonProcessingException {
     ObjectMapper om = new ObjectMapper();
     String json = om.writeValueAsString(lista);
@@ -107,7 +110,7 @@ public class ContenidosRepository {
         "dbo",
         p,
         "contenidos_restaurante",
-        PromocionContenidoBean.class);
+        BuscarContenidosIAResponseBean.class);
 
   }
 

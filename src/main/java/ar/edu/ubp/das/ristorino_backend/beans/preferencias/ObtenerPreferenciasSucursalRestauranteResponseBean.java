@@ -1,6 +1,6 @@
-package ar.edu.ubp.das.ristorino_backend.repositories.preferencias.beans;
+package ar.edu.ubp.das.ristorino_backend.beans.preferencias;
 
-public class ObtenerPreferenciasSucursalRestauranteBean {
+public class ObtenerPreferenciasSucursalRestauranteResponseBean {
   private String id;
   private String tags;
 

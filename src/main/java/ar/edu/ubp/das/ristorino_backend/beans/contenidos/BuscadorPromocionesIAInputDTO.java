@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.ristorino_backend.services.contenidos.Dto;
+package ar.edu.ubp.das.ristorino_backend.beans.contenidos;
 
 public class BuscadorPromocionesIAInputDTO {
 

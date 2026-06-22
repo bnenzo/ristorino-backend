@@ -1,6 +1,6 @@
-package ar.edu.ubp.das.ristorino_backend.repositories.preferencias.beans;
+package ar.edu.ubp.das.ristorino_backend.beans.preferencias;
 
-public class PreferenciaBean {
+public class PreferenciaResponseBean {
 
   private String cod_categoria;
   private Integer nro_valor_dominio;

@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
-import ar.edu.ubp.das.ristorino_backend.beans.RegistrarClickPromocionBody;
+import ar.edu.ubp.das.ristorino_backend.beans.clicks.RegistrarClickPromocionRequest;
 import ar.edu.ubp.das.ristorino_backend.components.SimpleJdbcCallFactory;
 
 @Repository
@@ -18,12 +18,12 @@ public class ClicksRepository {
   @Autowired
   private SimpleJdbcCallFactory jdbcCallFactory;
 
-  public void registrarClickContenido(RegistrarClickPromocionBody registrarClickPromocionBody) {
+  public void registrarClickContenido(RegistrarClickPromocionRequest registrarClickPromocionBody, Integer nroCliente) {
     SqlParameterSource params = new MapSqlParameterSource()
         .addValue("nro_restaurante", registrarClickPromocionBody.getNroRestaurante())
         .addValue("nro_idioma", registrarClickPromocionBody.getNroIdioma())
         .addValue("nro_contenido", registrarClickPromocionBody.getNroContenido())
-        .addValue("nro_cliente", 1, Types.INTEGER)
+        .addValue("nro_cliente", nroCliente)
         .addValue("costo_click", registrarClickPromocionBody.getCostoClick(), Types.DECIMAL)
         .addValue("cod_contenido_restaurante", registrarClickPromocionBody.getCodContenidoRestaurante());
 

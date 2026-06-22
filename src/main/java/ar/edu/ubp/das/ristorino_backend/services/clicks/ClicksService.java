@@ -7,10 +7,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ar.edu.ubp.das.ristorino_backend.beans.ClicksContenidosRestaurantesBean;
-import ar.edu.ubp.das.ristorino_backend.beans.RegistrarClickPromocionBody;
+import ar.edu.ubp.das.ristorino_backend.beans.ClienteBean;
+import ar.edu.ubp.das.ristorino_backend.beans.clicks.RegistrarClickPromocionRequest;
 import ar.edu.ubp.das.ristorino_backend.components.ApiHandler.ApiHandler;
 import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.repositories.clicks.ClicksRepository;
+import ar.edu.ubp.das.ristorino_backend.repositories.clientes.ClienteRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.configuracion.ConfiguracionRepository;
 import ar.edu.ubp.das.ristorino_backend.repositories.costos.CostosRepository;
 import com.google.gson.JsonObject;
@@ -22,8 +24,9 @@ public class ClicksService {
 
   @Autowired
   private ClicksRepository clicksRepository;
+
   @Autowired
-  private CostosRepository costosRepository;
+  private ClienteRepository clienteRepository;
 
   public ClicksService() {
   }
@@ -31,13 +34,25 @@ public class ClicksService {
   public Void registrarClickContenido(ClicksContenidosRestaurantesBean clickContenido) {
     ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(clickContenido.getNroRestaurante());
 
+    // Obtenemos todo el cliente
+    ClienteBean cliente = null;
+
+    if (clickContenido.getNroCliente() != null) {
+      cliente = clienteRepository.obtenerClientePorId(
+          clickContenido.getNroCliente());
+    }
+
     JsonObject body = new JsonObject();
     body.addProperty("nroRestaurante", 1);
     body.addProperty("nroContenido", clickContenido.getNroContenido());
     body.addProperty("nroClick", clickContenido.getNroClick());
     body.addProperty("fechaHoraRegistro", clickContenido.getFechaHoraRegistro());
-    body.addProperty("nroCliente", 1);
+    body.addProperty("nroCliente", cliente != null ? cliente.getNroCliente() : null);
     body.addProperty("costoClick", clickContenido.getCostoClick());
+    body.addProperty("apellido", cliente != null ? cliente.getApellido() : null);
+    body.addProperty("nombre", cliente != null ? cliente.getNombre() : null);
+    body.addProperty("correo", cliente != null ? cliente.getCorreo() : null);
+    body.addProperty("telefonos", cliente != null ? cliente.getTelefonos() : null);
 
     new ApiHandler(config, "RegistrarClickContenido").execute(body);
 
@@ -55,14 +70,4 @@ public class ClicksService {
     }
   }
 
-  public void registrarCostoClickContenido(RegistrarClickPromocionBody body) {
-
-    BigDecimal costoClick = costosRepository
-        .obtenerCostoPorTipo("CLICK")
-        .getMonto();
-
-    body.setCostoClick(costoClick);
-
-    clicksRepository.registrarClickContenido(body);
-  }
 }

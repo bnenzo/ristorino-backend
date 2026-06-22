@@ -6,6 +6,7 @@ import ar.edu.ubp.das.ristorino_backend.config.beans.ConfigBean;
 import ar.edu.ubp.das.ristorino_backend.config.soapClient.SoapClientFactory;
 import ar.edu.ubp.das.ristorino_backend.utils.Utils;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -22,7 +23,8 @@ public class ApiHandler {
 
   static {
     OPERATIONS.put("CrearReserva",
-        new ApiOperationConfig("/reservas", "POST", "CrearReservaDesdeRistorinoRequest", ""));
+        new ApiOperationConfig("/reservas", "POST", "CrearReservaDesdeRistorinoRequest",
+            "CrearReservaDesdeRistorinoResponse"));
 
     OPERATIONS.put("ObtenerContenidosNoPublicados",
         new ApiOperationConfig("/contenidos/no-publicados", "GET", "ObtenerContenidosNoPublicadosRequest",
@@ -35,6 +37,11 @@ public class ApiHandler {
     OPERATIONS.put("RegistrarClickContenido",
         new ApiOperationConfig("/registrar_click_contenido", "POST", "RegistrarClickContenidoRequest",
             ""));
+
+    OPERATIONS.put("ObtenerDisponibilidadHorariaZona",
+        new ApiOperationConfig("/reservas/obtener-disponibilidad-horaria-zona", "GET",
+            "ObtenerDisponibilidadHorariaZonaRequest",
+            "ObtenerDisponibilidadHorariaZonaResponse"));
 
   }
 
@@ -90,9 +97,20 @@ public class ApiHandler {
     return switch (operationConfig.restMethod) {
       case "POST" -> http.post(payload);
       case "PUT" -> http.put(payload);
-      case "GET" -> http;
+      case "GET" -> addQueryParams(http, payload);
       default -> throw new RuntimeException("HTTP method no soportado: " + operationConfig.restMethod);
     };
+  }
+
+  private Httpful addQueryParams(Httpful http, Object payload) {
+    if (payload == null)
+      return http;
+
+    JsonObject json = GSON.toJsonTree(payload).getAsJsonObject();
+    for (Map.Entry<String, com.google.gson.JsonElement> entry : json.entrySet()) {
+      http.addQueryParam(entry.getKey(), entry.getValue().getAsString());
+    }
+    return http;
   }
 
   // ── SOAP ──────────────────────────────────────────────────────────────────

@@ -82,7 +82,7 @@ public class ReservasService {
     }.getType());
 
     if (codReservaSucursal == null)
-      return "";
+      return ""; // Deuda recalcular horarios
 
     // Insertamos en ristorino
     reservasRepository.crearReservaRestaurante(

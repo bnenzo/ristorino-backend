@@ -31,7 +31,10 @@ public class NotificarClicksContenidosScheduler {
 
       // Se recorren los clicks para enviar 1 a 1 al backend del restaurante
       for (ClicksContenidosRestaurantesBean clickSinNotificar : clicksSinNotificar) {
+        // Notificar click a restaurante
         clicksService.registrarClickContenido(clickSinNotificar);
+
+        // Actualizar "notificado" del click en ristorino
         clicksRepository.actualizarClickSinNotificarANotificado(clickSinNotificar);
       }
 

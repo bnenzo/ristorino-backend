@@ -1,5 +1,6 @@
 package ar.edu.ubp.das.ristorino_backend.repositories.clicks;
 
+import java.math.BigDecimal;
 import java.sql.Types;
 import java.util.List;
 
@@ -18,13 +19,23 @@ public class ClicksRepository {
   @Autowired
   private SimpleJdbcCallFactory jdbcCallFactory;
 
-  public void registrarClickContenido(RegistrarClickPromocionRequest registrarClickPromocionBody, Integer nroCliente) {
+  /*
+   * ------------------------
+   * REGISTRAR CLICK EN UN CONTENIDO -> Se llama cuando el usuario hace click a un
+   * contenido
+   * ------------------------
+   */
+  public void registrarClickContenido(
+      RegistrarClickPromocionRequest registrarClickPromocionBody,
+      Integer nroCliente,
+      BigDecimal costoClick,
+      Integer nroIdioma) {
     SqlParameterSource params = new MapSqlParameterSource()
         .addValue("nro_restaurante", registrarClickPromocionBody.getNroRestaurante())
-        .addValue("nro_idioma", registrarClickPromocionBody.getNroIdioma())
+        .addValue("nro_idioma", nroIdioma)
         .addValue("nro_contenido", registrarClickPromocionBody.getNroContenido())
         .addValue("nro_cliente", nroCliente)
-        .addValue("costo_click", registrarClickPromocionBody.getCostoClick(), Types.DECIMAL)
+        .addValue("costo_click", costoClick, Types.DECIMAL)
         .addValue("cod_contenido_restaurante", registrarClickPromocionBody.getCodContenidoRestaurante());
 
     jdbcCallFactory.executeWithOutputs(

@@ -37,13 +37,20 @@ public class ClicksResource {
   @PostMapping("/registrar-click-promocion")
   public ResponseEntity<Void> registrarClickContenido(
       @RequestHeader(value = "nroCliente", required = false) Integer nroCliente,
+      @RequestHeader(value = "nroIdioma", required = false) Integer nroIdioma,
       @RequestBody RegistrarClickPromocionRequest req) {
+
+    /*
+     * Obtener el costo de registar el click
+     */
     BigDecimal costoClick = costosRepository
         .obtenerCostoPorTipo("CLICK")
         .getMonto();
 
-    req.setCostoClick(costoClick);
-    clicksRepository.registrarClickContenido(req, nroCliente);
+    /*
+     * Guardar el click
+     */
+    clicksRepository.registrarClickContenido(req, nroCliente, costoClick, nroIdioma);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 

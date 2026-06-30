@@ -31,7 +31,7 @@ public class ClicksService {
   public ClicksService() {
   }
 
-  public Void registrarClickContenido(ClicksContenidosRestaurantesBean clickContenido) {
+  public void registrarClickContenido(ClicksContenidosRestaurantesBean clickContenido) {
     ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(clickContenido.getNroRestaurante());
 
     // Obtenemos todo el cliente
@@ -43,20 +43,19 @@ public class ClicksService {
     }
 
     JsonObject body = new JsonObject();
-    body.addProperty("nroRestaurante", 1);
     body.addProperty("nroContenido", clickContenido.getNroContenido());
     body.addProperty("nroClick", clickContenido.getNroClick());
     body.addProperty("fechaHoraRegistro", clickContenido.getFechaHoraRegistro());
-    body.addProperty("nroCliente", cliente != null ? cliente.getNroCliente() : null);
     body.addProperty("costoClick", clickContenido.getCostoClick());
+    body.addProperty("codContenidoRestaurante", clickContenido.getCodContenidoRestaurante());
+
+    body.addProperty("nroCliente", cliente != null ? cliente.getNroCliente() : null);
     body.addProperty("apellido", cliente != null ? cliente.getApellido() : null);
     body.addProperty("nombre", cliente != null ? cliente.getNombre() : null);
     body.addProperty("correo", cliente != null ? cliente.getCorreo() : null);
     body.addProperty("telefonos", cliente != null ? cliente.getTelefonos() : null);
 
     new ApiHandler(config, "RegistrarClickContenido").execute(body);
-
-    return null;
   }
 
   public void notificarClicksPromocionManual() {

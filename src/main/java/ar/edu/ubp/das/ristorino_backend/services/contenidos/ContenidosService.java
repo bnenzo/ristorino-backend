@@ -114,15 +114,7 @@ public class ContenidosService {
 
       c.setCostoClick(costoContenido);
 
-      // Obtener configuración para obtener el prefijo
-      ConfigBean config = configuracionRepository.obtenerConfiguracionRestaunte(
-          c.getNroRestaurante());
-
-      String codContenidoRestaurante = config.getPrefix() + "-" + c.getNroRestaurante() + "-" + c.getNroContenido();
-
-      contenidosRepository.insertarContenidoNoPublicado(
-          c,
-          codContenidoRestaurante);
+      contenidosRepository.insertarContenidoNoPublicado(c);
     }
 
     this.actualizarContenidoNoPublicadosAPublicados(contenidos);

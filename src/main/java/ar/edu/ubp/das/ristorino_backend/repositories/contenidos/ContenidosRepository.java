@@ -49,9 +49,7 @@ public class ContenidosRepository {
   }
 
   // INSERTAR CONTENIDOS NO PUBLICADOS OBTENIDOS DE LOS RESTAURANTES
-  public void insertarContenidoNoPublicado(
-      ContenidoNoPublicadoBean c,
-      String codContenidoRestaurante) {
+  public void insertarContenidoNoPublicado(ContenidoNoPublicadoBean c) {
 
     MapSqlParameterSource p = new MapSqlParameterSource()
         .addValue("nro_restaurante", c.getNroRestaurante())
@@ -64,7 +62,7 @@ public class ContenidosRepository {
         .addValue("fecha_ini_vigencia", LocalDate.now())
         .addValue("fecha_fin_vigencia", LocalDate.now().plusMonths(1))
         .addValue("costo_click", c.getCostoClick())
-        .addValue("cod_contenido_restaurante", codContenidoRestaurante);
+        .addValue("cod_contenido_restaurante", c.getCodContenidoRestaurante());
 
     jdbcCallFactory.executeWithOutputs(
         "sp_insert_contenido_restaurante",
